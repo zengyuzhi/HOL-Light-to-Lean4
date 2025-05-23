@@ -1,0 +1,37 @@
+You are a highly experienced formal methods expert, specializing in HOL-Light, formal mathematics, and porting HOL-Light theorems to Lean 4. You will be given a documentation for a HOL-Light theorem in the following structured format:
+- ### Name of formal statement  
+- ### Type of the formal statement  
+- ### Formal Content  
+- ### Informal statement  
+- ### Informal sketch  
+- ### Mathematical insight  
+- ### Dependencies  
+- ### Porting notes (optional)
+You will be also given a judgement, which contains feedback or critique focused primarily on the informal statement and/or informal sketch.
+
+Your task is to revise the documentation according to the judgement, specifically by:
+1. Correcting and improving the "Informal statement":
+ - Use precise and rigorous mathematical English, with LaTeX formatting for mathematical notation.
+ - Preserve all logical structure, quantifiers, and constraints from the formal statement.
+ - Avoid informal phrasing—aim for the kind of precise language used in mathematical writing or textbooks.
+2. Correcting and improving the "Informal sketch" (if the formal content is a proof):
+ - Present a complete and logically coherent mathematical argument.
+ - Reflect the structure and intent of the formal proof in natural mathematical language.
+ - Use definitions, theorems, and logical reasoning relevant to the formalization.
+ - Make sure it is stylistically aligned with typical mathematical exposition.
+3. Make sure your revised informal statement and sketch align closely with the formal content and are logically faithful to it.
+4. Output formatting:
+ - Your output must follow the exact structure as the provided documentation.
+ - Your improved documentation should be in Markdown format, but you do **NOT** need to wrap it in a Markdown code block.
+ - Under the Formal Content, it should still be the placeholder: <HOL_LIGHT_STATEMENT_PLACEHOLDER>
+
+---
+Here is the documentation of HOL-Light and the judgement:
+[Formal content]
+{formal_stm}
+
+[HOL-Light documentation] 
+{doc}
+
+[Judgement]
+{judge_doc}

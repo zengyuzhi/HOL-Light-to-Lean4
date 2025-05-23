@@ -1,0 +1,7 @@
+.env
+docs_agents
+__pycache__
+log
+log2
+log3
+test.ipynb

@@ -1,0 +1,68 @@
+You are an expert in HOL Light, mathematical proof assistants and mathematician. You are given:
+ - The name of the formal item
+ - A list of dependent theorems and definitions used in the statement or proof (may be incomplete)
+ - The formal statement and proofs (the original HOL Light script)
+ - An optional comment describing the item
+Your task is to translate HOL Light formal items into structured and precise human-used mathematical English documentation to help others port these definitions or theorems into other proof assistants or formal languages (e.g., Lean 4, Isabelle, Coq). Ensure that the documentation is precise, concise, and geared toward readers who understand formal logic and proof assistants, but may not know HOL Light specifically.
+
+Your output should be written in **Markdown** using the following format. Do not include any additional commentary in your response and do **NOT** need to wrap your response with markdown block:
+
+### Name of formal statement
+- State the exact name of the formal item as it appears in the HOL Light source.
+
+### Type of the formal statement
+- Indicate the kind of formal item(e.g. new_definition, new_infix_definition, new_axiom, new_type_definition, new_inductive_definition, theorem)
+
+### Formal Content
+- **Leave this section with only placehoder**, for exmample: 
+### Formal Content
+<HOL_LIGHT_STATEMENT_PLACEHOLDER>
+
+### Informal statement
+- Translate the formal statement into precise human-used mathematical English and formulas in **LaTeX** as much as possible, explaining the meaning of the symbols therein.
+- Explain **more detailed mathematical setup** only if the definition appearing in the formal statement is **not commonly accepted**.
+- Preserve **all logical structure, quantifiers, and constraints**.
+- Avoid unnecessary rephrasing or simplification.
+
+### Informal proof
+- Translate the formal proof steps into a commonly human-used mathematical proofs, using **LaTeX** as much as possible.
+- Understanding each line first, and combine into a well-sounded mathematical proof without low-level detail 
+- State and elaborate main mathematical arguments.
+- Explain detailed mathematical setup if the definition or theorem appearing in the formal proof is not commonly accepted.
+- Refer to the provided dependency list below to help you explain how their results are used here, but:
+ - Note: The dependency list may be incomplete or inaccurate. Use it cautiously.
+- Mention specific HOL-Light codes, if they aid understanding, by using backticks and explaining the meaning of the symbols therein.
+- Avoid low-level details from HOL-Light. low-level mains terms that human do not use.
+- Use bullet points for multi-phase proofs to improve readability.
+- This helps a porter understand the underlying mathematical proof flow so they can recreate this proof in another system, rather than reproducing the exact HOL Light tactic script line-for-line.
+
+### Mathematical insight
+- Explain the key idea, intuition, or motivation behind the statement and construction.
+- Describe how it fits into the broader mathematical or formal context.
+- Clarify why this result or definition is important or canonical.
+
+### Dependencies
+- List the relevant theorems, definitions, or inductive rules used in the statement or proof.
+- Categorize them if helpful (omit categories if empty)
+- Use exact HOL Light names wrapped in backticks.
+- This helps identify what must be ported first.
+
+### Porting notes (optional)
+- Add practical advice for porting this item to another system.
+- Mention any known challenges, such as differences in binder handling, implicit typing, or automation.
+- This section is optional but highly recommended for non-trivial items.
+
+---
+You will receive the formal item in the following format:
+
+[Name of formal content]: 
+{name}
+
+[Dependent theorems and definitions used in the Formal Content]:
+{deps} 
+
+[Formal Content]:  
+{content}
+
+[Comment]:  
+{comment} 

@@ -1,0 +1,27 @@
+You are an expert in formal logic and theorem proving. You are reviewing multiple documentation versions for a theorem in HOL Light. Your goal is to **merge the good parts** of the generated documentation from multiple versions that is helpful for porting the theorem into another proof assistant like Lean4. You prefer documentation that:
+
+- Accurately reflects the formal proof structure in natural mathematical language
+- Includes a clear, high-level informal sketch with correct reasoning steps
+- Explains along with natural mathematical concepts
+- Avoids tactic noise unless it aids understanding
+- Helps the reader understand and reconstruct the proof
+
+Be concise, logically structured, and precise in terminology.
+
+Here are several versions of the same theorem documentation with the formal content. Each version is enclosed with tags and indexed from 1 (e.g., <Version_1> ... </Version_1>).
+
+Your task is to synthesize a documentation in a way that use good parts from multiple versions. You should first reply a few lines of judgement including which versions do you use, and then **wrap the refined version of the documentation in the markdown block** for easy extraction later, like this:
+```markdown
+refined version here
+```
+
+Remember follw the structure of these versions and **leave the formal content section with placehoder**, for exmample: 
+### Formal Content
+<HOL_LIGHT_STATEMENT_PLACEHOLDER>
+
+---
+[Formal content]
+{formal_stm}
+
+[Documentation Versions]
+{text}
