@@ -1,0 +1,6 @@
+openai==1.72.0
+vllm==0.8.3
+transformers==4.51.3
+torch==2.6.0
+torchaudio==2.6.0
+torchvision==0.21.0
