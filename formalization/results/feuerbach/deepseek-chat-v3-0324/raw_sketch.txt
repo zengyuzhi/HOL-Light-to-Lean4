@@ -1,0 +1,86 @@
+```lean
+import Mathlib
+import Aesop
+
+open Real
+
+section Feuerbach_Theorems
+
+variable {a b c : ℝ × ℝ}
+variable (r1 r2 : ℝ)
+variable (c1 c2 x : ℝ × ℝ)
+
+-- CIRCLES_TANGENT
+theorem circles_tangent
+    (h1 : 0 ≤ r1) (h2 : 0 ≤ r2)
+    (ht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|) :
+    (c1 = c2 ∧ r1 = r2) ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by sorry
+
+-- FEUERBACH
+variable {mbc mac mab pbc pac pab o f : ℝ × ℝ}
+variable {nradius iradius : ℝ}
+
+theorem feuerbach
+    (h_noncollinear : ¬collinear ({a, b, c} : Set (ℝ × ℝ)))
+    (h_mab : midpoint a b = mab)
+    (h_mbc : midpoint b c = mbc)
+    (h_mac : midpoint c a = mac)
+    (h_nradius1 : dist o mbc = nradius)
+    (h_nradius2 : dist o mac = nradius)
+    (h_nradius3 : dist o mab = nradius)
+    (h_iradius1 : dist f pbc = iradius)
+    (h_iradius2 : dist f pac = iradius)
+    (h_iradius3 : dist f pab = iradius)
+    (h_collinear1 : collinear ({a, b, pab} : Set (ℝ × ℝ)))
+    (h_orth1 : Orthogonal (a - b) (f - pab))
+    (h_collinear2 : collinear ({b, c, pbc} : Set (ℝ × ℝ)))
+    (h_orth2 : Orthogonal (b - c) (f - pbc))
+    (h_collinear3 : collinear ({c, a, pac} : Set (ℝ × ℝ)))
+    (h_orth3 : Orthogonal (c - a) (f - pac)) :
+    o = f ∧ nradius = iradius ∨ ∃! x, dist o x = nradius ∧ dist f x = iradius := by sorry
+
+-- NINE_POINT_CIRCLE_1
+variable {fab fbc fac : ℝ × ℝ}
+
+theorem nine_point_circle_1
+    (h_noncollinear : ¬collinear ({a, b, c} : Set (ℝ × ℝ)))
+    (h_mab : midpoint a b = mab)
+    (h_mbc : midpoint b c = mbc)
+    (h_mac : midpoint c a = mac)
+    (h_nradius1 : dist o mbc = nradius)
+    (h_nradius2 : dist o mac = nradius)
+    (h_nradius3 : dist o mab = nradius)
+    (h_collinear1 : collinear ({a, b, fab} : Set (ℝ × ℝ)))
+    (h_orth1 : Orthogonal (a - b) (c - fab))
+    (h_collinear2 : collinear ({b, c, fbc} : Set (ℝ × ℝ)))
+    (h_orth2 : Orthogonal (b - c) (a - fbc))
+    (h_collinear3 : collinear ({c, a, fac} : Set (ℝ × ℝ)))
+    (h_orth3 : Orthogonal (c - a) (b - fac)) :
+    dist o fab = nradius ∧ dist o fbc = nradius ∧ dist o fac = nradius := by sorry
+
+-- NINE_POINT_CIRCLE_2
+variable {oc : ℝ × ℝ}
+
+theorem nine_point_circle_2
+    (h_noncollinear : ¬collinear ({a, b, c} : Set (ℝ × ℝ)))
+    (h_mab : midpoint a b = mab)
+    (h_mbc : midpoint b c = mbc)
+    (h_mac : midpoint c a = mac)
+    (h_nradius1 : dist o mbc = nradius)
+    (h_nradius2 : dist o mac = nradius)
+    (h_nradius3 : dist o mab = nradius)
+    (h_collinear1 : collinear ({a, b, fab} : Set (ℝ × ℝ)))
+    (h_orth1 : Orthogonal (a - b) (c - fab))
+    (h_collinear2 : collinear ({b, c, fbc} : Set (ℝ × ℝ)))
+    (h_orth2 : Orthogonal (b - c) (a - fbc))
+    (h_collinear3 : collinear ({c, a, fac} : Set (ℝ × ℝ)))
+    (h_orth3 : Orthogonal (c - a) (b - fac))
+    (h_oc1 : collinear ({oc, a, fbc} : Set (ℝ × ℝ)))
+    (h_oc2 : collinear ({oc, b, fac} : Set (ℝ × ℝ)))
+    (h_oc3 : collinear ({oc, c, fab} : Set (ℝ × ℝ))) :
+    dist o (midpoint oc a) = nradius ∧
+    dist o (midpoint oc b) = nradius ∧
+    dist o (midpoint oc c) = nradius := by sorry
+
+end Feuerbach_Theorems
+```

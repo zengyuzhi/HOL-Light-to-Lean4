@@ -1,0 +1,315 @@
+Refinement 1 errors:
+import Mathlib
+import Aesop
+
+variable (Point Line : Type)
+variable [ProjPlane Point Line]
+
+variable {u v w : ℝ³}
+variable {x y z : ℝ³} 
+variable {a b c : ℝ³}
+variable {p p' p'' : Point}
+variable {l l' l'' : Line}
+
+-- NORMAL_EXISTS
+theorem normal_exists : ∃ w : ℝ³, w ≠ 0 ∧ orthogonal u w ∧ orthogonal v w := by sorry
+
+-- direction_tybij
+def mk_dir (x : ℝ³) (h : x ≠ 0) : Direction := sorry
+def dest_dir (d : Direction) : {x : ℝ³ // x ≠ 0} := sorry
+
+-- perpdir
+def Perpendicular (x y : Direction) : Prop := orthogonal (dest_dir x) (dest_dir y)
+
+-- pardir
+def Parallel (x y : Direction) : Prop := (dest_dir x) × (dest_dir y) = 0
+
+-- DIRECTION_CLAUSES
+theorem direction_clauses (P : ℝ³ → Prop) :
+    (∀ x : Direction, P (dest_dir x)) ↔ (∀ x : ℝ³, x ≠ 0 → P x) ∧ 
+    (∃ x : Direction, P (dest_dir x)) ↔ (∃ x : ℝ³, x ≠ 0 ∧ P x) := by sorry
+
+-- PARDIR_REFL
+theorem parallel_refl : ∀ x : Direction, Parallel x x := by sorry
+
+-- PARDIR_SYM
+theorem parallel_sym : ∀ x y : Direction, Parallel x y ↔ Parallel y x := by sorry
+
+-- PARDIR_TRANS
+theorem parallel_trans : ∀ x y z : Direction, Parallel x y ∧ Parallel y z → Parallel x z := by sorry
+
+-- PARDIR_EQUIV
+theorem parallel_equiv : ∀ x y : Direction, (Parallel x = Parallel y) ↔ Parallel x y := by sorry
+
+-- DIRECTION_AXIOM_1
+theorem direction_axiom_1 : ∀ p p' : Direction, ¬Parallel p p' → 
+    ∃ l : Direction, Perpendicular p l ∧ Perpendicular p' l ∧ 
+    ∀ l' : Direction, Perpendicular p l' ∧ Perpendicular p' l' → Parallel l' l := by sorry
+
+-- DIRECTION_AXIOM_2
+theorem direction_axiom_2 : ∀ l l' : Direction, ∃ p : Direction, Perpendicular p l ∧ Perpendicular p l' := by sorry
+
+-- DIRECTION_AXIOM_3
+theorem direction_axiom_3 : ∃ p p' p'' : Direction, 
+    ¬Parallel p p' ∧ ¬Parallel p' p'' ∧ ¬Parallel p p'' ∧ 
+    ¬∃ l : Direction, Perpendicular p l ∧ Perpendicular p' l ∧ Perpendicular p'' l := by sorry
+
+-- DIRECTION_AXIOM_4_WEAK
+theorem direction_axiom_4_weak : ∀ l : Direction, 
+    ∃ p p' : Direction, ¬Parallel p p' ∧ Perpendicular p l ∧ Perpendicular p' l := by sorry
+
+-- ORTHOGONAL_COMBINE
+theorem orthogonal_combine : ∀ x a b : Direction,
+    Perpendicular a x ∧ Perpendicular b x ∧ ¬Parallel a b → 
+    ∃ c : Direction, Perpendicular c x ∧ ¬Parallel a c ∧ ¬Parallel b c := by sorry
+
+-- DIRECTION_AXIOM_4
+theorem direction_axiom_4 : ∀ l : Direction, ∃ p p' p'' : Direction,
+    ¬Parallel p p' ∧ ¬Parallel p' p'' ∧ ¬Parallel p p'' ∧
+    Perpendicular p l ∧ Perpendicular p' l ∧ Perpendicular p'' l := by sorry
+
+-- line_tybij
+def mk_line (d : Direction) : Line := sorry
+def dest_line (l : Line) : {d : Direction // true} := sorry
+
+-- PERPDIR_WELLDEF
+theorem perpendicular_well_def : ∀ x y x' y' : Direction,
+    Parallel x x' ∧ Parallel y y' → (Perpendicular x y ↔ Perpendicular x' y') := by sorry
+
+-- perpl, perpl_th
+noncomputable def perpl : Line → Line → Prop := sorry
+
+-- line_lift_thm
+theorem line_lift {P : Direction → Direction → Prop} 
+    (h : ∀ d d', Parallel d d' → P d d') : ∀ l l' : Line, perpl l l' := by sorry
+
+-- LINE_AXIOM_1
+theorem line_axiom_1 : ∀ p p' : Point, p ≠ p' → 
+    ∃ l : Line, Incident p l ∧ Incident p' l ∧ 
+    ∀ l' : Line, Incident p l' ∧ Incident p' l' → l' = l := by sorry
+
+-- LINE_AXIOM_2
+theorem line_axiom_2 : ∀ l l' : Line, ∃ p : Point, Incident p l ∧ Incident p l' := by sorry
+
+-- LINE_AXIOM_3
+theorem line_axiom_3 : ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' := by sorry
+
+-- LINE_AXIOM_4
+theorem line_axiom_4 : ∀ l : Line, ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' ∧ Incident p l ∧ Incident p' l ∧ Incident p'' l := by sorry
+
+-- point_tybij
+def mk_point (l : Line) : Point := sorry
+def dest_point (p : Point) : {l : Line // true} := sorry
+
+-- on
+def Incident (p : Point) (l : Line) : Prop := perpl (dest_point p) l
+
+-- POINT_CLAUSES
+theorem point_clauses (P : Line → Prop) :
+    (∀ p : Point, P (dest_point p)) ↔ (∀ l : Line, P l) ∧ 
+    (∃ p : Point, P (dest_point p)) ↔ (∃ l : Line, P l) := by sorry
+
+-- POINT_TAC (tactic, not directly portable)
+
+-- AXIOM_1
+theorem axiom_1 : ∀ p p' : Point, p ≠ p' → 
+    ∃ l : Line, Incident p l ∧ Incident p' l ∧ 
+    ∀ l' : Line, Incident p l' ∧ Incident p' l' → l' = l := by sorry
+
+-- AXIOM_2
+theorem axiom_2 : ∀ l l' : Line, ∃ p : Point, Incident p l ∧ Incident p l' := by sorry
+
+-- AXIOM_3
+theorem axiom_3 : ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' := by sorry
+
+-- AXIOM_4
+theorem axiom_4 : ∀ l : Line, ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' ∧ Incident p l ∧ Incident p' l ∧ Incident p'' l := by sorry
+
+-- projl
+def projl (x : ℝ³) (h : x ≠ 0) : Line := mk_line (mk_dir x h)
+
+-- projp
+def projp (x : ℝ³) (h : x ≠ 0) : Point := mk_point (projl x h)
+
+-- PROJL_TOTAL
+theorem projl_total : ∀ l : Line, ∃ x : ℝ³, x ≠ 0 ∧ l = projl x := by sorry
+
+-- homol
+noncomputable def homol (l : Line) : {x : ℝ³ // x ≠ 0} := sorry
+
+-- PERPDIR_WELLDEF
+theorem perpendicular_well_def : ∀ x y x' y' : Direction,
+    Parallel x x' ∧ Parallel y y' → (Perpendicular x y ↔ Perpendicular x' y') := by sorry
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef : ∀ x y x' y' : Direction,
+    Parallel x x' ∧ Parallel y y' → (Perpendicular x y ↔ Perpendicular x' y') := by sorry
+
+-- projl_homol
+theorem projl_homol (x : ℝ³) (h : x ≠ 0) : Parallel x (homol (projl x h)) := by sorry
+
+-- homop_def
+def homop (p : Point) : {x : ℝ³ // x ≠ 0} := homol (dest_point p)
+
+-- homop
+theorem homop_property (p : Point) : homop p ≠ 0 ∧ p = projp (homop p) := by sorry
+
+-- ON_HOMOL
+theorem on_homol : ∀ p : Point, ∀ l : Line, 
+    Incident p l ↔ orthogonal (homop p) (homol l) := by sorry
+
+-- EQ_HOMOL
+theorem eq_homol : ∀ l l' : Line, l = l' ↔ Parallel (homol l) (homol l') := by sorry
+
+-- EQ_HOMOP
+theorem eq_homop : ∀ p p' : Point, p = p' ↔ Parallel (homop p) (homop p') := by sorry
+
+-- PARALLEL_PROJL_HOMOL
+theorem parallel_projl_homol (x : ℝ³) (h : x ≠ 0) : 
+    Parallel x (homol (projl x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP
+theorem parallel_projp_homop (x : ℝ³) (h : x ≠ 0) : 
+    Parallel x (homop (projp x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP_EXPLICIT
+theorem parallel_projp_homop_explicit (x : ℝ³) (h : x ≠ 0) :
+    ∃ a : ℝ, a ≠ 0 ∧ homop (projp x h) = a • x := by sorry
+
+-- bracket
+def bracket [Finite ι] (v : ι → ℝ³) : ℝ := det (Matrix.of (fun i j => (v i) j))
+
+-- COLLINEAR
+def Collinear (s : Set Point) : Prop := ∃ l : Line, ∀ p ∈ s, Incident p l
+
+-- COLLINEAR_SINGLETON
+theorem collinear_singleton (a : Point) : Collinear {a} := by sorry
+
+-- COLLINEAR_PAIR
+theorem collinear_pair (a b : Point) : Collinear {a, b} := by sorry
+
+-- COLLINEAR_TRIPLE
+theorem collinear_triple (a b c : Point) : 
+    Collinear {a, b, c} ↔ ∃ l : Line, Incident a l ∧ Incident b l ∧ Incident c l := by sorry
+
+-- COLLINEAR_BRACKET
+theorem collinear_bracket (p1 p2 p3 : Point) :
+    Collinear {p1, p2, p3} ↔ bracket ![homop p1, homop p2, homop p3] = 0 := by sorry
+
+-- homogeneous_conic
+def HomogeneousConic (con : Set ℝ³) : Prop := 
+    ∃ a b c d e f : ℝ, ¬(a = 0 ∧ b = 0 ∧ c = 0 ∧ d = 0 ∧ e = 0 ∧ f = 0) ∧
+    con = {x : ℝ³ | a * x.1² + b * x.2² + c * x.3² + d * x.1 * x.2 + 
+                    e * x.1 * x.3 + f * x.2 * x.3 = 0}
+
+-- projective_conic
+def ProjectiveConic (con : Set Point) : Prop := 
+    ∃ c : Set ℝ³, HomogeneousConic c ∧ con = {p | (homop p) ∈ c}
+
+-- HOMOGENEOUS_CONIC_BRACKET
+theorem homogeneous_conic_bracket {con : Set ℝ³} {x1 x2 x3 x4 x5 x6 : ℝ³} :
+    HomogeneousConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    bracket ![x6, x1, x4] * bracket ![x6, x2, x3] * 
+    bracket ![x5, x1, x3] * bracket ![x5, x2, x4] = 
+    bracket ![x6, x1, x3] * bracket ![x6, x2, x4] * 
+    bracket ![x5, x1, x4] * bracket ![x5, x2, x3] := by sorry
+
+-- PROJECTIVE_CONIC_BRACKET
+theorem projective_conic_bracket {con : Set Point} {p1 p2 p3 p4 p5 p6 : Point} :
+    ProjectiveConic con → p1 ∈ con → p2 ∈ con → p3 ∈ con → 
+    p4 ∈ con → p5 ∈ con → p6 ∈ con → 
+    bracket ![homop p6, homop p1, homop p4] * bracket ![homop p6, homop p2, homop p3] * 
+    bracket ![homop p5, homop p1, homop p3] * bracket ![homop p5, homop p2, homop p4] = 
+    bracket ![homop p6, homop p1, homop p3] * bracket ![homop p6, homop p2, homop p4] * 
+    bracket ![homop p5, homop p1, homop p4] * bracket ![homop p5, homop p2, homop p3] := by sorry
+
+-- PASCAL_DIRECT
+theorem pascal_direct {con : Set Point} {x1 x2 x3 x4 x5 x6 x7 x8 x9 : Point} :
+    (¬Collinear x2 x5 x7) → (¬Collinear x1 x2 x5) → (¬Collinear x1 x3 x6) → 
+    (¬Collinear x2 x4 x6) → (¬Collinear x3 x4 x5) → (¬Collinear x1 x5 x7) → 
+    (¬Collinear x2 x5 x9) → (¬Collinear x1 x2 x6) → (¬Collinear x3 x6 x8) → 
+    (¬Collinear x2 x4 x5) → (¬Collinear x2 x4 x7) → (¬Collinear x2 x6 x8) → 
+    (¬Collinear x3 x4 x6) → (¬Collinear x3 x5 x8) → (¬Collinear x1 x3 x5) →
+    ProjectiveConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+
+-- PASCAL
+theorem pascal {con : Set Point} {x1 x2 x3 x4 x5 x6 x7 x8 x9 : Point} :
+    (¬Collinear x1 x2 x4) → (¬Collinear x1 x2 x5) → (¬Collinear x1 x2 x6) → 
+    (¬Collinear x1 x3 x4) → (¬Collinear x1 x3 x5) → (¬Collinear x1 x3 x6) → 
+    (¬Collinear x2 x3 x4) → (¬Collinear x2 x3 x5) → (¬Collinear x2 x3 x6) → 
+    (¬Collinear x4 x5 x1) → (¬Collinear x4 x5 x2) → (¬Collinear x4 x5 x3) → 
+    (¬Collinear x4 x6 x1) → (¬Collinear x4 x6 x2) → (¬Collinear x4 x6 x3) → 
+    (¬Collinear x5 x6 x1) → (¬Collinear x5 x6 x2) → (¬Collinear x5 x6 x3) →
+    ProjectiveConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+
+-- homogenize
+def homogenize (x : ℝ²) : ℝ³ := ![x.1, x.2, 1]
+
+-- projectivize
+def projectivize (x : ℝ²) : Point := projp (homogenize x) (by simp [homogenize])
+
+-- HOMOGENIZE_NONZERO
+theorem homogenize_nonzero (x : ℝ²) : homogenize x ≠ 0 := by sorry
+
+-- affine_conic
+def AffineConic (con : Set ℝ²) : Prop := 
+    ∃ a b c d e f : ℝ, ¬(a = 0 ∧ b = 0 ∧ c = 0 ∧ d = 0 ∧ e = 0 ∧ f = 0) ∧
+    con = {x : ℝ² | a * x.1² + b * x.2² + c * x.1 * x.2 + 
+                    d * x.1 + e * x.2 + f = 0}
+
+-- COLLINEAR_PROJECTIVIZE
+theorem collinear_projectivize (a b c : ℝ²) : 
+    Collinear a b c ↔ Collinear (projectivize a) (projectivize b) (projectivize c) := by sorry
+
+-- AFFINE_PROJECTIVE_CONIC
+theorem affine_projective_conic (con : Set ℝ²) : 
+    AffineConic con ↔ ∃ con' : Set Point, ProjectiveConic con' ∧ 
+                  con = {x | projectivize x ∈ con'} := by sorry
+
+-- PASCAL_AFFINE
+theorem pascal_affine {con : Set ℝ²} {x1 x2 x3 x4 x5 x6 x7 x8 x9 : ℝ²} :
+    (¬Collinear x1 x2 x4) → (¬Collinear x1 x2 x5) → (¬Collinear x1 x2 x6) → 
+    (¬Collinear x1 x3 x4) → (¬Collinear x1 x3 x5) → (¬Collinear x1 x3 x6) → 
+    (¬Collinear x2 x3 x4) → (¬Collinear x2 x3 x5) → (¬Collinear x2 x3 x6) → 
+    (¬Collinear x4 x5 x1) → (¬Collinear x4 x5 x2) → (¬Collinear x4 x5 x3) → 
+    (¬Collinear x4 x6 x1) → (¬Collinear x4 x6 x2) → (¬Collinear x4 x6 x3) → 
+    (¬Collinear x5 x6 x1) → (¬Collinear x5 x6 x2) → (¬Collinear x5 x6 x3) →
+    AffineConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+
+-- COLLINEAR_NOT_COCIRCULAR
+theorem collinear_not_cocircular {r : ℝ} {c x y z : ℝ²} : 
+    dist c x = r → dist c y = r → dist c z = r → 
+    x ≠ y → x ≠ z → y ≠ z → 
+    ¬Collinear x y z := by sorry
+
+-- PASCAL_AFFINE_CIRCLE
+theorem pascal_affine_circle {r : ℝ} {c x1 x2 x3 x4 x5 x6 x7 x8 x9 : ℝ²} :
+    Pairwise (· ≠ ·) [x1, x2, x3, x4, x5, x6] → 
+    dist c x1 = r → dist c x2 = r → dist c x3 = r → 
+    dist c x4 = r → dist c x5 = r → dist c x6 = r → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+[{'severity': 'error', 'pos': {'line': 3, 'column': 10}, 'endPos': {'line': 3, 'column': 30}, 'data': 'invalid binder annotation, type is not a class instance\n  ?m.14\nuse the command `set_option checkBinderAnnotations false` to disable the check'}, {'severity': 'error', 'pos': {'line': 5, 'column': 19}, 'endPos': {'line': 5, 'column': 20}, 'data': "unexpected token '³'; expected '}'"}, {'severity': 'error', 'pos': {'line': 6, 'column': 19}, 'endPos': {'line': 6, 'column': 20}, 'data': "unexpected token '³'; expected '}'"}, {'severity': 'error', 'pos': {'line': 7, 'column': 19}, 'endPos': {'line': 7, 'column': 20}, 'data': "unexpected token '³'; expected '}'"}, {'severity': 'error', 'pos': {'line': 12, 'column': 31}, 'endPos': {'line': 12, 'column': 32}, 'data': "unexpected token '³'; expected ','"}, {'severity': 'error', 'pos': {'line': 15, 'column': 17}, 'endPos': {'line': 15, 'column': 18}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 16, 'column': 37}, 'endPos': {'line': 16, 'column': 38}, 'data': "unexpected token '³'; expected '//', '|' or '}'"}, {'severity': 'error', 'pos': {'line': 19, 'column': 46}, 'endPos': {'line': 19, 'column': 56}, 'data': "unknown identifier 'orthogonal'"}, {'severity': 'warning', 'pos': {'line': 22, 'column': 4}, 'endPos': {'line': 22, 'column': 12}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 25, 'column': 32}, 'endPos': {'line': 25, 'column': 33}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'warning', 'pos': {'line': 30, 'column': 8}, 'endPos': {'line': 30, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 33, 'column': 8}, 'endPos': {'line': 33, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 36, 'column': 8}, 'endPos': {'line': 36, 'column': 22}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 39, 'column': 8}, 'endPos': {'line': 39, 'column': 22}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 42, 'column': 8}, 'endPos': {'line': 42, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 47, 'column': 8}, 'endPos': {'line': 47, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 50, 'column': 8}, 'endPos': {'line': 50, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 55, 'column': 8}, 'endPos': {'line': 55, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 59, 'column': 8}, 'endPos': {'line': 59, 'column': 26}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 64, 'column': 8}, 'endPos': {'line': 64, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 69, 'column': 4}, 'endPos': {'line': 69, 'column': 11}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 70, 'column': 4}, 'endPos': {'line': 70, 'column': 13}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 73, 'column': 8}, 'endPos': {'line': 73, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 77, 'column': 18}, 'endPos': {'line': 77, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 81, 'column': 64}, 'endPos': {'line': 81, 'column': 65}, 'data': 'application type mismatch\n  perpl l\nargument\n  l\nhas type\n  Line : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 85, 'column': 16}, 'endPos': {'line': 85, 'column': 28}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.26621'}, {'severity': 'error', 'pos': {'line': 85, 'column': 31}, 'endPos': {'line': 85, 'column': 44}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.26621'}, {'severity': 'error', 'pos': {'line': 86, 'column': 17}, 'endPos': {'line': 86, 'column': 30}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.26621'}, {'severity': 'error', 'pos': {'line': 86, 'column': 33}, 'endPos': {'line': 86, 'column': 47}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.26621'}, {'severity': 'error', 'pos': {'line': 89, 'column': 51}, 'endPos': {'line': 89, 'column': 63}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.28422'}, {'severity': 'error', 'pos': {'line': 89, 'column': 66}, 'endPos': {'line': 89, 'column': 79}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.28422'}, {'severity': 'error', 'pos': {'line': 93, 'column': 15}, 'endPos': {'line': 93, 'column': 16}, 'data': 'application type mismatch\n  @Collinear p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.29352 : Type (?u.29352 + 1)'}, {'severity': 'error', 'pos': {'line': 97, 'column': 15}, 'endPos': {'line': 97, 'column': 16}, 'data': 'application type mismatch\n  @Collinear p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.34253 : Type (?u.34253 + 1)'}, {'severity': 'error', 'pos': {'line': 97, 'column': 26}, 'endPos': {'line': 97, 'column': 38}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.34233'}, {'severity': 'error', 'pos': {'line': 97, 'column': 41}, 'endPos': {'line': 97, 'column': 54}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.34233'}, {'severity': 'error', 'pos': {'line': 97, 'column': 57}, 'endPos': {'line': 97, 'column': 71}, 'data': 'function expected at\n  Incident\nterm has type\n  ?m.34233'}, {'severity': 'warning', 'pos': {'line': 100, 'column': 4}, 'endPos': {'line': 100, 'column': 12}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 101, 'column': 4}, 'endPos': {'line': 101, 'column': 14}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 104, 'column': 64}, 'endPos': {'line': 104, 'column': 65}, 'data': 'application type mismatch\n  dest_point p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 109, 'column': 35}, 'endPos': {'line': 109, 'column': 37}, 'data': "unexpected token '↔'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 108, 'column': 32}, 'endPos': {'line': 108, 'column': 33}, 'data': 'application type mismatch\n  dest_point p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 109, 'column': 32}, 'endPos': {'line': 109, 'column': 33}, 'data': 'application type mismatch\n  dest_point p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 115, 'column': 25}, 'endPos': {'line': 115, 'column': 26}, 'data': 'application type mismatch\n  Incident p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 115, 'column': 40}, 'endPos': {'line': 115, 'column': 42}, 'data': "application type mismatch\n  Incident p'\nargument\n  p'\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1"}, {'severity': 'error', 'pos': {'line': 116, 'column': 26}, 'endPos': {'line': 116, 'column': 27}, 'data': 'application type mismatch\n  Incident p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 116, 'column': 42}, 'endPos': {'line': 116, 'column': 44}, 'data': "application type mismatch\n  Incident p'\nargument\n  p'\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1"}, {'severity': 'error', 'pos': {'line': 119, 'column': 55}, 'endPos': {'line': 119, 'column': 56}, 'data': 'application type mismatch\n  Incident p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 119, 'column': 70}, 'endPos': {'line': 119, 'column': 71}, 'data': 'application type mismatch\n  Incident p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 123, 'column': 15}, 'endPos': {'line': 123, 'column': 16}, 'data': 'application type mismatch\n  @Collinear p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.51451 : Type (?u.51451 + 1)'}, {'severity': 'error', 'pos': {'line': 127, 'column': 15}, 'endPos': {'line': 127, 'column': 16}, 'data': 'application type mismatch\n  @Collinear p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.54212 : Type (?u.54212 + 1)'}, {'severity': 'error', 'pos': {'line': 127, 'column': 35}, 'endPos': {'line': 127, 'column': 36}, 'data': 'application type mismatch\n  Incident p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 127, 'column': 50}, 'endPos': {'line': 127, 'column': 52}, 'data': "application type mismatch\n  Incident p'\nargument\n  p'\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1"}, {'severity': 'error', 'pos': {'line': 127, 'column': 66}, 'endPos': {'line': 127, 'column': 69}, 'data': "application type mismatch\n  Incident p''\nargument\n  p''\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1"}, {'severity': 'error', 'pos': {'line': 130, 'column': 16}, 'endPos': {'line': 130, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 133, 'column': 16}, 'endPos': {'line': 133, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 136, 'column': 41}, 'endPos': {'line': 136, 'column': 42}, 'data': "unexpected token '³'; expected ','"}, {'severity': 'error', 'pos': {'line': 139, 'column': 43}, 'endPos': {'line': 139, 'column': 44}, 'data': "unexpected token '³'; expected '//', '|' or '}'"}, {'severity': 'error', 'pos': {'line': 142, 'column': 8}, 'endPos': {'line': 142, 'column': 30}, 'data': "'perpendicular_well_def' has already been declared"}, {'severity': 'warning', 'pos': {'line': 146, 'column': 8}, 'endPos': {'line': 146, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 150, 'column': 26}, 'endPos': {'line': 150, 'column': 27}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 153, 'column': 30}, 'endPos': {'line': 153, 'column': 31}, 'data': "unexpected token '³'; expected '//', '|' or '}'"}, {'severity': 'error', 'pos': {'line': 156, 'column': 43}, 'endPos': {'line': 156, 'column': 44}, 'data': 'application type mismatch\n  homop p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 156, 'column': 55}, 'endPos': {'line': 156, 'column': 70}, 'data': 'function expected at\n  projp\nterm has type\n  ?m.85009'}, {'severity': 'error', 'pos': {'line': 160, 'column': 13}, 'endPos': {'line': 160, 'column': 14}, 'data': 'application type mismatch\n  Incident p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 160, 'column': 19}, 'endPos': {'line': 160, 'column': 49}, 'data': 'function expected at\n  orthogonal\nterm has type\n  ?m.88569'}, {'severity': 'error', 'pos': {'line': 163, 'column': 59}, 'endPos': {'line': 163, 'column': 60}, 'data': 'application type mismatch\n  homol l\nargument\n  l\nhas type\n  Line : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 163, 'column': 69}, 'endPos': {'line': 163, 'column': 71}, 'data': "application type mismatch\n  homol l'\nargument\n  l'\nhas type\n  Line : Type\nbut is expected to have type\n  Type : Type 1"}, {'severity': 'error', 'pos': {'line': 166, 'column': 60}, 'endPos': {'line': 166, 'column': 61}, 'data': 'application type mismatch\n  homop p\nargument\n  p\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 166, 'column': 70}, 'endPos': {'line': 166, 'column': 72}, 'data': "application type mismatch\n  homop p'\nargument\n  p'\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1"}, {'severity': 'error', 'pos': {'line': 169, 'column': 35}, 'endPos': {'line': 169, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 173, 'column': 35}, 'endPos': {'line': 173, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 177, 'column': 44}, 'endPos': {'line': 177, 'column': 45}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 181, 'column': 33}, 'endPos': {'line': 181, 'column': 34}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 184, 'column': 4}, 'endPos': {'line': 184, 'column': 13}, 'data': "'Collinear' has already been declared"}, {'severity': 'error', 'pos': {'line': 187, 'column': 8}, 'endPos': {'line': 187, 'column': 27}, 'data': "'collinear_singleton' has already been declared"}, {'severity': 'error', 'pos': {'line': 190, 'column': 8}, 'endPos': {'line': 190, 'column': 22}, 'data': "'collinear_pair' has already been declared"}, {'severity': 'error', 'pos': {'line': 194, 'column': 14}, 'endPos': {'line': 194, 'column': 23}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.93904)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.93904'}, {'severity': 'error', 'pos': {'line': 194, 'column': 47}, 'endPos': {'line': 194, 'column': 48}, 'data': 'application type mismatch\n  Incident a\nargument\n  a\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 194, 'column': 62}, 'endPos': {'line': 194, 'column': 63}, 'data': 'application type mismatch\n  Incident b\nargument\n  b\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 194, 'column': 77}, 'endPos': {'line': 194, 'column': 78}, 'data': 'application type mismatch\n  Incident c\nargument\n  c\nhas type\n  Point : Type\nbut is expected to have type\n  Type : Type 1'}, {'severity': 'error', 'pos': {'line': 198, 'column': 14}, 'endPos': {'line': 198, 'column': 26}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.99867)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.99867'}, {'severity': 'error', 'pos': {'line': 198, 'column': 29}, 'endPos': {'line': 198, 'column': 68}, 'data': 'function expected at\n  bracket\nterm has type\n  ?m.99856'}, {'severity': 'error', 'pos': {'line': 201, 'column': 33}, 'endPos': {'line': 201, 'column': 34}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 208, 'column': 15}, 'endPos': {'line': 208, 'column': 16}, 'data': "unexpected token '³'; expected ','"}, {'severity': 'error', 'pos': {'line': 211, 'column': 46}, 'endPos': {'line': 211, 'column': 47}, 'data': "unexpected token '³'; expected '}'"}, {'severity': 'error', 'pos': {'line': 221, 'column': 4}, 'endPos': {'line': 221, 'column': 23}, 'data': 'type expected, got\n  (ProjectiveConic ↑con : Set ↑con → Prop)'}, {'severity': 'error', 'pos': {'line': 230, 'column': 16}, 'endPos': {'line': 230, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.102031 : Type (?u.102031 + 1)'}, {'severity': 'error', 'pos': {'line': 230, 'column': 40}, 'endPos': {'line': 230, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.104154 : Type (?u.104154 + 1)'}, {'severity': 'error', 'pos': {'line': 230, 'column': 64}, 'endPos': {'line': 230, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.106423 : Type (?u.106423 + 1)'}, {'severity': 'error', 'pos': {'line': 231, 'column': 16}, 'endPos': {'line': 231, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.108838 : Type (?u.108838 + 1)'}, {'severity': 'error', 'pos': {'line': 231, 'column': 40}, 'endPos': {'line': 231, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x3\nargument\n  x3\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.111399 : Type (?u.111399 + 1)'}, {'severity': 'error', 'pos': {'line': 231, 'column': 64}, 'endPos': {'line': 231, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.114106 : Type (?u.114106 + 1)'}, {'severity': 'error', 'pos': {'line': 232, 'column': 16}, 'endPos': {'line': 232, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.116959 : Type (?u.116959 + 1)'}, {'severity': 'error', 'pos': {'line': 232, 'column': 40}, 'endPos': {'line': 232, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.119958 : Type (?u.119958 + 1)'}, {'severity': 'error', 'pos': {'line': 232, 'column': 64}, 'endPos': {'line': 232, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x3\nargument\n  x3\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.123103 : Type (?u.123103 + 1)'}, {'severity': 'error', 'pos': {'line': 233, 'column': 16}, 'endPos': {'line': 233, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.126394 : Type (?u.126394 + 1)'}, {'severity': 'error', 'pos': {'line': 233, 'column': 40}, 'endPos': {'line': 233, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.129831 : Type (?u.129831 + 1)'}, {'severity': 'error', 'pos': {'line': 233, 'column': 64}, 'endPos': {'line': 233, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.133414 : Type (?u.133414 + 1)'}, {'severity': 'error', 'pos': {'line': 234, 'column': 16}, 'endPos': {'line': 234, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x3\nargument\n  x3\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.137143 : Type (?u.137143 + 1)'}, {'severity': 'error', 'pos': {'line': 234, 'column': 40}, 'endPos': {'line': 234, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x3\nargument\n  x3\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.141018 : Type (?u.141018 + 1)'}, {'severity': 'error', 'pos': {'line': 234, 'column': 64}, 'endPos': {'line': 234, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.145039 : Type (?u.145039 + 1)'}, {'severity': 'error', 'pos': {'line': 235, 'column': 4}, 'endPos': {'line': 235, 'column': 23}, 'data': 'type expected, got\n  (ProjectiveConic ↑con : Set ↑con → Prop)'}, {'severity': 'error', 'pos': {'line': 244, 'column': 16}, 'endPos': {'line': 244, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.158177 : Type (?u.158177 + 1)'}, {'severity': 'error', 'pos': {'line': 244, 'column': 40}, 'endPos': {'line': 244, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.160300 : Type (?u.160300 + 1)'}, {'severity': 'error', 'pos': {'line': 244, 'column': 64}, 'endPos': {'line': 244, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.162569 : Type (?u.162569 + 1)'}, {'severity': 'error', 'pos': {'line': 245, 'column': 16}, 'endPos': {'line': 245, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.164984 : Type (?u.164984 + 1)'}, {'severity': 'error', 'pos': {'line': 245, 'column': 40}, 'endPos': {'line': 245, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.167545 : Type (?u.167545 + 1)'}, {'severity': 'error', 'pos': {'line': 245, 'column': 64}, 'endPos': {'line': 245, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x1\nargument\n  x1\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.170252 : Type (?u.170252 + 1)'}, {'severity': 'error', 'pos': {'line': 246, 'column': 16}, 'endPos': {'line': 246, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.173105 : Type (?u.173105 + 1)'}, {'severity': 'error', 'pos': {'line': 246, 'column': 40}, 'endPos': {'line': 246, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.176104 : Type (?u.176104 + 1)'}, {'severity': 'error', 'pos': {'line': 246, 'column': 64}, 'endPos': {'line': 246, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x2\nargument\n  x2\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.179249 : Type (?u.179249 + 1)'}, {'severity': 'error', 'pos': {'line': 247, 'column': 16}, 'endPos': {'line': 247, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x4\nargument\n  x4\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.182540 : Type (?u.182540 + 1)'}, {'severity': 'error', 'pos': {'line': 247, 'column': 40}, 'endPos': {'line': 247, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x4\nargument\n  x4\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.185977 : Type (?u.185977 + 1)'}, {'severity': 'error', 'pos': {'line': 247, 'column': 64}, 'endPos': {'line': 247, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x4\nargument\n  x4\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.189560 : Type (?u.189560 + 1)'}, {'severity': 'error', 'pos': {'line': 248, 'column': 16}, 'endPos': {'line': 248, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x4\nargument\n  x4\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.193289 : Type (?u.193289 + 1)'}, {'severity': 'error', 'pos': {'line': 248, 'column': 40}, 'endPos': {'line': 248, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x4\nargument\n  x4\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.197164 : Type (?u.197164 + 1)'}, {'severity': 'error', 'pos': {'line': 248, 'column': 64}, 'endPos': {'line': 248, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x4\nargument\n  x4\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.201185 : Type (?u.201185 + 1)'}, {'severity': 'error', 'pos': {'line': 249, 'column': 16}, 'endPos': {'line': 249, 'column': 18}, 'data': 'application type mismatch\n  @Collinear x5\nargument\n  x5\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.205352 : Type (?u.205352 + 1)'}, {'severity': 'error', 'pos': {'line': 249, 'column': 40}, 'endPos': {'line': 249, 'column': 42}, 'data': 'application type mismatch\n  @Collinear x5\nargument\n  x5\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.209665 : Type (?u.209665 + 1)'}, {'severity': 'error', 'pos': {'line': 249, 'column': 64}, 'endPos': {'line': 249, 'column': 66}, 'data': 'application type mismatch\n  @Collinear x5\nargument\n  x5\nhas type\n  Point : Type\nbut is expected to have type\n  Type ?u.214124 : Type (?u.214124 + 1)'}, {'severity': 'error', 'pos': {'line': 250, 'column': 4}, 'endPos': {'line': 250, 'column': 23}, 'data': 'type expected, got\n  (ProjectiveConic ↑con : Set ↑con → Prop)'}, {'severity': 'error', 'pos': {'line': 258, 'column': 21}, 'endPos': {'line': 258, 'column': 22}, 'data': "unexpected token '²'; expected ')'"}, {'severity': 'error', 'pos': {'line': 261, 'column': 23}, 'endPos': {'line': 261, 'column': 24}, 'data': "unexpected token '²'; expected ')'"}, {'severity': 'error', 'pos': {'line': 264, 'column': 33}, 'endPos': {'line': 264, 'column': 34}, 'data': "unexpected token '²'; expected ')'"}, {'severity': 'error', 'pos': {'line': 267, 'column': 28}, 'endPos': {'line': 267, 'column': 29}, 'data': "unexpected token '²'; expected ')'"}, {'severity': 'error', 'pos': {'line': 273, 'column': 41}, 'endPos': {'line': 273, 'column': 42}, 'data': "unexpected token '²'; expected ')'"}, {'severity': 'error', 'pos': {'line': 277, 'column': 44}, 'endPos': {'line': 277, 'column': 45}, 'data': "unexpected token '²'; expected ')'"}, {'severity': 'error', 'pos': {'line': 282, 'column': 34}, 'endPos': {'line': 282, 'column': 35}, 'data': "unexpected token '²'; expected '}'"}, {'severity': 'error', 'pos': {'line': 297, 'column': 53}, 'endPos': {'line': 297, 'column': 54}, 'data': "unexpected token '²'; expected '}'"}, {'severity': 'error', 'pos': {'line': 303, 'column': 70}, 'endPos': {'line': 303, 'column': 71}, 'data': "unexpected token '²'; expected '}'"}]
+---

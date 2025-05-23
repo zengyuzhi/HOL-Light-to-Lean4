@@ -1,0 +1,44 @@
+Refinement 1 errors:
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Set.Basic
+
+open Set
+
+-- open_ball_def
+def openBall (x : ℝ × ℝ) (r : ℝ) : Set (ℝ × ℝ) :=
+  {y | Real.sqrt ((y.1 - x.1) ^ 2 + (y.2 - x.2) ^ 2) < r}
+
+-- closed_ball_def
+def closedBall (x : ℝ × ℝ) (r : ℝ) : Set (ℝ × ℝ) :=
+  {y | Real.sqrt ((y.1 - x.1) ^ 2 + (y.2 - x.2) ^ 2) ≤ r}
+
+-- open_ball_nonempty
+lemma openBall_nonempty {x : ℝ × ℝ} {r : ℝ} (hr : 0 < r) : (openBall x r).Nonempty :=
+  by sorry
+
+-- open_ball_subset_closed_ball
+lemma openBall_subset_closedBall {x : ℝ × ℝ} {r₁ r₂ : ℝ} (h : r₁ < r₂) :
+    openBall x r₁ ⊆ closedBall x r₂ :=
+  by sorry
+
+-- open_ball_open
+lemma openBall_isOpen {x : ℝ × ℝ} {r : ℝ} (hr : 0 < r) : IsOpen (openBall x r) :=
+  by sorry
+
+-- closed_ball_closed
+lemma closedBall_isClosed {x : ℝ × ℝ} {r : ℝ} (hr : 0 < r) : IsClosed (closedBall x r) :=
+  by sorry
+
+-- open_ball_center
+lemma mem_openBall_center {x : ℝ × ℝ} {r : ℝ} (hr : 0 < r) : x ∈ openBall x r :=
+  by sorry
+[{'severity': 'error', 'pos': {'line': 6, 'column': 7}, 'endPos': {'line': 6, 'column': 52}, 'data': "unknown constant 'Real.sqrt'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 7}, 'endPos': {'line': 10, 'column': 52}, 'data': "unknown constant 'Real.sqrt'"}, {'severity': 'warning', 'pos': {'line': 13, 'column': 6}, 'endPos': {'line': 13, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 17, 'column': 6}, 'endPos': {'line': 17, 'column': 32}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 22, 'column': 57}, 'endPos': {'line': 22, 'column': 78}, 'data': 'function expected at\n  IsOpen\nterm has type\n  ?m.249'}, {'severity': 'error', 'pos': {'line': 26, 'column': 61}, 'endPos': {'line': 26, 'column': 86}, 'data': 'function expected at\n  IsClosed\nterm has type\n  ?m.409'}, {'severity': 'warning', 'pos': {'line': 30, 'column': 6}, 'endPos': {'line': 30, 'column': 25}, 'data': "declaration uses 'sorry'"}]
+---
+Refinement 2 errors:
+{sketch}
+[{'severity': 'error', 'pos': {'line': 1, 'column': 0}, 'endPos': {'line': 1, 'column': 1}, 'data': "unexpected token '{'; expected command"}]
+---
+Refinement 3 errors:
+{sketch}
+[{'severity': 'error', 'pos': {'line': 1, 'column': 0}, 'endPos': {'line': 1, 'column': 1}, 'data': "unexpected token '{'; expected command"}]
+---

@@ -1,0 +1,315 @@
+Formalization errors for 'CIRCLES_TANGENT':
+theorem circles_tangent
+    (h1 : 0 ≤ r1) (h2 : 0 ≤ r2)
+    (ht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|) :
+    (c1 = c2 ∧ r1 = r2) ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+  have h3 : r1 ≤ r2 ∨ r2 ≤ r1 := by
+    by_cases h : r1 ≤ r2
+    · exact Or.inl h
+    · exact Or.inr (by linarith)
+  rcases h3 with (h3 | h3)
+  -- The proof is symmetric in r1 and r2, so we assume r1 ≤ r2 without loss of generality
+  · have h4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1 := by
+      cases ht with
+      | inl h =>
+        exact Or.inl h
+      | inr h =>
+        have h5 : r1 ≤ r2 := h3
+        have h6 : |r1 - r2| = r2 - r1 := by
+          rw [abs_eq_max_neg]
+          <;>
+          (try cases' le_or_lt 0 (r1 - r2) with h7 h7 <;> simp_all [max_eq_iff, le_of_lt])
+          <;>
+          linarith
+        rw [h6] at h
+        exact Or.inr h
+    -- We handle the two cases separately: external tangency and internal tangency
+    by_cases h7 : r1 = 0
+    · -- Case 1: r1 = 0
+      have h8 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+        have h9 : c1 = c2 := by
+          cases' h4 with h4 h4
+          · -- Subcase: dist c1 c2 = r1 + r2
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+          · -- Subcase: dist c1 c2 = r2 - r1
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+        have h10 : r1 = r2 := by
+          cases' h4 with h4 h4
+          · -- Subcase: dist c1 c2 = r1 + r2
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+          · -- Subcase: dist c1 c2 = r2 - r1
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+        exact Or.inl ⟨h9, h10⟩
+      exact h8
+    · -- Case 2: r1 ≠ 0
+      by_cases h8 : r2 = 0
+      · -- Subcase: r2 = 0
+        have h9 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+          have h10 : r1 = 0 := by
+            cases' h4 with h4 h4
+            · -- Subcase: dist c1 c2 = r1 + r2
+              simp_all [h8, dist_eq_norm, norm_sub_rev]
+              <;>
+              (try simp_all [h8, dist_eq_norm, norm_sub_rev])
+              <;>
+              linarith
+            · -- Subcase: dist c1 c2 = r2 - r1
+              simp_all [h8, dist_eq_norm, norm_sub_rev]
+              <;>
+              (try simp_all [h8, dist_eq_norm, norm_sub_rev])
+              <;>
+              linarith
+          simp_all
+        exact h9
+      · -- Subcase: r2 ≠ 0
+        have h9 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+          cases' h4 with h4 h4
+          · -- Subcase: dist c1 c2 = r1 + r2
+            have h10 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+              -- Prove the unique existence of x
+              sorry
+            exact h10
+          · -- Subcase: dist c1 c2 = r2 - r1
+            have h10 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+              -- Prove the unique existence of x
+              sorry
+            exact h10
+        exact h9
+  · -- The symmetric case where r2 ≤ r1
+    sorry
+{'sorries': [{'proofState': 4, 'pos': {'line': 101, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r1 + r2\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 101, 'column': 19}}, {'proofState': 5, 'pos': {'line': 106, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r2 - r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 106, 'column': 19}}, {'proofState': 6, 'pos': {'line': 110, 'column': 4}, 'goal': 'case inr\nr1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r2 ≤ r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 110, 'column': 9}}], 'messages': [{'severity': 'error', 'pos': {'line': 52, 'column': 12}, 'endPos': {'line': 52, 'column': 20}, 'data': 'linarith failed to find a contradiction\ncase inl\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh2 : 0 ≤ r2\nh7 : r1 = 0\nh4 : ‖c1 - c2‖ = r2\n⊢ False failed'}, {'severity': 'error', 'pos': {'line': 58, 'column': 12}, 'endPos': {'line': 58, 'column': 20}, 'data': 'linarith failed to find a contradiction\ncase inr\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh2 : 0 ≤ r2\nh7 : r1 = 0\nh4 : ‖c1 - c2‖ = r2\n⊢ False failed'}, {'severity': 'error', 'pos': {'line': 86, 'column': 14}, 'endPos': {'line': 86, 'column': 22}, 'data': 'linarith failed to find a contradiction\ncase inl\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh1 : 0 ≤ r1\nh3 : r1 ≤ 0\nh7 : ¬r1 = 0\nh8 : r2 = 0\nh4 : ‖c1 - c2‖ = r1\n⊢ False failed'}, {'severity': 'error', 'pos': {'line': 92, 'column': 14}, 'endPos': {'line': 92, 'column': 22}, 'data': 'linarith failed to find a contradiction\ncase inr\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh1 : 0 ≤ r1\nht : -r1 = r1 ∨ -r1 = |r1|\nh3 : r1 ≤ 0\nh7 : ¬r1 = 0\nh8 : r2 = 0\nh4 : ‖c1 - c2‖ = -r1\n⊢ False failed'}], 'env': 4, 'time': 1.961787223815918}
+---
+Stmt 1 refinement 1 errors:
+theorem circles_tangent
+    (h1 : 0 ≤ r1) (h2 : 0 ≤ r2)
+    (ht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|) :
+    (c1 = c2 ∧ r1 = r2) ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+  have h3 : r1 ≤ r2 ∨ r2 ≤ r1 := by
+    by_cases h : r1 ≤ r2
+    · exact Or.inl h
+    · exact Or.inr (by linarith)
+  rcases h3 with (h3 | h3)
+  -- The proof is symmetric in r1 and r2, so we assume r1 ≤ r2 without loss of generality
+  · have h4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1 := by
+      cases ht with
+      | inl h =>
+        exact Or.inl h
+      | inr h =>
+        have h5 : r1 ≤ r2 := h3
+        have h6 : |r1 - r2| = r2 - r1 := by
+          rw [abs_eq_max_neg]
+          <;>
+          (try cases' le_or_lt 0 (r1 - r2) with h7 h7 <;> simp_all [max_eq_iff, le_of_lt])
+          <;>
+          linarith
+        rw [h6] at h
+        exact Or.inr h
+    -- We handle the two cases separately: external tangency and internal tangency
+    by_cases h7 : r1 = 0
+    · -- Case 1: r1 = 0
+      have h8 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+        have h9 : c1 = c2 := by
+          cases' h4 with h4 h4
+          · -- Subcase: dist c1 c2 = r1 + r2
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+          · -- Subcase: dist c1 c2 = r2 - r1
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+        have h10 : r1 = r2 := by
+          cases' h4 with h4 h4
+          · -- Subcase: dist c1 c2 = r1 + r2
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+          · -- Subcase: dist c1 c2 = r2 - r1
+            simp_all [h7, dist_eq_norm, norm_sub_rev]
+            <;>
+            (try simp_all [h7, dist_eq_norm, norm_sub_rev])
+            <;>
+            linarith
+        exact Or.inl ⟨h9, h10⟩
+      exact h8
+    · -- Case 2: r1 ≠ 0
+      by_cases h8 : r2 = 0
+      · -- Subcase: r2 = 0
+        have h9 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+          have h10 : r1 = 0 := by
+            cases' h4 with h4 h4
+            · -- Subcase: dist c1 c2 = r1 + r2
+              simp_all [h8, dist_eq_norm, norm_sub_rev]
+              <;>
+              (try simp_all [h8, dist_eq_norm, norm_sub_rev])
+              <;>
+              linarith
+            · -- Subcase: dist c1 c2 = r2 - r1
+              simp_all [h8, dist_eq_norm, norm_sub_rev]
+              <;>
+              (try simp_all [h8, dist_eq_norm, norm_sub_rev])
+              <;>
+              linarith
+          simp_all
+        exact h9
+      · -- Subcase: r2 ≠ 0
+        have h9 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+          cases' h4 with h4 h4
+          · -- Subcase: dist c1 c2 = r1 + r2
+            have h10 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+              -- Prove the unique existence of x
+              sorry
+            exact h10
+          · -- Subcase: dist c1 c2 = r2 - r1
+            have h10 : c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2 := by
+              -- Prove the unique existence of x
+              sorry
+            exact h10
+        exact h9
+  · -- The symmetric case where r2 ≤ r1
+    sorry
+{'sorries': [{'proofState': 7, 'pos': {'line': 101, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r1 + r2\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 101, 'column': 19}}, {'proofState': 8, 'pos': {'line': 106, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r2 - r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 106, 'column': 19}}, {'proofState': 9, 'pos': {'line': 110, 'column': 4}, 'goal': 'case inr\nr1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r2 ≤ r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 110, 'column': 9}}], 'messages': [{'severity': 'error', 'pos': {'line': 52, 'column': 12}, 'endPos': {'line': 52, 'column': 20}, 'data': 'linarith failed to find a contradiction\ncase inl\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh2 : 0 ≤ r2\nh7 : r1 = 0\nh4 : ‖c1 - c2‖ = r2\n⊢ False failed'}, {'severity': 'error', 'pos': {'line': 58, 'column': 12}, 'endPos': {'line': 58, 'column': 20}, 'data': 'linarith failed to find a contradiction\ncase inr\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh2 : 0 ≤ r2\nh7 : r1 = 0\nh4 : ‖c1 - c2‖ = r2\n⊢ False failed'}, {'severity': 'error', 'pos': {'line': 86, 'column': 14}, 'endPos': {'line': 86, 'column': 22}, 'data': 'linarith failed to find a contradiction\ncase inl\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh1 : 0 ≤ r1\nh3 : r1 ≤ 0\nh7 : ¬r1 = 0\nh8 : r2 = 0\nh4 : ‖c1 - c2‖ = r1\n⊢ False failed'}, {'severity': 'error', 'pos': {'line': 92, 'column': 14}, 'endPos': {'line': 92, 'column': 22}, 'data': 'linarith failed to find a contradiction\ncase inr\nr1 r2 : ℝ\nc1 c2 : ℝ²\nh1 : 0 ≤ r1\nht : -r1 = r1 ∨ -r1 = |r1|\nh3 : r1 ≤ 0\nh7 : ¬r1 = 0\nh8 : r2 = 0\nh4 : ‖c1 - c2‖ = -r1\n⊢ False failed'}], 'env': 5, 'time': 1.8831243515014648}
+---
+Formalization errors for 'FEUERBACH':
+4
+theorem feuerbach
+    (h_noncollinear : ¬Collinear ℝ ({a, b, c} : Set ℝ²))
+    (h_mab : midpoint ℝ a b = mab)
+    (h_mbc : midpoint ℝ b c = mbc)
+    (h_mac : midpoint ℝ c a = mac)
+    (h_nradius1 : dist ncenter mbc = nradius)
+    (h_nradius2 : dist ncenter mac = nradius)
+    (h_nradius3 : dist ncenter mab = nradius)
+    (h_iradius1 : dist icenter pbc = iradius)
+    (h_iradius2 : dist icenter pac = iradius)
+    (h_iradius3 : dist icenter pab = iradius)
+    (h_collinear1 : Collinear ℝ ({a, b, pab} : Set ℝ²))
+    (h_orth1 : inner (a - b) (icenter - pab) = (0:ℝ))
+    (h_collinear2 : Collinear ℝ ({b, c, pbc} : Set ℝ²))
+    (h_orth2 : inner (b - c) (icenter - pbc) = (0:ℝ))
+    (h_collinear3 : Collinear ℝ ({a, c, pac} : Set ℝ²))
+    (h_orth3 : inner (a - c) (icenter - pac) = (0:ℝ)) :
+    ncenter = icenter ∧ nradius = iradius ∨
+    ∃! (x : ℝ²), dist ncenter x = nradius ∧ dist icenter x = iradius := by
+  have h₁ : 0 ≤ nradius := by
+    -- Prove that the radius of the nine-point circle is non-negative.
+    have h₁ : 0 ≤ dist ncenter mbc := dist_nonneg
+    have h₂ : dist ncenter mbc = nradius := h_nradius1
+    linarith
+  have h₂ : 0 ≤ iradius := by
+    -- Prove that the radius of the incircle is non-negative.
+    have h₁ : 0 ≤ dist icenter pbc := dist_nonneg
+    have h₂ : dist icenter pbc = iradius := h_iradius1
+    linarith
+  have h₃ : dist ncenter icenter = nradius + iradius ∨ dist ncenter icenter = |nradius - iradius| := by
+    -- Prove that the distance between the centers of the nine-point circle and the incircle is either the sum or the difference of the radii.
+    sorry
+  -- Apply the circles_tangent theorem to get the desired result.
+  have h₄ : (ncenter = icenter ∧ nradius = iradius) ∨ ∃! (x : ℝ²), dist ncenter x = nradius ∧ dist icenter x = iradius := by
+    apply circles_tangent h₁ h₂ h₃
+  exact h₄
+{'sorries': [{'proofState': 10, 'pos': {'line': 45, 'column': 8}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1\nh7 : r1 = 0\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 45, 'column': 13}}, {'proofState': 11, 'pos': {'line': 51, 'column': 10}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1\nh7 : ¬r1 = 0\nh8 : r2 = 0\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 51, 'column': 15}}, {'proofState': 12, 'pos': {'line': 59, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r1 + r2\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 59, 'column': 19}}, {'proofState': 13, 'pos': {'line': 64, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r2 - r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 64, 'column': 19}}, {'proofState': 14, 'pos': {'line': 68, 'column': 4}, 'goal': 'case inr\nr1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r2 ≤ r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 68, 'column': 9}}, {'proofState': 15, 'pos': {'line': 102, 'column': 4}, 'goal': 'a b c mbc mac mab pbc pac pab ncenter icenter : EuclideanSpace ℝ (Fin 2)\nnradius iradius : ℝ\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_iradius1 : dist icenter pbc = iradius\nh_iradius2 : dist icenter pac = iradius\nh_iradius3 : dist icenter pab = iradius\nh_collinear1 : Collinear ℝ {a, b, pab}\nh_orth1 : inner (a - b) (icenter - pab) = 0\nh_collinear2 : Collinear ℝ {b, c, pbc}\nh_orth2 : inner (b - c) (icenter - pbc) = 0\nh_collinear3 : Collinear ℝ {a, c, pac}\nh_orth3 : inner (a - c) (icenter - pac) = 0\nh₁ : 0 ≤ nradius\nh₂ : 0 ≤ iradius\n⊢ dist ncenter icenter = nradius + iradius ∨ dist ncenter icenter = |nradius - iradius|', 'endPos': {'line': 102, 'column': 9}}], 'messages': [{'severity': 'warning', 'pos': {'line': 17, 'column': 8}, 'endPos': {'line': 17, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 35, 'column': 10}, 'endPos': {'line': 35, 'column': 13}, 'data': 'Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\nnote: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`'}, {'severity': 'error', 'pos': {'line': 70, 'column': 0}, 'endPos': {'line': 70, 'column': 1}, 'data': 'unexpected token; expected command'}, {'severity': 'warning', 'pos': {'line': 71, 'column': 8}, 'endPos': {'line': 71, 'column': 17}, 'data': "declaration uses 'sorry'"}], 'env': 6, 'time': 1.4525275230407715}
+---
+Formalization errors for 'NINE_POINT_CIRCLE_2':
+theorem nine_point_circle_2
+    (h_noncollinear : ¬Collinear ℝ ({a, b, c} : Set ℝ²))
+    (h_mab : midpoint ℝ a b = mab)
+    (h_mbc : midpoint ℝ b c = mbc)
+    (h_mac : midpoint ℝ c a = mac)
+    (h_nradius1 : dist ncenter mbc = nradius)
+    (h_nradius2 : dist ncenter mac = nradius)
+    (h_nradius3 : dist ncenter mab = nradius)
+    (h_collinear1 : Collinear ℝ ({a, b, fab} : Set ℝ²))
+    (h_orth1 : inner (a - b) (c - fab) = (0:ℝ))
+    (h_collinear2 : Collinear ℝ ({b, c, fbc} : Set ℝ²))
+    (h_orth2 : inner (b - c) (a - fbc) = (0:ℝ))
+    (h_collinear3 : Collinear ℝ ({c, a, fac} : Set ℝ²))
+    (h_orth3 : inner (c - a) (b - fac) = (0:ℝ))
+    (h_oc1 : Collinear ℝ ({oc, a, fbc} : Set ℝ²))
+    (h_oc2 : Collinear ℝ ({oc, b, fac} : Set ℝ²))
+    (h_oc3 : Collinear ℝ ({oc, c, fab} : Set ℝ²)) :
+    dist ncenter (midpoint ℝ oc a) = nradius ∧
+    dist ncenter (midpoint ℝ oc b) = nradius ∧
+    dist ncenter (midpoint ℝ oc c) = nradius := by
+  -- Rewrite the midpoint hypotheses to use symmetry
+  have h_mab' : midpoint ℝ a b = mab := h_mab
+  have h_mbc' : midpoint ℝ b c = mbc := h_mbc
+  have h_mac' : midpoint ℝ c a = mac := h_mac
+  simp_all [midpoint_eq_iff, dist_eq_norm, norm_sub_rev, inner_sub_left, inner_sub_right,
+    inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, real_inner_comm]
+  <;> ring_nf
+  <;> norm_num
+  <;>
+    (try
+      norm_num
+      <;>
+      aesop)
+  <;>
+    (try
+      linarith)
+{'sorries': [{'proofState': 35, 'pos': {'line': 45, 'column': 8}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1\nh7 : r1 = 0\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 45, 'column': 13}}, {'proofState': 36, 'pos': {'line': 51, 'column': 10}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1\nh7 : ¬r1 = 0\nh8 : r2 = 0\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 51, 'column': 15}}, {'proofState': 37, 'pos': {'line': 59, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r1 + r2\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 59, 'column': 19}}, {'proofState': 38, 'pos': {'line': 64, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r2 - r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 64, 'column': 19}}, {'proofState': 39, 'pos': {'line': 68, 'column': 4}, 'goal': 'case inr\nr1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r2 ≤ r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 68, 'column': 9}}, {'proofState': 40, 'pos': {'line': 101, 'column': 4}, 'goal': 'a b c mbc mac mab pbc pac pab ncenter icenter : EuclideanSpace ℝ (Fin 2)\nnradius iradius : ℝ\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_iradius1 : dist icenter pbc = iradius\nh_iradius2 : dist icenter pac = iradius\nh_iradius3 : dist icenter pab = iradius\nh_collinear1 : Collinear ℝ {a, b, pab}\nh_orth1 : inner (a - b) (icenter - pab) = 0\nh_collinear2 : Collinear ℝ {b, c, pbc}\nh_orth2 : inner (b - c) (icenter - pbc) = 0\nh_collinear3 : Collinear ℝ {a, c, pac}\nh_orth3 : inner (a - c) (icenter - pac) = 0\nh₁ : 0 ≤ nradius\nh₂ : 0 ≤ iradius\n⊢ dist ncenter icenter = nradius + iradius ∨ dist ncenter icenter = |nradius - iradius|', 'endPos': {'line': 101, 'column': 9}}, {'proofState': 41, 'pos': {'line': 122, 'column': 30}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\n⊢ o = ncenter', 'endPos': {'line': 122, 'column': 35}}, {'proofState': 42, 'pos': {'line': 123, 'column': 45}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\n⊢ dist ncenter fab = nradius', 'endPos': {'line': 123, 'column': 50}}, {'proofState': 43, 'pos': {'line': 124, 'column': 45}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\n⊢ dist ncenter fbc = nradius', 'endPos': {'line': 124, 'column': 50}}, {'proofState': 44, 'pos': {'line': 125, 'column': 45}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\n⊢ dist ncenter fac = nradius', 'endPos': {'line': 125, 'column': 50}}, {'proofState': 45, 'pos': {'line': 126, 'column': 39}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\nh₄ : dist ncenter fac = nradius\n⊢ dist o fab = nradius', 'endPos': {'line': 126, 'column': 44}}, {'proofState': 46, 'pos': {'line': 127, 'column': 39}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\nh₄ : dist ncenter fac = nradius\nh₅ : dist o fab = nradius\n⊢ dist o fbc = nradius', 'endPos': {'line': 127, 'column': 44}}, {'proofState': 47, 'pos': {'line': 128, 'column': 39}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\nh₄ : dist ncenter fac = nradius\nh₅ : dist o fab = nradius\nh₆ : dist o fbc = nradius\n⊢ dist o fac = nradius', 'endPos': {'line': 128, 'column': 44}}], 'messages': [{'severity': 'warning', 'pos': {'line': 17, 'column': 8}, 'endPos': {'line': 17, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 35, 'column': 10}, 'endPos': {'line': 35, 'column': 13}, 'data': 'Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\nnote: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`'}, {'severity': 'warning', 'pos': {'line': 70, 'column': 8}, 'endPos': {'line': 70, 'column': 17}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 107, 'column': 8}, 'endPos': {'line': 107, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 150, 'column': 48}, 'endPos': {'line': 166, 'column': 15}, 'data': '(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached\nUse `set_option maxHeartbeats <num>` to set the limit.\nAdditional diagnostic information may be available using the `set_option diagnostics true` command.'}], 'env': 9, 'time': 13.262258291244507}
+---
+Stmt 4 refinement 1 errors:
+theorem nine_point_circle_2
+    (h_noncollinear : ¬Collinear ℝ ({a, b, c} : Set ℝ²))
+    (h_mab : midpoint ℝ a b = mab)
+    (h_mbc : midpoint ℝ b c = mbc)
+    (h_mac : midpoint ℝ c a = mac)
+    (h_nradius1 : dist ncenter mbc = nradius)
+    (h_nradius2 : dist ncenter mac = nradius)
+    (h_nradius3 : dist ncenter mab = nradius)
+    (h_collinear1 : Collinear ℝ ({a, b, fab} : Set ℝ²))
+    (h_orth1 : inner (a - b) (c - fab) = (0:ℝ))
+    (h_collinear2 : Collinear ℝ ({b, c, fbc} : Set ℝ²))
+    (h_orth2 : inner (b - c) (a - fbc) = (0:ℝ))
+    (h_collinear3 : Collinear ℝ ({c, a, fac} : Set ℝ²))
+    (h_orth3 : inner (c - a) (b - fac) = (0:ℝ))
+    (h_oc1 : Collinear ℝ ({oc, a, fbc} : Set ℝ²))
+    (h_oc2 : Collinear ℝ ({oc, b, fac} : Set ℝ²))
+    (h_oc3 : Collinear ℝ ({oc, c, fab} : Set ℝ²)) :
+    dist ncenter (midpoint ℝ oc a) = nradius ∧
+    dist ncenter (midpoint ℝ oc b) = nradius ∧
+    dist ncenter (midpoint ℝ oc c) = nradius := by
+  -- Rewrite the midpoint hypotheses to use symmetry
+  have h_mab' : midpoint ℝ a b = mab := h_mab
+  have h_mbc' : midpoint ℝ b c = mbc := h_mbc
+  have h_mac' : midpoint ℝ c a = mac := h_mac
+  simp_all [midpoint_eq_iff, dist_eq_norm, norm_sub_rev, inner_sub_left, inner_sub_right,
+    inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, real_inner_comm]
+  <;> ring_nf
+  <;> norm_num
+  <;>
+    (try
+      norm_num
+      <;>
+      aesop)
+  <;>
+    (try
+      linarith)
+  <;>
+    (try
+      sorry)
+{'sorries': [{'proofState': 48, 'pos': {'line': 45, 'column': 8}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1\nh7 : r1 = 0\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 45, 'column': 13}}, {'proofState': 49, 'pos': {'line': 51, 'column': 10}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh4 : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = r2 - r1\nh7 : ¬r1 = 0\nh8 : r2 = 0\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 51, 'column': 15}}, {'proofState': 50, 'pos': {'line': 59, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r1 + r2\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 59, 'column': 19}}, {'proofState': 51, 'pos': {'line': 64, 'column': 14}, 'goal': 'r1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r1 ≤ r2\nh7 : ¬r1 = 0\nh8 : ¬r2 = 0\nh4 : dist c1 c2 = r2 - r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 64, 'column': 19}}, {'proofState': 52, 'pos': {'line': 68, 'column': 4}, 'goal': 'case inr\nr1 r2 : ℝ\nc1 c2 : EuclideanSpace ℝ (Fin 2)\nh1 : 0 ≤ r1\nh2 : 0 ≤ r2\nht : dist c1 c2 = r1 + r2 ∨ dist c1 c2 = |r1 - r2|\nh3 : r2 ≤ r1\n⊢ c1 = c2 ∧ r1 = r2 ∨ ∃! x, dist c1 x = r1 ∧ dist c2 x = r2', 'endPos': {'line': 68, 'column': 9}}, {'proofState': 53, 'pos': {'line': 101, 'column': 4}, 'goal': 'a b c mbc mac mab pbc pac pab ncenter icenter : EuclideanSpace ℝ (Fin 2)\nnradius iradius : ℝ\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_iradius1 : dist icenter pbc = iradius\nh_iradius2 : dist icenter pac = iradius\nh_iradius3 : dist icenter pab = iradius\nh_collinear1 : Collinear ℝ {a, b, pab}\nh_orth1 : inner (a - b) (icenter - pab) = 0\nh_collinear2 : Collinear ℝ {b, c, pbc}\nh_orth2 : inner (b - c) (icenter - pbc) = 0\nh_collinear3 : Collinear ℝ {a, c, pac}\nh_orth3 : inner (a - c) (icenter - pac) = 0\nh₁ : 0 ≤ nradius\nh₂ : 0 ≤ iradius\n⊢ dist ncenter icenter = nradius + iradius ∨ dist ncenter icenter = |nradius - iradius|', 'endPos': {'line': 101, 'column': 9}}, {'proofState': 54, 'pos': {'line': 122, 'column': 30}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\n⊢ o = ncenter', 'endPos': {'line': 122, 'column': 35}}, {'proofState': 55, 'pos': {'line': 123, 'column': 45}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\n⊢ dist ncenter fab = nradius', 'endPos': {'line': 123, 'column': 50}}, {'proofState': 56, 'pos': {'line': 124, 'column': 45}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\n⊢ dist ncenter fbc = nradius', 'endPos': {'line': 124, 'column': 50}}, {'proofState': 57, 'pos': {'line': 125, 'column': 45}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\n⊢ dist ncenter fac = nradius', 'endPos': {'line': 125, 'column': 50}}, {'proofState': 58, 'pos': {'line': 126, 'column': 39}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\nh₄ : dist ncenter fac = nradius\n⊢ dist o fab = nradius', 'endPos': {'line': 126, 'column': 44}}, {'proofState': 59, 'pos': {'line': 127, 'column': 39}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\nh₄ : dist ncenter fac = nradius\nh₅ : dist o fab = nradius\n⊢ dist o fbc = nradius', 'endPos': {'line': 127, 'column': 44}}, {'proofState': 60, 'pos': {'line': 128, 'column': 39}, 'goal': 'a b c mbc mac mab ncenter : EuclideanSpace ℝ (Fin 2)\nnradius : ℝ\nfab fbc fac o : EuclideanSpace ℝ (Fin 2)\nh_noncollinear : ¬Collinear ℝ {a, b, c}\nh_mab : midpoint ℝ a b = mab\nh_mbc : midpoint ℝ b c = mbc\nh_mac : midpoint ℝ c a = mac\nh_nradius1 : dist ncenter mbc = nradius\nh_nradius2 : dist ncenter mac = nradius\nh_nradius3 : dist ncenter mab = nradius\nh_collinear1 : Collinear ℝ {a, b, fab}\nh_orth1 : inner (a - b) (c - fab) = 0\nh_collinear2 : Collinear ℝ {b, c, fbc}\nh_orth2 : inner (b - c) (a - fbc) = 0\nh_collinear3 : Collinear ℝ {c, a, fac}\nh_orth3 : inner (c - a) (b - fac) = 0\nh₁ : o = ncenter\nh₂ : dist ncenter fab = nradius\nh₃ : dist ncenter fbc = nradius\nh₄ : dist ncenter fac = nradius\nh₅ : dist o fab = nradius\nh₆ : dist o fbc = nradius\n⊢ dist o fac = nradius', 'endPos': {'line': 128, 'column': 44}}], 'messages': [{'severity': 'warning', 'pos': {'line': 17, 'column': 8}, 'endPos': {'line': 17, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 35, 'column': 10}, 'endPos': {'line': 35, 'column': 13}, 'data': 'Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\nnote: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`'}, {'severity': 'warning', 'pos': {'line': 70, 'column': 8}, 'endPos': {'line': 70, 'column': 17}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 107, 'column': 8}, 'endPos': {'line': 107, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 150, 'column': 48}, 'endPos': {'line': 169, 'column': 12}, 'data': '(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached\nUse `set_option maxHeartbeats <num>` to set the limit.\nAdditional diagnostic information may be available using the `set_option diagnostics true` command.'}], 'env': 10, 'time': 13.287474155426025}
+---

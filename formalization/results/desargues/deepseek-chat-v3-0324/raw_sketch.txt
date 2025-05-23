@@ -1,0 +1,230 @@
+Here's the Lean 4 scaffold file for the HOL Light formalization of Desargues's theorem:
+
+```lean
+import Mathlib
+import Aesop
+
+-- NORMAL_EXISTS
+theorem normal_exists (u v : ℝ³) : ∃ w, w ≠ 0 ∧ Orthogonal u w ∧ Orthogonal v w := by sorry
+
+-- direction_tybij
+def Direction := {x : ℝ³ // x ≠ 0}
+def mk_dir (x : ℝ³) (h : x ≠ 0) : Direction := ⟨x, h⟩
+def dest_dir (d : Direction) : ℝ³ := d.val
+theorem direction_tybij : (∀ x, mk_dir (dest_dir x) (by cases x; exact x.property) = x) ∧ 
+                         (∀ x h, dest_dir (mk_dir x h) = x) := by sorry
+
+-- perpdir
+def perpdir (x y : Direction) : Prop := Orthogonal (dest_dir x) (dest_dir y)
+infix:50 " _|_ " => perpdir
+
+-- pardir
+def pardir (x y : Direction) : Prop := (dest_dir x) × (dest_dir y) = 0
+infix:50 " || " => pardir
+
+-- DIRECTION_CLAUSES
+theorem direction_clauses (P : ℝ³ → Prop) : 
+    (∀ x : Direction, P (dest_dir x)) ↔ (∀ x, x ≠ 0 → P x) ∧
+    (∃ x : Direction, P (dest_dir x)) ↔ (∃ x, x ≠ 0 ∧ P x) := by sorry
+
+-- PARDIR_REFL, PARDIR_SYM, PARDIR_TRANS
+theorem pardir_refl (x : Direction) : x || x := by sorry
+theorem pardir_sym (x y : Direction) : x || y ↔ y || x := by sorry
+theorem pardir_trans (x y z : Direction) : x || y ∧ y || z → x || z := by sorry
+
+-- PARDIR_EQUIV
+theorem pardir_equiv (x y : Direction) : ((· || ·) x = (· || ·) y) ↔ x || y := by sorry
+
+-- DIRECTION_AXIOM_1
+theorem direction_axiom_1 (p p' : Direction) : ¬(p || p') → 
+    ∃ l, p _|_ l ∧ p' _|_ l ∧ ∀ l', p _|_ l' ∧ p' _|_ l' → l' || l := by sorry
+
+-- DIRECTION_AXIOM_2
+theorem direction_axiom_2 (l l' : Direction) : ∃ p, p _|_ l ∧ p _|_ l' := by sorry
+
+-- DIRECTION_AXIOM_3
+theorem direction_axiom_3 : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    ¬(∃ l, p _|_ l ∧ p' _|_ l ∧ p'' _|_ l) := by sorry
+
+-- DIRECTION_AXIOM_4_WEAK
+theorem direction_axiom_4_weak (l : Direction) : ∃ p p', ¬(p || p') ∧ p _|_ l ∧ p' _|_ l := by sorry
+
+-- ORTHOGONAL_COMBINE
+theorem orthogonal_combine (x a b : Direction) : 
+    a _|_ x ∧ b _|_ x ∧ ¬(a || b) → 
+    ∃ c, c _|_ x ∧ ¬(a || c) ∧ ¬(b || c) := by sorry
+
+-- DIRECTION_AXIOM_4
+theorem direction_axiom_4 (l : Direction) : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    p _|_ l ∧ p' _|_ l ∧ p'' _|_ l := by sorry
+
+-- line_tybij
+def Line := Quotient (· || ·)
+def mk_line (d : Direction) : Line := Quotient.mk _ d
+def dest_line (l : Line) : {d : Direction // Quotient.mk _ d = l} := by sorry
+theorem line_tybij : (∀ x, mk_line (dest_line x).val = x) ∧ 
+                    (∀ x, dest_line (mk_line x) = ⟨x, rfl⟩) := by sorry
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef (x y x' y' : Direction) : 
+    x || x' ∧ y || y' → (x _|_ y ↔ x' _|_ y') := by sorry
+
+-- perpl, perpl_th
+def perpl (l : Line) (d : Direction) : Prop := 
+    Quotient.lift (fun x => x _|_ d) (by sorry) l
+theorem perpl_th : perpl = fun l d => Quotient.lift (fun x => x _|_ d) (by sorry) l := rfl
+
+-- line_lift_thm
+theorem line_lift_thm {P : Line → Prop} (h : ∀ d, P (mk_line d)) : ∀ l, P l := by sorry
+
+-- LINE_AXIOM_1
+theorem line_axiom_1 (p p' : Line) : p ≠ p' → 
+    ∃ l, perpl p l ∧ perpl p' l ∧ ∀ l', perpl p l' ∧ perpl p' l' → l' = l := by sorry
+
+-- LINE_AXIOM_2
+theorem line_axiom_2 (l l' : Line) : ∃ p, perpl p l ∧ perpl p l' := by sorry
+
+-- LINE_AXIOM_3
+theorem line_axiom_3 : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l, perpl p l ∧ perpl p' l ∧ perpl p'' l) := by sorry
+
+ LINE_AXIOM_4
+theorem line_axiom_4 (l : Line) : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    perpl p l ∧ perpl p' l ∧ perpl p'' l := by sorry
+
+-- point_tybij
+def Point := Line
+def mk_point (l : Line) : Point := l
+def dest_point (p : Point) : Line := p
+theorem point_tybij : mk_point ∘ dest_point = id ∧ dest_point ∘ mk_point = id := by sorry
+
+-- on
+def on (p : Point) (l : Line) : Prop := perpl (dest_point p) l
+
+-- POINT_CLAUSES
+theorem point_clauses (P : Line → Prop) : 
+    (∀ p : Point, P (dest_point p)) ↔ (∀ l, P l) ∧
+    (∃ p : Point, P (dest_point p)) ↔ (∃ l, P l) := by sorry
+
+-- POINT_TAC
+macro "point_tac" th:term : tactic => `(tactic| rewrite [on, point_clauses]; exact $th)
+
+-- AXIOM_1
+theorem axiom_1 (p p' : Point) : p ≠ p' → 
+    ∃ l, p.on l ∧ p'.on l ∧ ∀ l', p.on l' ∧ p'.on l' → l' = l := by sorry
+
+-- AXIOM_2
+theorem axiom_2 (l l' : Line) : ∃ p, p.on l ∧ p.on l' := by sorry
+
+-- AXIOM_3
+theorem axiom_3 : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l, p.on l ∧ p'.on l ∧ p''.on l) := by sorry
+
+-- AXIOM_4
+theorem axiom_4 (l : Line) : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    p.on l ∧ p'.on l ∧ p''.on l := by sorry
+
+-- projl
+def projl (x : ℝ³) : Line := mk_line (mk_dir x (by sorry))
+
+-- projp
+def projp (x : ℝ³) : Point := mk_point (projl x)
+
+-- PROJL_TOTAL
+theorem projl_total (l : Line) : ∃ x, x ≠ 0 ∧ l = projl x := by sorry
+
+-- homol
+noncomputable def homol (l : Line) : ℝ³ := (projl_total l).choose
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef (x y x' y' : Direction) : 
+    x || x' ∧ y || y' → (x _|_ y ↔ x' _|_ y') := by sorry
+
+-- ON_HOMOL
+theorem on_homol (p : Point) (l : Line) : p.on l ↔ Orthogonal (homop p) (homol l) := by sorry
+
+-- EQ_HOMOL
+theorem eq_homol (l l' : Line) : l = l' ↔ parallel (homol l) (homol l') := by sorry
+
+-- EQ_HOMOP
+theorem eq_homop (p p' : Point) : p = p' ↔ parallel (homop p) (homop p') := by sorry
+
+-- PARALLEL_PROJL_HOMOL
+theorem parallel_projl_homol (x : ℝ³) : parallel x (homol (projl x)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP
+theorem parallel_projp_homop (x : ℝ³) : parallel x (homop (projp x)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP_EXPLICIT
+theorem parallel_projp_homop_explicit (x : ℝ³) : 
+    x ≠ 0 → ∃ a, a ≠ 0 ∧ homop (projp x) = a • x := by sorry
+
+-- bracket
+def bracket (p₁ p₂ p₃ : Point) : ℝ := 
+    Matrix.det ![homop p₁, homop p₂, homop p₃]
+
+-- COLLINEAR
+def Collinear (s : Set Point) : Prop := ∃ l : Line, ∀ p ∈ s, p.on l
+
+-- COLLINEAR_SINGLETON
+theorem collinear_singleton (a : Point) : Collinear {a} := by sorry
+
+-- COLLINEAR_PAIR
+theorem collinear_pair (a b : Point) : Collinear {a, b} := by sorry
+
+-- COLLINEAR_TRIPLE
+theorem collinear_triple (a b c : Point) : 
+    Collinear {a, b, c} ↔ ∃ l, a.on l ∧ b.on l ∧ c.on l := by sorry
+
+-- COLLINEAR_BRACKET
+theorem collinear_bracket (p₁ p₂ p₃ : Point) : 
+    Collinear {p₁, p₂, p₃} ↔ bracket p₁ p₂ p₃ = 0 := by sorry
+
+-- BRACKET_SWAP, BRACKET_SHUFFLE
+theorem bracket_swap (x y z : Point) : 
+    bracket x y z = -bracket x z y := by sorry
+
+theorem bracket_shuffle (x y z : Point) : 
+    bracket x y z = bracket y z x ∧ 
+    bracket x y z = bracket z x y := by sorry
+
+-- BRACKET_SWAP_CONV
+-- Skipped as it's a conversion tactic
+
+-- DESARGUES_DIRECT
+theorem desargues_direct 
+    (A' B S A P C R Q C' B' : Point)
+    (h1 : ¬Collinear {A', B, S})
+    (h2 : ¬Collinear {A, P, C})
+    (h3 : ¬Collinear {A, P, R})
+    (h4 : ¬Collinear {A, C, B})
+    (h5 : ¬Collinear {A, B, R})
+    (h6 : ¬Collinear {C', P, A'})
+    (h7 : ¬Collinear {C', P, B})
+    (h8 : ¬Collinear {C', P, B'})
+    (h9 : ¬Collinear {C', A', S})
+    (h10 : ¬Collinear {C', A', B'})
+    (h11 : ¬Collinear {P, C, A'})
+    (h12 : ¬Collinear {P, C, B})
+    (h13 : ¬Collinear {P, A', R})
+    (h14 : ¬Collinear {P, B, Q})
+    (h15 : ¬Collinear {P, Q, B'})
+    (h16 : ¬Collinear {C, B, S})
+    (h17 : ¬Collinear {A', Q, B'})
+    (h18 : Collinear {P, A', A})
+    (h19 : Collinear {P, B, B'})
+    (h20 : Collinear {P, C', C})
+    (h21 : Collinear {B, C, Q})
+    (h22 : Collinear {B', C', Q})
+    (h23 : Collinear {A, R, C})
+    (h24 : Collinear {A', C', R})
+    (h25 : Collinear {B, S, A})
+    (h26 : Collinear {A', S, B'}) :
+    Collinear {Q, S, R} := by sorry
+```

@@ -1,0 +1,114 @@
+Formalization errors for 'IRRATIONAL_SQRT_NONSQUARE':
+theorem irrational_sqrt_nonsquare (n : ℕ) :
+    (∃ p q : ℤ, q ≠ 0 ∧ sqrt n = p / q) → ∃ m : ℕ, n = m ^ 2 := by
+  intro h
+  -- Extract integers p and q from the rational condition
+  rcases h with ⟨p, q, hq, hsqrt⟩
+  -- Square both sides of the equation to eliminate the square root
+  have h₁ : (Real.sqrt n : ℝ) = p / q := by simpa [hq] using hsqrt
+  have h₂ : (Real.sqrt n : ℝ) ^ 2 = (p / q : ℝ) ^ 2 := by rw [h₁]
+  -- Simplify the squared equation
+  have h₃ : (n : ℝ) = (p : ℝ) ^ 2 / (q : ℝ) ^ 2 := by
+    have h₄ : (Real.sqrt n : ℝ) ^ 2 = (n : ℝ) := by
+      rw [Real.sq_sqrt (by positivity)]
+    rw [h₄] at h₂
+    field_simp [hq] at h₂ ⊢
+    <;> nlinarith
+  -- Clear denominators to get an integer equation
+  have h₄ : (q : ℤ) ^ 2 * n = p ^ 2 := by
+    field_simp [hq, mul_comm] at h₃
+    <;> norm_cast at h₃ ⊢
+    <;> ring_nf at h₃ ⊢
+    <;> nlinarith
+  -- Use the fact that the square root of n is rational to conclude n is a perfect square
+  have h₅ : ∃ m : ℕ, n = m ^ 2 := by
+    have h₆ : ∃ m : ℕ, n = m ^ 2 := by
+      -- Use the fact that the square root of n is rational to conclude n is a perfect square
+      have h₇ : n = 0 ∨ ∃ m : ℕ, n = m ^ 2 := by
+        -- Consider the case when n is zero or a perfect square
+        by_cases hn : n = 0
+        · exact Or.inl hn
+        · right
+          -- Use the fact that the square root of n is rational to conclude n is a perfect square
+          have h₈ : ∃ m : ℕ, n = m ^ 2 := by
+            -- Factor out the greatest perfect square from n
+            have h₉ : ∃ m : ℕ, n = m ^ 2 := by
+              -- Use the fact that the square root of n is rational to conclude n is a perfect square
+              have h₁₀ : ∃ m : ℕ, n = m ^ 2 := by
+                -- Use the fact that the square root of n is rational to conclude n is a perfect square
+                exact?
+              exact h₁₀
+            exact h₉
+          exact h₈
+      cases h₇ with
+      | inl h₇ =>
+        -- If n = 0, then n = 0^2
+        use 0
+        <;> simp_all
+      | inr h₇ =>
+        -- If n is a perfect square, then n = m^2 for some m
+        obtain ⟨m, hm⟩ := h₇
+        exact ⟨m, by simp_all⟩
+    exact h₆
+  -- Since we already have that n is a perfect square, we can conclude
+  obtain ⟨m, hm⟩ := h₅
+  exact ⟨m, by simp_all⟩
+[]
+---
+Stmt 1 refinement 1 errors:
+theorem irrational_sqrt_nonsquare (n : ℕ) :
+    (∃ p q : ℤ, q ≠ 0 ∧ sqrt n = p / q) → ∃ m : ℕ, n = m ^ 2 := by
+  intro h
+  -- Extract integers p and q from the rational condition
+  rcases h with ⟨p, q, hq, hsqrt⟩
+  -- Square both sides of the equation to eliminate the square root
+  have h₁ : (Real.sqrt n : ℝ) = p / q := by simpa [hq] using hsqrt
+  have h₂ : (Real.sqrt n : ℝ) ^ 2 = (p / q : ℝ) ^ 2 := by rw [h₁]
+  -- Simplify the squared equation
+  have h₃ : (n : ℝ) = (p : ℝ) ^ 2 / (q : ℝ) ^ 2 := by
+    have h₄ : (Real.sqrt n : ℝ) ^ 2 = (n : ℝ) := by
+      rw [Real.sq_sqrt (by positivity)]
+    rw [h₄] at h₂
+    field_simp [hq] at h₂ ⊢
+    <;> nlinarith
+  -- Clear denominators to get an integer equation
+  have h₄ : (q : ℤ) ^ 2 * n = p ^ 2 := by
+    field_simp [hq, mul_comm] at h₃
+    <;> norm_cast at h₃ ⊢
+    <;> ring_nf at h₃ ⊢
+    <;> nlinarith
+  -- Use the fact that the square root of n is rational to conclude n is a perfect square
+  have h₅ : ∃ m : ℕ, n = m ^ 2 := by
+    have h₆ : ∃ m : ℕ, n = m ^ 2 := by
+      -- Use the fact that the square root of n is rational to conclude n is a perfect square
+      have h₇ : n = 0 ∨ ∃ m : ℕ, n = m ^ 2 := by
+        -- Consider the case when n is zero or a perfect square
+        by_cases hn : n = 0
+        · exact Or.inl hn
+        · right
+          -- Use the fact that the square root of n is rational to conclude n is a perfect square
+          have h₈ : ∃ m : ℕ, n = m ^ 2 := by
+            -- Factor out the greatest perfect square from n
+            have h₉ : ∃ m : ℕ, n = m ^ 2 := by
+              -- Use the fact that the square root of n is rational to conclude n is a perfect square
+              have h₁₀ : ∃ m : ℕ, n = m ^ 2 := by
+                -- Use the fact that the square root of n is rational to conclude n is a perfect square
+                exact?
+              exact h₁₀
+            exact h₉
+          exact h₈
+      cases h₇ with
+      | inl h₇ =>
+        -- If n = 0, then n = 0^2
+        use 0
+        <;> simp_all
+      | inr h₇ =>
+        -- If n is a perfect square, then n = m^2 for some m
+        obtain ⟨m, hm⟩ := h₇
+        exact ⟨m, by simp_all⟩
+    exact h₆
+  -- Since we already have that n is a perfect square, we can conclude
+  obtain ⟨m, hm⟩ := h₅
+  exact ⟨m, by simp_all⟩
+[]
+---

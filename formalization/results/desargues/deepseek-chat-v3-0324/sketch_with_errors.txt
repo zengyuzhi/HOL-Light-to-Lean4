@@ -1,0 +1,687 @@
+Refinement 1 errors:
+import Mathlib
+import Aesop
+
+-- NORMAL_EXISTS
+theorem normal_exists (u v : ℝ³) : ∃ w, w ≠ 0 ∧ Orthogonal u w ∧ Orthogonal v w := by sorry
+
+-- direction_tybij
+def Direction := {x : ℝ³ // x ≠ 0}
+def mk_dir (x : ℝ³) (h : x ≠ 0) : Direction := ⟨x, h⟩
+def dest_dir (d : Direction) : ℝ³ := d.val
+theorem direction_tybij : (∀ x, mk_dir (dest_dir x) (by cases x; exact x.property) = x) ∧ 
+                         (∀ x h, dest_dir (mk_dir x h) = x) := by sorry
+
+-- perpdir
+def perpdir (x y : Direction) : Prop := Orthogonal (dest_dir x) (dest_dir y)
+infix:50 " _|_ " => perpdir
+
+-- pardir
+def pardir (x y : Direction) : Prop := (dest_dir x) × (dest_dir y) = 0
+infix:50 " || " => pardir
+
+-- DIRECTION_CLAUSES
+theorem direction_clauses (P : ℝ³ → Prop) : 
+    (∀ x : Direction, P (dest_dir x)) ↔ (∀ x, x ≠ 0 → P x) ∧
+    (∃ x : Direction, P (dest_dir x)) ↔ (∃ x, x ≠ 0 ∧ P x) := by sorry
+
+-- PARDIR_REFL, PARDIR_SYM, PARDIR_TRANS
+theorem pardir_refl (x : Direction) : x || x := by sorry
+theorem pardir_sym (x y : Direction) : x || y ↔ y || x := by sorry
+theorem pardir_trans (x y z : Direction) : x || y ∧ y || z → x || z := by sorry
+
+-- PARDIR_EQUIV
+theorem pardir_equiv (x y : Direction) : ((· || ·) x = (· || ·) y) ↔ x || y := by sorry
+
+-- DIRECTION_AXIOM_1
+theorem direction_axiom_1 (p p' : Direction) : ¬(p || p') → 
+    ∃ l, p _|_ l ∧ p' _|_ l ∧ ∀ l', p _|_ l' ∧ p' _|_ l' → l' || l := by sorry
+
+-- DIRECTION_AXIOM_2
+theorem direction_axiom_2 (l l' : Direction) : ∃ p, p _|_ l ∧ p _|_ l' := by sorry
+
+-- DIRECTION_AXIOM_3
+theorem direction_axiom_3 : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    ¬(∃ l, p _|_ l ∧ p' _|_ l ∧ p'' _|_ l) := by sorry
+
+-- DIRECTION_AXIOM_4_WEAK
+theorem direction_axiom_4_weak (l : Direction) : ∃ p p', ¬(p || p') ∧ p _|_ l ∧ p' _|_ l := by sorry
+
+-- ORTHOGONAL_COMBINE
+theorem orthogonal_combine (x a b : Direction) : 
+    a _|_ x ∧ b _|_ x ∧ ¬(a || b) → 
+    ∃ c, c _|_ x ∧ ¬(a || c) ∧ ¬(b || c) := by sorry
+
+-- DIRECTION_AXIOM_4
+theorem direction_axiom_4 (l : Direction) : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    p _|_ l ∧ p' _|_ l ∧ p'' _|_ l := by sorry
+
+-- line_tybij
+def Line := Quotient (· || ·)
+def mk_line (d : Direction) : Line := Quotient.mk _ d
+def dest_line (l : Line) : {d : Direction // Quotient.mk _ d = l} := by sorry
+theorem line_tybij : (∀ x, mk_line (dest_line x).val = x) ∧ 
+                    (∀ x, dest_line (mk_line x) = ⟨x, rfl⟩) := by sorry
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef (x y x' y' : Direction) : 
+    x || x' ∧ y || y' → (x _|_ y ↔ x' _|_ y') := by sorry
+
+-- perpl, perpl_th
+def perpl (l : Line) (d : Direction) : Prop := 
+    Quotient.lift (fun x => x _|_ d) (by sorry) l
+theorem perpl_th : perpl = fun l d => Quotient.lift (fun x => x _|_ d) (by sorry) l := rfl
+
+-- line_lift_thm
+theorem line_lift_thm {P : Line → Prop} (h : ∀ d, P (mk_line d)) : ∀ l, P l := by sorry
+
+-- LINE_AXIOM_1
+theorem line_axiom_1 (p p' : Line) : p ≠ p' → 
+    ∃ l, perpl p l ∧ perpl p' l ∧ ∀ l', perpl p l' ∧ perpl p' l' → l' = l := by sorry
+
+-- LINE_AXIOM_2
+theorem line_axiom_2 (l l' : Line) : ∃ p, perpl p l ∧ perpl p l' := by sorry
+
+-- LINE_AXIOM_3
+theorem line_axiom_3 : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l, perpl p l ∧ perpl p' l ∧ perpl p'' l) := by sorry
+
+ LINE_AXIOM_4
+theorem line_axiom_4 (l : Line) : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    perpl p l ∧ perpl p' l ∧ perpl p'' l := by sorry
+
+-- point_tybij
+def Point := Line
+def mk_point (l : Line) : Point := l
+def dest_point (p : Point) : Line := p
+theorem point_tybij : mk_point ∘ dest_point = id ∧ dest_point ∘ mk_point = id := by sorry
+
+-- on
+def on (p : Point) (l : Line) : Prop := perpl (dest_point p) l
+
+-- POINT_CLAUSES
+theorem point_clauses (P : Line → Prop) : 
+    (∀ p : Point, P (dest_point p)) ↔ (∀ l, P l) ∧
+    (∃ p : Point, P (dest_point p)) ↔ (∃ l, P l) := by sorry
+
+-- POINT_TAC
+macro "point_tac" th:term : tactic => `(tactic| rewrite [on, point_clauses]; exact $th)
+
+-- AXIOM_1
+theorem axiom_1 (p p' : Point) : p ≠ p' → 
+    ∃ l, p.on l ∧ p'.on l ∧ ∀ l', p.on l' ∧ p'.on l' → l' = l := by sorry
+
+-- AXIOM_2
+theorem axiom_2 (l l' : Line) : ∃ p, p.on l ∧ p.on l' := by sorry
+
+-- AXIOM_3
+theorem axiom_3 : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l, p.on l ∧ p'.on l ∧ p''.on l) := by sorry
+
+-- AXIOM_4
+theorem axiom_4 (l : Line) : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    p.on l ∧ p'.on l ∧ p''.on l := by sorry
+
+-- projl
+def projl (x : ℝ³) : Line := mk_line (mk_dir x (by sorry))
+
+-- projp
+def projp (x : ℝ³) : Point := mk_point (projl x)
+
+-- PROJL_TOTAL
+theorem projl_total (l : Line) : ∃ x, x ≠ 0 ∧ l = projl x := by sorry
+
+-- homol
+noncomputable def homol (l : Line) : ℝ³ := (projl_total l).choose
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef (x y x' y' : Direction) : 
+    x || x' ∧ y || y' → (x _|_ y ↔ x' _|_ y') := by sorry
+
+-- ON_HOMOL
+theorem on_homol (p : Point) (l : Line) : p.on l ↔ Orthogonal (homop p) (homol l) := by sorry
+
+-- EQ_HOMOL
+theorem eq_homol (l l' : Line) : l = l' ↔ parallel (homol l) (homol l') := by sorry
+
+-- EQ_HOMOP
+theorem eq_homop (p p' : Point) : p = p' ↔ parallel (homop p) (homop p') := by sorry
+
+-- PARALLEL_PROJL_HOMOL
+theorem parallel_projl_homol (x : ℝ³) : parallel x (homol (projl x)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP
+theorem parallel_projp_homop (x : ℝ³) : parallel x (homop (projp x)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP_EXPLICIT
+theorem parallel_projp_homop_explicit (x : ℝ³) : 
+    x ≠ 0 → ∃ a, a ≠ 0 ∧ homop (projp x) = a • x := by sorry
+
+-- bracket
+def bracket (p₁ p₂ p₃ : Point) : ℝ := 
+    Matrix.det ![homop p₁, homop p₂, homop p₃]
+
+-- COLLINEAR
+def Collinear (s : Set Point) : Prop := ∃ l : Line, ∀ p ∈ s, p.on l
+
+-- COLLINEAR_SINGLETON
+theorem collinear_singleton (a : Point) : Collinear {a} := by sorry
+
+-- COLLINEAR_PAIR
+theorem collinear_pair (a b : Point) : Collinear {a, b} := by sorry
+
+-- COLLINEAR_TRIPLE
+theorem collinear_triple (a b c : Point) : 
+    Collinear {a, b, c} ↔ ∃ l, a.on l ∧ b.on l ∧ c.on l := by sorry
+
+-- COLLINEAR_BRACKET
+theorem collinear_bracket (p₁ p₂ p₃ : Point) : 
+    Collinear {p₁, p₂, p₃} ↔ bracket p₁ p₂ p₃ = 0 := by sorry
+
+-- BRACKET_SWAP, BRACKET_SHUFFLE
+theorem bracket_swap (x y z : Point) : 
+    bracket x y z = -bracket x z y := by sorry
+
+theorem bracket_shuffle (x y z : Point) : 
+    bracket x y z = bracket y z x ∧ 
+    bracket x y z = bracket z x y := by sorry
+
+-- BRACKET_SWAP_CONV
+-- Skipped as it's a conversion tactic
+
+-- DESARGUES_DIRECT
+theorem desargues_direct 
+    (A' B S A P C R Q C' B' : Point)
+    (h1 : ¬Collinear {A', B, S})
+    (h2 : ¬Collinear {A, P, C})
+    (h3 : ¬Collinear {A, P, R})
+    (h4 : ¬Collinear {A, C, B})
+    (h5 : ¬Collinear {A, B, R})
+    (h6 : ¬Collinear {C', P, A'})
+    (h7 : ¬Collinear {C', P, B})
+    (h8 : ¬Collinear {C', P, B'})
+    (h9 : ¬Collinear {C', A', S})
+    (h10 : ¬Collinear {C', A', B'})
+    (h11 : ¬Collinear {P, C, A'})
+    (h12 : ¬Collinear {P, C, B})
+    (h13 : ¬Collinear {P, A', R})
+    (h14 : ¬Collinear {P, B, Q})
+    (h15 : ¬Collinear {P, Q, B'})
+    (h16 : ¬Collinear {C, B, S})
+    (h17 : ¬Collinear {A', Q, B'})
+    (h18 : Collinear {P, A', A})
+    (h19 : Collinear {P, B, B'})
+    (h20 : Collinear {P, C', C})
+    (h21 : Collinear {B, C, Q})
+    (h22 : Collinear {B', C', Q})
+    (h23 : Collinear {A, R, C})
+    (h24 : Collinear {A', C', R})
+    (h25 : Collinear {B, S, A})
+    (h26 : Collinear {A', S, B'}) :
+    Collinear {Q, S, R} := by sorry
+[{'severity': 'error', 'pos': {'line': 3, 'column': 30}, 'endPos': {'line': 3, 'column': 31}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 6, 'column': 23}, 'endPos': {'line': 6, 'column': 24}, 'data': "unexpected token '³'; expected '//', '|' or '}'"}, {'severity': 'error', 'pos': {'line': 7, 'column': 17}, 'endPos': {'line': 7, 'column': 18}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 8, 'column': 32}, 'endPos': {'line': 8, 'column': 33}, 'data': "unexpected token '³'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 9, 'column': 32}, 'endPos': {'line': 9, 'column': 82}, 'data': 'function expected at\n  mk_dir\nterm has type\n  ?m.62'}, {'severity': 'error', 'pos': {'line': 10, 'column': 43}, 'endPos': {'line': 10, 'column': 53}, 'data': 'function expected at\n  mk_dir\nterm has type\n  ?m.62'}, {'severity': 'error', 'pos': {'line': 13, 'column': 40}, 'endPos': {'line': 13, 'column': 50}, 'data': "unknown identifier 'Orthogonal'"}, {'severity': 'error', 'pos': {'line': 17, 'column': 39}, 'endPos': {'line': 17, 'column': 51}, 'data': 'application type mismatch\n  Prod (dest_dir x)\nargument\n  dest_dir x\nhas type\n  ℝ : Type\nbut is expected to have type\n  Type ?u.2667 : Type (?u.2667 + 1)'}, {'severity': 'error', 'pos': {'line': 21, 'column': 32}, 'endPos': {'line': 21, 'column': 33}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'warning', 'pos': {'line': 26, 'column': 8}, 'endPos': {'line': 26, 'column': 19}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 27, 'column': 8}, 'endPos': {'line': 27, 'column': 18}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 43}, 'endPos': {'line': 28, 'column': 44}, 'data': 'application type mismatch\n  or x\nargument\n  x\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Bool : Type'}, {'severity': 'error', 'pos': {'line': 28, 'column': 48}, 'endPos': {'line': 28, 'column': 49}, 'data': 'application type mismatch\n  And y\nargument\n  y\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Prop : Type'}, {'severity': 'error', 'pos': {'line': 31, 'column': 43}, 'endPos': {'line': 31, 'column': 49}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'error', 'pos': {'line': 31, 'column': 56}, 'endPos': {'line': 31, 'column': 62}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'warning', 'pos': {'line': 34, 'column': 8}, 'endPos': {'line': 34, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 38, 'column': 8}, 'endPos': {'line': 38, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 41, 'column': 8}, 'endPos': {'line': 41, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 46, 'column': 59}, 'endPos': {'line': 46, 'column': 66}, 'data': "ambiguous, possible interpretations \n  p || p' : Prop\n  \n  (p || p') = true : Prop"}, {'severity': 'error', 'pos': {'line': 46, 'column': 70}, 'endPos': {'line': 46, 'column': 71}, 'data': 'application type mismatch\n  perpdir p\nargument\n  p\nhas type\n  Bool : Type\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 46, 'column': 80}, 'endPos': {'line': 46, 'column': 82}, 'data': "application type mismatch\n  perpdir p'\nargument\n  p'\nhas type\n  Bool : Type\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'warning', 'pos': {'line': 49, 'column': 8}, 'endPos': {'line': 49, 'column': 26}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 54, 'column': 8}, 'endPos': {'line': 54, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 59, 'column': 22}, 'endPos': {'line': 59, 'column': 28}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'error', 'pos': {'line': 60, 'column': 38}, 'endPos': {'line': 60, 'column': 53}, 'data': 'type mismatch\n  ⟦d⟧\nhas type\n  Quotient ?m.44188 : Type\nbut is expected to have type\n  Line : Sort ?u.44182'}, {'severity': 'error', 'pos': {'line': 61, 'column': 63}, 'endPos': {'line': 61, 'column': 64}, 'data': 'type mismatch\n  l\nhas type\n  Line : Sort ?u.45016\nbut is expected to have type\n  Quotient (?m.47004 d) : Type'}, {'severity': 'error', 'pos': {'line': 62, 'column': 36}, 'endPos': {'line': 62, 'column': 47}, 'data': 'function expected at\n  dest_line\nterm has type\n  ?m.48500'}, {'severity': 'error', 'pos': {'line': 63, 'column': 26}, 'endPos': {'line': 63, 'column': 47}, 'data': 'function expected at\n  dest_line\nterm has type\n  ?m.48500'}, {'severity': 'error', 'pos': {'line': 63, 'column': 50}, 'endPos': {'line': 63, 'column': 58}, 'data': 'invalid constructor ⟨...⟩, expected type must be an inductive type \n  ?m.48537 x'}, {'severity': 'error', 'pos': {'line': 67, 'column': 4}, 'endPos': {'line': 67, 'column': 5}, 'data': 'application type mismatch\n  or x\nargument\n  x\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Bool : Type'}, {'severity': 'error', 'pos': {'line': 67, 'column': 9}, 'endPos': {'line': 67, 'column': 11}, 'data': "application type mismatch\n  And x'\nargument\n  x'\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Prop : Type"}, {'severity': 'error', 'pos': {'line': 71, 'column': 48}, 'endPos': {'line': 71, 'column': 49}, 'data': 'application type mismatch\n  Quotient.lift (fun x => x _|_ d) ⋯ l\nargument\n  l\nhas type\n  Line : Sort ?u.52133\nbut is expected to have type\n  Quotient ?m.52163 : Type'}, {'severity': 'error', 'pos': {'line': 72, 'column': 27}, 'endPos': {'line': 72, 'column': 83}, 'data': 'type mismatch\n  fun l d => Quotient.lift (fun x => x _|_ d) ⋯ l\nhas type\n  Quotient ?m.55563 → ↑Direction → Prop : Type\nbut is expected to have type\n  Line → ↑Direction → Prop : Sort (max 1 ?u.55543)'}, {'severity': 'warning', 'pos': {'line': 75, 'column': 8}, 'endPos': {'line': 75, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 78, 'column': 8}, 'endPos': {'line': 78, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 82, 'column': 50}, 'endPos': {'line': 82, 'column': 51}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.64511\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 82, 'column': 62}, 'endPos': {'line': 82, 'column': 64}, 'data': "application type mismatch\n  perpl p l'\nargument\n  l'\nhas type\n  Line : Sort ?u.64514\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'warning', 'pos': {'line': 85, 'column': 8}, 'endPos': {'line': 85, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 89, 'column': 1}, 'endPos': {'line': 89, 'column': 13}, 'data': 'unexpected identifier; expected command'}, {'severity': 'error', 'pos': {'line': 92, 'column': 12}, 'endPos': {'line': 92, 'column': 13}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.82062\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 92, 'column': 25}, 'endPos': {'line': 92, 'column': 26}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.82062\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 92, 'column': 39}, 'endPos': {'line': 92, 'column': 40}, 'data': "application type mismatch\n  perpl p'' l\nargument\n  l\nhas type\n  Line : Sort ?u.82062\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'warning', 'pos': {'line': 98, 'column': 8}, 'endPos': {'line': 98, 'column': 19}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 101, 'column': 3}, 'endPos': {'line': 101, 'column': 6}, 'data': "unexpected token 'on'; expected identifier"}, {'severity': 'error', 'pos': {'line': 101, 'column': 61}, 'endPos': {'line': 101, 'column': 62}, 'data': 'application type mismatch\n  perpl (dest_point p) l\nargument\n  l\nhas type\n  Line : Sort ?u.91054\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 106, 'column': 35}, 'endPos': {'line': 106, 'column': 37}, 'data': "unexpected token '↔'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 109, 'column': 57}, 'endPos': {'line': 109, 'column': 59}, 'data': "unexpected token 'on'; expected ']'"}, {'severity': 'error', 'pos': {'line': 113, 'column': 9}, 'endPos': {'line': 113, 'column': 15}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 113, 'column': 9}, 'endPos': {'line': 113, 'column': 15}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 113, 'column': 18}, 'endPos': {'line': 113, 'column': 25}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 113, 'column': 18}, 'endPos': {'line': 113, 'column': 25}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 113, 'column': 34}, 'endPos': {'line': 113, 'column': 41}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 113, 'column': 34}, 'endPos': {'line': 113, 'column': 41}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 113, 'column': 44}, 'endPos': {'line': 113, 'column': 52}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 113, 'column': 44}, 'endPos': {'line': 113, 'column': 52}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 116, 'column': 37}, 'endPos': {'line': 116, 'column': 43}, 'data': 'invalid field notation, type is not of the form (C ...) where C is a constant\n  p\nhas type\n  ?m.100288'}, {'severity': 'error', 'pos': {'line': 116, 'column': 46}, 'endPos': {'line': 116, 'column': 53}, 'data': 'invalid field notation, type is not of the form (C ...) where C is a constant\n  p\nhas type\n  ?m.100288'}, {'severity': 'error', 'pos': {'line': 121, 'column': 11}, 'endPos': {'line': 121, 'column': 17}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 121, 'column': 11}, 'endPos': {'line': 121, 'column': 17}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 121, 'column': 20}, 'endPos': {'line': 121, 'column': 27}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 121, 'column': 20}, 'endPos': {'line': 121, 'column': 27}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 121, 'column': 30}, 'endPos': {'line': 121, 'column': 38}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p''\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 121, 'column': 30}, 'endPos': {'line': 121, 'column': 38}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p''\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 126, 'column': 4}, 'endPos': {'line': 126, 'column': 10}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 126, 'column': 4}, 'endPos': {'line': 126, 'column': 10}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 126, 'column': 13}, 'endPos': {'line': 126, 'column': 20}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 126, 'column': 13}, 'endPos': {'line': 126, 'column': 20}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 126, 'column': 23}, 'endPos': {'line': 126, 'column': 31}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p''\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 126, 'column': 23}, 'endPos': {'line': 126, 'column': 31}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p''\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 129, 'column': 16}, 'endPos': {'line': 129, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 132, 'column': 16}, 'endPos': {'line': 132, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 135, 'column': 50}, 'endPos': {'line': 135, 'column': 57}, 'data': 'function expected at\n  projl\nterm has type\n  ?m.100427'}, {'severity': 'error', 'pos': {'line': 138, 'column': 38}, 'endPos': {'line': 138, 'column': 39}, 'data': "unexpected token '³'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 141, 'column': 8}, 'endPos': {'line': 141, 'column': 23}, 'data': "'perpdir_welldef' has already been declared"}, {'severity': 'error', 'pos': {'line': 145, 'column': 42}, 'endPos': {'line': 145, 'column': 48}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 145, 'column': 42}, 'endPos': {'line': 145, 'column': 48}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 145, 'column': 51}, 'endPos': {'line': 145, 'column': 81}, 'data': 'function expected at\n  Orthogonal\nterm has type\n  ?m.101142'}, {'severity': 'error', 'pos': {'line': 148, 'column': 42}, 'endPos': {'line': 148, 'column': 71}, 'data': 'function expected at\n  parallel\nterm has type\n  ?m.101612'}, {'severity': 'error', 'pos': {'line': 151, 'column': 43}, 'endPos': {'line': 151, 'column': 72}, 'data': 'function expected at\n  parallel\nterm has type\n  ?m.102102'}, {'severity': 'error', 'pos': {'line': 154, 'column': 35}, 'endPos': {'line': 154, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 157, 'column': 35}, 'endPos': {'line': 157, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 160, 'column': 44}, 'endPos': {'line': 160, 'column': 45}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 165, 'column': 17}, 'endPos': {'line': 165, 'column': 22}, 'data': "unknown identifier 'homop'"}, {'severity': 'error', 'pos': {'line': 165, 'column': 27}, 'endPos': {'line': 165, 'column': 32}, 'data': "unknown identifier 'homop'"}, {'severity': 'error', 'pos': {'line': 165, 'column': 37}, 'endPos': {'line': 165, 'column': 42}, 'data': "unknown identifier 'homop'"}, {'severity': 'error', 'pos': {'line': 168, 'column': 4}, 'endPos': {'line': 168, 'column': 13}, 'data': "'Collinear' has already been declared"}, {'severity': 'error', 'pos': {'line': 171, 'column': 8}, 'endPos': {'line': 171, 'column': 27}, 'data': "'collinear_singleton' has already been declared"}, {'severity': 'error', 'pos': {'line': 174, 'column': 8}, 'endPos': {'line': 174, 'column': 22}, 'data': "'collinear_pair' has already been declared"}, {'severity': 'error', 'pos': {'line': 178, 'column': 14}, 'endPos': {'line': 178, 'column': 23}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.103375)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.103375'}, {'severity': 'error', 'pos': {'line': 178, 'column': 31}, 'endPos': {'line': 178, 'column': 37}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  a\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 178, 'column': 31}, 'endPos': {'line': 178, 'column': 37}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  a\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 178, 'column': 40}, 'endPos': {'line': 178, 'column': 46}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  b\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 178, 'column': 40}, 'endPos': {'line': 178, 'column': 46}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  b\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 178, 'column': 49}, 'endPos': {'line': 178, 'column': 55}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  c\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 178, 'column': 49}, 'endPos': {'line': 178, 'column': 55}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  c\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 182, 'column': 14}, 'endPos': {'line': 182, 'column': 26}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.104461)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.104461'}, {'severity': 'warning', 'pos': {'line': 185, 'column': 8}, 'endPos': {'line': 185, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 188, 'column': 8}, 'endPos': {'line': 188, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 198, 'column': 21}, 'endPos': {'line': 198, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.105662)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.105662'}, {'severity': 'error', 'pos': {'line': 199, 'column': 21}, 'endPos': {'line': 199, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.106723)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.106723'}, {'severity': 'error', 'pos': {'line': 200, 'column': 21}, 'endPos': {'line': 200, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.107784)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.107784'}, {'severity': 'error', 'pos': {'line': 201, 'column': 21}, 'endPos': {'line': 201, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.108845)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.108845'}, {'severity': 'error', 'pos': {'line': 202, 'column': 21}, 'endPos': {'line': 202, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.109906)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.109906'}, {'severity': 'error', 'pos': {'line': 203, 'column': 21}, 'endPos': {'line': 203, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.110967)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.110967'}, {'severity': 'error', 'pos': {'line': 204, 'column': 21}, 'endPos': {'line': 204, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.112028)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.112028'}, {'severity': 'error', 'pos': {'line': 205, 'column': 21}, 'endPos': {'line': 205, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.113089)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.113089'}, {'severity': 'error', 'pos': {'line': 206, 'column': 21}, 'endPos': {'line': 206, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.114150)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.114150'}, {'severity': 'error', 'pos': {'line': 207, 'column': 22}, 'endPos': {'line': 207, 'column': 34}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.115211)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.115211'}, {'severity': 'error', 'pos': {'line': 208, 'column': 22}, 'endPos': {'line': 208, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.116272)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.116272'}, {'severity': 'error', 'pos': {'line': 209, 'column': 22}, 'endPos': {'line': 209, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.117333)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.117333'}, {'severity': 'error', 'pos': {'line': 210, 'column': 22}, 'endPos': {'line': 210, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.118394)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.118394'}, {'severity': 'error', 'pos': {'line': 211, 'column': 22}, 'endPos': {'line': 211, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.119455)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.119455'}, {'severity': 'error', 'pos': {'line': 212, 'column': 22}, 'endPos': {'line': 212, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.120516)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.120516'}, {'severity': 'error', 'pos': {'line': 213, 'column': 22}, 'endPos': {'line': 213, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.121577)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.121577'}, {'severity': 'error', 'pos': {'line': 214, 'column': 22}, 'endPos': {'line': 214, 'column': 33}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.122638)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.122638'}, {'severity': 'error', 'pos': {'line': 215, 'column': 21}, 'endPos': {'line': 215, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.123699)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.123699'}, {'severity': 'error', 'pos': {'line': 216, 'column': 21}, 'endPos': {'line': 216, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.124760)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.124760'}, {'severity': 'error', 'pos': {'line': 217, 'column': 21}, 'endPos': {'line': 217, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.125821)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.125821'}, {'severity': 'error', 'pos': {'line': 218, 'column': 21}, 'endPos': {'line': 218, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.126882)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.126882'}, {'severity': 'error', 'pos': {'line': 219, 'column': 21}, 'endPos': {'line': 219, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.127943)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.127943'}, {'severity': 'error', 'pos': {'line': 220, 'column': 21}, 'endPos': {'line': 220, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.129004)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.129004'}, {'severity': 'error', 'pos': {'line': 221, 'column': 21}, 'endPos': {'line': 221, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.130065)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.130065'}, {'severity': 'error', 'pos': {'line': 222, 'column': 21}, 'endPos': {'line': 222, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.131126)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.131126'}, {'severity': 'error', 'pos': {'line': 223, 'column': 21}, 'endPos': {'line': 223, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.132187)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.132187'}, {'severity': 'error', 'pos': {'line': 224, 'column': 14}, 'endPos': {'line': 224, 'column': 23}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.133248)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.133248'}]
+---
+Refinement 2 errors:
+import Mathlib
+import Aesop
+
+-- Define 3D vectors
+abbrev ℝ³ := Fin 3 → ℝ
+
+-- NORMAL_EXISTS
+theorem normal_exists (u v : ℝ³) : ∃ w : ℝ³, w ≠ 0 ∧ Orthogonal u w ∧ Orthogonal v w := by sorry
+
+-- direction_tybij
+def Direction := {x : ℝ³ // x ≠ 0}
+def mk_dir (x : ℝ³) (h : x ≠ 0) : Direction := ⟨x, h⟩
+def dest_dir (d : Direction) : ℝ³ := d.val
+theorem direction_tybij : (∀ x : Direction, mk_dir (dest_dir x) (by cases x; exact x.property) = x) ∧ 
+                         (∀ x h, dest_dir (mk_dir x h) = x) := by sorry
+
+-- perpdir
+def perpdir (x y : Direction) : Prop := Orthogonal (dest_dir x) (dest_dir y)
+infix:50 " _|_ " => perpdir
+
+-- pardir
+def pardir (x y : Direction) : Prop := (dest_dir x) × (dest_dir y) = 0
+infix:50 " || " => pardir
+
+-- DIRECTION_CLAUSES
+theorem direction_clauses (P : ℝ³ → Prop) : 
+    (∀ x : Direction, P (dest_dir x)) ↔ (∀ x, x ≠ 0 → P x) ∧
+    (∃ x : Direction, P (dest_dir x)) ↔ (∃ x, x ≠ 0 ∧ P x) := by sorry
+
+-- PARDIR_REFL, PARDIR_SYM, PARDIR_TRANS
+theorem pardir_refl (x : Direction) : x || x := by sorry
+theorem pardir_sym (x y : Direction) : x || y ↔ y || x := by sorry
+theorem pardir_trans (x y z : Direction) : x || y ∧ y || z → x || z := by sorry
+
+-- PARDIR_EQUIV
+theorem pardir_equiv (x y : Direction) : ((· || ·) x = (· || ·) y) ↔ x || y := by sorry
+
+-- DIRECTION_AXIOM_1
+theorem direction_axiom_1 (p p' : Direction) : ¬(p || p') → 
+    ∃ l : Direction, p _|_ l ∧ p' _|_ l ∧ ∀ l' : Direction, p _|_ l' ∧ p' _|_ l' → l' || l := by sorry
+
+-- DIRECTION_AXIOM_2
+theorem direction_axiom_2 (l l' : Direction) : ∃ p : Direction, p _|_ l ∧ p _|_ l' := by sorry
+
+-- DIRECTION_AXIOM_3
+theorem direction_axiom_3 : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    ¬(∃ l : Direction, p _|_ l ∧ p' _|_ l ∧ p'' _|_ l) := by sorry
+
+-- DIRECTION_AXIOM_4_WEAK
+theorem direction_axiom_4_weak (l : Direction) : ∃ p p' : Direction, ¬(p || p') ∧ p _|_ l ∧ p' _|_ l := by sorry
+
+-- ORTHOGONAL_COMBINE
+theorem orthogonal_combine (x a b : Direction) : 
+    a _|_ x ∧ b _|_ x ∧ ¬(a || b) → 
+    ∃ c : Direction, c _|_ x ∧ ¬(a || c) ∧ ¬(b || c) := by sorry
+
+-- DIRECTION_AXIOM_4
+theorem direction_axiom_4 (l : Direction) : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    p _|_ l ∧ p' _|_ l ∧ p'' _|_ l := by sorry
+
+-- line_tybij
+def Line := Quotient (· || ·)
+def mk_line (d : Direction) : Line := Quotient.mk _ d
+noncomputable def dest_line (l : Line) : Direction := Quotient.out l
+theorem line_tybij : (∀ x, mk_line (dest_line x) = x) ∧ 
+                    (∀ x, Quotient.mk _ (dest_line (mk_line x)) = mk_line x) := by sorry
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef (x y x' y' : Direction) : 
+    x || x' ∧ y || y' → (x _|_ y ↔ x' _|_ y') := by sorry
+
+-- perpl, perpl_th
+noncomputable def perpl (l : Line) (d : Direction) : Prop := 
+    Quotient.lift (fun x => x _|_ d) (by sorry) l
+theorem perpl_th : perpl = fun l d => Quotient.lift (fun x => x _|_ d) (by sorry) l := rfl
+
+-- line_lift_thm
+theorem line_lift_thm {P : Line → Prop} (h : ∀ d, P (mk_line d)) : ∀ l, P l := by sorry
+
+-- LINE_AXIOM_1
+theorem line_axiom_1 (p p' : Line) : p ≠ p' → 
+    ∃ l : Line, perpl p l ∧ perpl p' l ∧ ∀ l' : Line, perpl p l' ∧ perpl p' l' → l' = l := by sorry
+
+-- LINE_AXIOM_2
+theorem line_axiom_2 (l l' : Line) : ∃ p : Line, perpl p l ∧ perpl p l' := by sorry
+
+-- LINE_AXIOM_3
+theorem line_axiom_3 : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l : Line, perpl p l ∧ perpl p' l ∧ perpl p'' l) := by sorry
+
+-- LINE_AXIOM_4
+theorem line_axiom_4 (l : Line) : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    perpl p l ∧ perpl p' l ∧ perpl p'' l := by sorry
+
+-- point_tybij
+def Point := Line
+def mk_point (l : Line) : Point := l
+def dest_point (p : Point) : Line := p
+theorem point_tybij : mk_point ∘ dest_point = id ∧ dest_point ∘ mk_point = id := by rfl
+
+-- on
+def on (p : Point) (l : Line) : Prop := perpl (dest_point p) l
+
+-- POINT_CLAUSES
+theorem point_clauses (P : Line → Prop) : 
+    (∀ p : Point, P (dest_point p)) ↔ (∀ l, P l) ∧
+    (∃ p : Point, P (dest_point p)) ↔ (∃ l, P l) := by sorry
+
+-- POINT_TAC
+macro "point_tac" th:term : tactic => `(tactic| rewrite [on, point_clauses]; exact $th)
+
+-- AXIOM_1
+theorem axiom_1 (p p' : Point) : p ≠ p' → 
+    ∃ l : Line, p.on l ∧ p'.on l ∧ ∀ l' : Line, p.on l' ∧ p'.on l' → l' = l := by sorry
+
+-- AXIOM_2
+theorem axiom_2 (l l' : Line) : ∃ p : Point, p.on l ∧ p.on l' := by sorry
+
+-- AXIOM_3
+theorem axiom_3 : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l : Line, p.on l ∧ p'.on l ∧ p''.on l) := by sorry
+
+-- AXIOM_4
+theorem axiom_4 (l : Line) : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    p.on l ∧ p'.on l ∧ p''.on l := by sorry
+
+-- projl
+def projl (x : ℝ³) (h : x ≠ 0) : Line := mk_line (mk_dir x h)
+
+-- projp
+def projp (x : ℝ³) (h : x ≠ 0) : Point := mk_point (projl x h)
+
+-- PROJL_TOTAL
+theorem projl_total (l : Line) : ∃ x : ℝ³, x ≠ 0 ∧ l = projl x (by sorry) := by sorry
+
+-- homol
+noncomputable def homol (l : Line) : ℝ³ := dest_dir (dest_line l)
+
+-- ON_HOMOL
+theorem on_homol (p : Point) (l : Line) : p.on l ↔ Orthogonal (homol p) (homol l) := by sorry
+
+-- EQ_HOMOL
+theorem eq_homol (l l' : Line) : l = l' ↔ parallel (homol l) (homol l') := by sorry
+
+-- EQ_HOMOP
+theorem eq_homop (p p' : Point) : p = p' ↔ parallel (homol p) (homol p') := by sorry
+
+-- PARALLEL_PROJL_HOMOL
+theorem parallel_projl_homol (x : ℝ³) (h : x ≠ 0) : parallel x (homol (projl x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP
+theorem parallel_projp_homop (x : ℝ³) (h : x ≠ 0) : parallel x (homol (projp x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP_EXPLICIT
+theorem parallel_projp_homop_explicit (x : ℝ³) (h : x ≠ 0) : 
+    ∃ a, a ≠ 0 ∧ homol (projp x h) = a • x := by sorry
+
+-- bracket
+def bracket (p₁ p₂ p₃ : Point) : ℝ := 
+    Matrix.det ![homol p₁, homol p₂, homol p₃]
+
+-- COLLINEAR
+def Collinear (s : Set Point) : Prop := ∃ l : Line, ∀ p ∈ s, p.on l
+
+-- COLLINEAR_SINGLETON
+theorem collinear_singleton (a : Point) : Collinear {a} := by sorry
+
+-- COLLINEAR_PAIR
+theorem collinear_pair (a b : Point) : Collinear {a, b} := by sorry
+
+-- COLLINEAR_TRIPLE
+theorem collinear_triple (a b c : Point) : 
+    Collinear {a, b, c} ↔ ∃ l : Line, a.on l ∧ b.on l ∧ c.on l := by sorry
+
+-- COLLINEAR_BRACKET
+theorem collinear_bracket (p₁ p₂ p₃ : Point) : 
+    Collinear {p₁, p₂, p₃} ↔ bracket p₁ p₂ p₃ = 0 := by sorry
+
+-- BRACKET_SWAP, BRACKET_SHUFFLE
+theorem bracket_swap (x y z : Point) : 
+    bracket x y z = -bracket x z y := by sorry
+
+theorem bracket_shuffle (x y z : Point) : 
+    bracket x y z = bracket y z x ∧ 
+    bracket x y z = bracket z x y := by sorry
+
+-- DESARGUES_DIRECT
+theorem desargues_direct 
+    (A' B S A P C R Q C' B' : Point)
+    (h1 : ¬Collinear {A', B, S})
+    (h2 : ¬Collinear {A, P, C})
+    (h3 : ¬Collinear {A, P, R})
+    (h4 : ¬Collinear {A, C, B})
+    (h5 : ¬Collinear {A, B, R})
+    (h6 : ¬Collinear {C', P, A'})
+    (h7 : ¬Collinear {C', P, B})
+    (h8 : ¬Collinear {C', P, B'})
+    (h9 : ¬Collinear {C', A', S})
+    (h10 : ¬Collinear {C', A', B'})
+    (h11 : ¬Collinear {P, C, A'})
+    (h12 : ¬Collinear {P, C, B})
+    (h13 : ¬Collinear {P, A', R})
+    (h14 : ¬Collinear {P, B, Q})
+    (h15 : ¬Collinear {P, Q, B'})
+    (h16 : ¬Collinear {C, B, S})
+    (h17 : ¬Collinear {A', Q, B'})
+    (h18 : Collinear {P, A', A})
+    (h19 : Collinear {P, B, B'})
+    (h20 : Collinear {P, C', C})
+    (h21 : Collinear {B, C, Q})
+    (h22 : Collinear {B', C', Q})
+    (h23 : Collinear {A, R, C})
+    (h24 : Collinear {A', C', R})
+    (h25 : Collinear {B, S, A})
+    (h26 : Collinear {A', S, B'}) :
+    Collinear {Q, S, R} := by sorry
+[{'severity': 'error', 'pos': {'line': 3, 'column': 6}, 'endPos': {'line': 3, 'column': 8}, 'data': "unexpected token 'ℝ'; expected identifier"}, {'severity': 'error', 'pos': {'line': 6, 'column': 30}, 'endPos': {'line': 6, 'column': 31}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 9, 'column': 23}, 'endPos': {'line': 9, 'column': 24}, 'data': "unexpected token '³'; expected '//', '|' or '}'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 17}, 'endPos': {'line': 10, 'column': 18}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 11, 'column': 32}, 'endPos': {'line': 11, 'column': 33}, 'data': "unexpected token '³'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 12, 'column': 44}, 'endPos': {'line': 12, 'column': 94}, 'data': 'function expected at\n  mk_dir\nterm has type\n  ?m.82'}, {'severity': 'error', 'pos': {'line': 13, 'column': 43}, 'endPos': {'line': 13, 'column': 53}, 'data': 'function expected at\n  mk_dir\nterm has type\n  ?m.82'}, {'severity': 'error', 'pos': {'line': 16, 'column': 40}, 'endPos': {'line': 16, 'column': 50}, 'data': "unknown identifier 'Orthogonal'"}, {'severity': 'error', 'pos': {'line': 20, 'column': 39}, 'endPos': {'line': 20, 'column': 51}, 'data': 'application type mismatch\n  Prod (dest_dir x)\nargument\n  dest_dir x\nhas type\n  ℝ : Type\nbut is expected to have type\n  Type ?u.2697 : Type (?u.2697 + 1)'}, {'severity': 'error', 'pos': {'line': 24, 'column': 32}, 'endPos': {'line': 24, 'column': 33}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'warning', 'pos': {'line': 29, 'column': 8}, 'endPos': {'line': 29, 'column': 19}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 30, 'column': 8}, 'endPos': {'line': 30, 'column': 18}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 31, 'column': 43}, 'endPos': {'line': 31, 'column': 44}, 'data': 'application type mismatch\n  or x\nargument\n  x\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Bool : Type'}, {'severity': 'error', 'pos': {'line': 31, 'column': 48}, 'endPos': {'line': 31, 'column': 49}, 'data': 'application type mismatch\n  And y\nargument\n  y\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Prop : Type'}, {'severity': 'error', 'pos': {'line': 34, 'column': 43}, 'endPos': {'line': 34, 'column': 49}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'error', 'pos': {'line': 34, 'column': 56}, 'endPos': {'line': 34, 'column': 62}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'warning', 'pos': {'line': 37, 'column': 8}, 'endPos': {'line': 37, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 41, 'column': 8}, 'endPos': {'line': 41, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 44, 'column': 8}, 'endPos': {'line': 44, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 49, 'column': 8}, 'endPos': {'line': 49, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 52, 'column': 8}, 'endPos': {'line': 52, 'column': 26}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 57, 'column': 8}, 'endPos': {'line': 57, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 62, 'column': 22}, 'endPos': {'line': 62, 'column': 28}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'error', 'pos': {'line': 63, 'column': 38}, 'endPos': {'line': 63, 'column': 53}, 'data': 'type mismatch\n  ⟦d⟧\nhas type\n  Quotient ?m.27595 : Type\nbut is expected to have type\n  Line : Sort ?u.27589'}, {'severity': 'error', 'pos': {'line': 64, 'column': 67}, 'endPos': {'line': 64, 'column': 68}, 'data': 'application type mismatch\n  Quotient.out l\nargument\n  l\nhas type\n  Line : Sort ?u.28423\nbut is expected to have type\n  Quotient ?m.28449 : Type'}, {'severity': 'error', 'pos': {'line': 66, 'column': 66}, 'endPos': {'line': 66, 'column': 75}, 'data': 'type mismatch\n  mk_line x\nhas type\n  Line : Sort ?u.30368\nbut is expected to have type\n  Quotient (?m.32328 x) : Type'}, {'severity': 'error', 'pos': {'line': 70, 'column': 4}, 'endPos': {'line': 70, 'column': 5}, 'data': 'application type mismatch\n  or x\nargument\n  x\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Bool : Type'}, {'severity': 'error', 'pos': {'line': 70, 'column': 9}, 'endPos': {'line': 70, 'column': 11}, 'data': "application type mismatch\n  And x'\nargument\n  x'\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Prop : Type"}, {'severity': 'error', 'pos': {'line': 74, 'column': 48}, 'endPos': {'line': 74, 'column': 49}, 'data': 'application type mismatch\n  Quotient.lift (fun x => x _|_ d) ⋯ l\nargument\n  l\nhas type\n  Line : Sort ?u.36539\nbut is expected to have type\n  Quotient ?m.36569 : Type'}, {'severity': 'error', 'pos': {'line': 75, 'column': 27}, 'endPos': {'line': 75, 'column': 83}, 'data': 'type mismatch\n  fun l d => Quotient.lift (fun x => x _|_ d) ⋯ l\nhas type\n  Quotient ?m.39969 → ↑Direction → Prop : Type\nbut is expected to have type\n  Line → ↑Direction → Prop : Sort (max 1 ?u.39949)'}, {'severity': 'warning', 'pos': {'line': 78, 'column': 8}, 'endPos': {'line': 78, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 82, 'column': 24}, 'endPos': {'line': 82, 'column': 25}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.48891\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 82, 'column': 37}, 'endPos': {'line': 82, 'column': 38}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.48891\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 82, 'column': 62}, 'endPos': {'line': 82, 'column': 64}, 'data': "application type mismatch\n  perpl p l'\nargument\n  l'\nhas type\n  Line : Sort ?u.57701\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 82, 'column': 76}, 'endPos': {'line': 82, 'column': 78}, 'data': "application type mismatch\n  perpl p' l'\nargument\n  l'\nhas type\n  Line : Sort ?u.57701\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 85, 'column': 57}, 'endPos': {'line': 85, 'column': 58}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.66426\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 85, 'column': 69}, 'endPos': {'line': 85, 'column': 71}, 'data': "application type mismatch\n  perpl p l'\nargument\n  l'\nhas type\n  Line : Sort ?u.66429\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 90, 'column': 26}, 'endPos': {'line': 90, 'column': 27}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.83959\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 90, 'column': 39}, 'endPos': {'line': 90, 'column': 40}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.83959\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 90, 'column': 53}, 'endPos': {'line': 90, 'column': 54}, 'data': "application type mismatch\n  perpl p'' l\nargument\n  l\nhas type\n  Line : Sort ?u.83959\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 95, 'column': 12}, 'endPos': {'line': 95, 'column': 13}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.92784\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 95, 'column': 25}, 'endPos': {'line': 95, 'column': 26}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.92784\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 95, 'column': 39}, 'endPos': {'line': 95, 'column': 40}, 'data': "application type mismatch\n  perpl p'' l\nargument\n  l\nhas type\n  Line : Sort ?u.92784\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 101, 'column': 84}, 'endPos': {'line': 101, 'column': 87}, 'data': "tactic 'rfl' failed, the left-hand side\n  mk_point ∘ dest_point = id\nis not definitionally equal to the right-hand side\n  dest_point ∘ mk_point = id\n⊢ mk_point ∘ dest_point = id ∧ dest_point ∘ mk_point = id"}, {'severity': 'error', 'pos': {'line': 104, 'column': 3}, 'endPos': {'line': 104, 'column': 6}, 'data': "unexpected token 'on'; expected identifier"}, {'severity': 'error', 'pos': {'line': 104, 'column': 61}, 'endPos': {'line': 104, 'column': 62}, 'data': 'application type mismatch\n  perpl (dest_point p) l\nargument\n  l\nhas type\n  Line : Sort ?u.101784\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 109, 'column': 35}, 'endPos': {'line': 109, 'column': 37}, 'data': "unexpected token '↔'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 112, 'column': 57}, 'endPos': {'line': 112, 'column': 59}, 'data': "unexpected token 'on'; expected ']'"}, {'severity': 'error', 'pos': {'line': 116, 'column': 16}, 'endPos': {'line': 116, 'column': 22}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 116, 'column': 16}, 'endPos': {'line': 116, 'column': 22}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 116, 'column': 25}, 'endPos': {'line': 116, 'column': 32}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 116, 'column': 25}, 'endPos': {'line': 116, 'column': 32}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 116, 'column': 48}, 'endPos': {'line': 116, 'column': 55}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 116, 'column': 48}, 'endPos': {'line': 116, 'column': 55}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 116, 'column': 58}, 'endPos': {'line': 116, 'column': 66}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 116, 'column': 58}, 'endPos': {'line': 116, 'column': 66}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 119, 'column': 45}, 'endPos': {'line': 119, 'column': 51}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 119, 'column': 45}, 'endPos': {'line': 119, 'column': 51}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 119, 'column': 54}, 'endPos': {'line': 119, 'column': 61}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 119, 'column': 54}, 'endPos': {'line': 119, 'column': 61}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 124, 'column': 18}, 'endPos': {'line': 124, 'column': 24}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 124, 'column': 18}, 'endPos': {'line': 124, 'column': 24}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 124, 'column': 27}, 'endPos': {'line': 124, 'column': 34}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 124, 'column': 27}, 'endPos': {'line': 124, 'column': 34}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 124, 'column': 37}, 'endPos': {'line': 124, 'column': 45}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p''\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 124, 'column': 37}, 'endPos': {'line': 124, 'column': 45}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p''\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 129, 'column': 4}, 'endPos': {'line': 129, 'column': 10}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 129, 'column': 4}, 'endPos': {'line': 129, 'column': 10}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 129, 'column': 13}, 'endPos': {'line': 129, 'column': 20}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p'\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 129, 'column': 13}, 'endPos': {'line': 129, 'column': 20}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p'\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 129, 'column': 23}, 'endPos': {'line': 129, 'column': 31}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p''\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 129, 'column': 23}, 'endPos': {'line': 129, 'column': 31}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p''\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 132, 'column': 16}, 'endPos': {'line': 132, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 135, 'column': 16}, 'endPos': {'line': 135, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 138, 'column': 40}, 'endPos': {'line': 138, 'column': 41}, 'data': "unexpected token '³'; expected ','"}, {'severity': 'error', 'pos': {'line': 141, 'column': 38}, 'endPos': {'line': 141, 'column': 39}, 'data': "unexpected token '³'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 144, 'column': 42}, 'endPos': {'line': 144, 'column': 48}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  p\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 144, 'column': 42}, 'endPos': {'line': 144, 'column': 48}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  p\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 144, 'column': 51}, 'endPos': {'line': 144, 'column': 81}, 'data': 'function expected at\n  Orthogonal\nterm has type\n  ?m.111160'}, {'severity': 'error', 'pos': {'line': 147, 'column': 42}, 'endPos': {'line': 147, 'column': 71}, 'data': 'function expected at\n  parallel\nterm has type\n  ?m.111630'}, {'severity': 'error', 'pos': {'line': 150, 'column': 43}, 'endPos': {'line': 150, 'column': 72}, 'data': 'function expected at\n  parallel\nterm has type\n  ?m.112120'}, {'severity': 'error', 'pos': {'line': 153, 'column': 35}, 'endPos': {'line': 153, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 156, 'column': 35}, 'endPos': {'line': 156, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 159, 'column': 44}, 'endPos': {'line': 159, 'column': 45}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 164, 'column': 27}, 'endPos': {'line': 164, 'column': 35}, 'data': 'application type mismatch\n  Matrix.vecCons (homol p₂)\nargument\n  homol p₂\nhas type\n  ℝ : Type\nbut is expected to have type\n  Fin (Nat.succ ?m.114039).succ → ℝ : Type'}, {'severity': 'error', 'pos': {'line': 164, 'column': 37}, 'endPos': {'line': 164, 'column': 45}, 'data': 'application type mismatch\n  Matrix.vecCons (homol p₃)\nargument\n  homol p₃\nhas type\n  ℝ : Type\nbut is expected to have type\n  Fin (Nat.succ ?m.117244).succ.succ → ℝ : Type'}, {'severity': 'error', 'pos': {'line': 164, 'column': 17}, 'endPos': {'line': 164, 'column': 25}, 'data': 'application type mismatch\n  Matrix.vecCons (homol p₁)\nargument\n  homol p₁\nhas type\n  ℝ : Type\nbut is expected to have type\n  Fin (Nat.succ 0).succ.succ → ℝ : Type'}, {'severity': 'error', 'pos': {'line': 167, 'column': 4}, 'endPos': {'line': 167, 'column': 13}, 'data': "'Collinear' has already been declared"}, {'severity': 'error', 'pos': {'line': 170, 'column': 8}, 'endPos': {'line': 170, 'column': 27}, 'data': "'collinear_singleton' has already been declared"}, {'severity': 'error', 'pos': {'line': 173, 'column': 8}, 'endPos': {'line': 173, 'column': 22}, 'data': "'collinear_pair' has already been declared"}, {'severity': 'error', 'pos': {'line': 177, 'column': 14}, 'endPos': {'line': 177, 'column': 23}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.120989)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.120989'}, {'severity': 'error', 'pos': {'line': 177, 'column': 38}, 'endPos': {'line': 177, 'column': 44}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  a\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 177, 'column': 38}, 'endPos': {'line': 177, 'column': 44}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  a\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 177, 'column': 47}, 'endPos': {'line': 177, 'column': 53}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  b\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 177, 'column': 47}, 'endPos': {'line': 177, 'column': 53}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  b\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 177, 'column': 56}, 'endPos': {'line': 177, 'column': 62}, 'data': "invalid field 'on', the environment does not contain 'Point.on'\n  c\nhas type\n  Point"}, {'severity': 'error', 'pos': {'line': 177, 'column': 56}, 'endPos': {'line': 177, 'column': 62}, 'data': "invalid field 'on', the environment does not contain 'Line.on'\n  c\nhas type\n  Line"}, {'severity': 'error', 'pos': {'line': 181, 'column': 14}, 'endPos': {'line': 181, 'column': 26}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.122072)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.122072'}, {'severity': 'warning', 'pos': {'line': 184, 'column': 8}, 'endPos': {'line': 184, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 187, 'column': 8}, 'endPos': {'line': 187, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 194, 'column': 21}, 'endPos': {'line': 194, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.123273)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.123273'}, {'severity': 'error', 'pos': {'line': 195, 'column': 21}, 'endPos': {'line': 195, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.124334)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.124334'}, {'severity': 'error', 'pos': {'line': 196, 'column': 21}, 'endPos': {'line': 196, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.125395)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.125395'}, {'severity': 'error', 'pos': {'line': 197, 'column': 21}, 'endPos': {'line': 197, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.126456)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.126456'}, {'severity': 'error', 'pos': {'line': 198, 'column': 21}, 'endPos': {'line': 198, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.127517)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.127517'}, {'severity': 'error', 'pos': {'line': 199, 'column': 21}, 'endPos': {'line': 199, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.128578)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.128578'}, {'severity': 'error', 'pos': {'line': 200, 'column': 21}, 'endPos': {'line': 200, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.129639)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.129639'}, {'severity': 'error', 'pos': {'line': 201, 'column': 21}, 'endPos': {'line': 201, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.130700)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.130700'}, {'severity': 'error', 'pos': {'line': 202, 'column': 21}, 'endPos': {'line': 202, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.131761)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.131761'}, {'severity': 'error', 'pos': {'line': 203, 'column': 22}, 'endPos': {'line': 203, 'column': 34}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.132822)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.132822'}, {'severity': 'error', 'pos': {'line': 204, 'column': 22}, 'endPos': {'line': 204, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.133883)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.133883'}, {'severity': 'error', 'pos': {'line': 205, 'column': 22}, 'endPos': {'line': 205, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.134944)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.134944'}, {'severity': 'error', 'pos': {'line': 206, 'column': 22}, 'endPos': {'line': 206, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.136005)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.136005'}, {'severity': 'error', 'pos': {'line': 207, 'column': 22}, 'endPos': {'line': 207, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.137066)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.137066'}, {'severity': 'error', 'pos': {'line': 208, 'column': 22}, 'endPos': {'line': 208, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.138127)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.138127'}, {'severity': 'error', 'pos': {'line': 209, 'column': 22}, 'endPos': {'line': 209, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.139188)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.139188'}, {'severity': 'error', 'pos': {'line': 210, 'column': 22}, 'endPos': {'line': 210, 'column': 33}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.140249)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.140249'}, {'severity': 'error', 'pos': {'line': 211, 'column': 21}, 'endPos': {'line': 211, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.141310)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.141310'}, {'severity': 'error', 'pos': {'line': 212, 'column': 21}, 'endPos': {'line': 212, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.142371)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.142371'}, {'severity': 'error', 'pos': {'line': 213, 'column': 21}, 'endPos': {'line': 213, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.143432)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.143432'}, {'severity': 'error', 'pos': {'line': 214, 'column': 21}, 'endPos': {'line': 214, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.144493)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.144493'}, {'severity': 'error', 'pos': {'line': 215, 'column': 21}, 'endPos': {'line': 215, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.145554)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.145554'}, {'severity': 'error', 'pos': {'line': 216, 'column': 21}, 'endPos': {'line': 216, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.146615)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.146615'}, {'severity': 'error', 'pos': {'line': 217, 'column': 21}, 'endPos': {'line': 217, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.147676)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.147676'}, {'severity': 'error', 'pos': {'line': 218, 'column': 21}, 'endPos': {'line': 218, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.148737)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.148737'}, {'severity': 'error', 'pos': {'line': 219, 'column': 21}, 'endPos': {'line': 219, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.149798)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.149798'}, {'severity': 'error', 'pos': {'line': 220, 'column': 14}, 'endPos': {'line': 220, 'column': 23}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.150859)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.150859'}]
+---
+Refinement 3 errors:
+import Mathlib
+import Mathlib.LinearAlgebra.CrossProduct
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.Matrix.Notation
+import Mathlib.Tactic
+
+-- Define 3D vectors
+abbrev ℝ³ := Fin 3 → ℝ
+
+-- Define vector operations
+def Orthogonal (u v : ℝ³) : Prop := u • v = 0
+def parallel (u v : ℝ³) : Prop := u × v = 0
+
+-- NORMAL_EXISTS
+theorem normal_exists (u v : ℝ³) : ∃ w : ℝ³, w ≠ 0 ∧ Orthogonal u w ∧ Orthogonal v w := by sorry
+
+-- direction_tybij
+def Direction := {x : ℝ³ // x ≠ 0}
+def mk_dir (x : ℝ³) (h : x ≠ 0) : Direction := ⟨x, h⟩
+def dest_dir (d : Direction) : ℝ³ := d.val
+theorem direction_tybij : (∀ x : Direction, mk_dir (dest_dir x) (by cases x; exact x.property) = x) ∧ 
+                         (∀ x h, dest_dir (mk_dir x h) = x) := by sorry
+
+-- perpdir
+def perpdir (x y : Direction) : Prop := Orthogonal (dest_dir x) (dest_dir y)
+infix:50 " _|_ " => perpdir
+
+-- pardir
+def pardir (x y : Direction) : Prop := parallel (dest_dir x) (dest_dir y)
+infix:50 " || " => pardir
+
+-- DIRECTION_CLAUSES
+theorem direction_clauses (P : ℝ³ → Prop) : 
+    (∀ x : Direction, P (dest_dir x)) ↔ (∀ x, x ≠ 0 → P x) ∧
+    (∃ x : Direction, P (dest_dir x)) ↔ (∃ x, x ≠ 0 ∧ P x) := by sorry
+
+-- PARDIR_REFL, PARDIR_SYM, PARDIR_TRANS
+theorem pardir_refl (x : Direction) : x || x := by sorry
+theorem pardir_sym (x y : Direction) : x || y ↔ y || x := by sorry
+theorem pardir_trans (x y z : Direction) : x || y ∧ y || z → x || z := by sorry
+
+-- PARDIR_EQUIV
+theorem pardir_equiv (x y : Direction) : ((· || ·) x = (· || ·) y) ↔ x || y := by sorry
+
+-- DIRECTION_AXIOM_1
+theorem direction_axiom_1 (p p' : Direction) : ¬(p || p') → 
+    ∃ l : Direction, p _|_ l ∧ p' _|_ l ∧ ∀ l' : Direction, p _|_ l' ∧ p' _|_ l' → l' || l := by sorry
+
+-- DIRECTION_AXIOM_2
+theorem direction_axiom_2 (l l' : Direction) : ∃ p : Direction, p _|_ l ∧ p _|_ l' := by sorry
+
+-- DIRECTION_AXIOM_3
+theorem direction_axiom_3 : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    ¬(∃ l : Direction, p _|_ l ∧ p' _|_ l ∧ p'' _|_ l) := by sorry
+
+-- DIRECTION_AXIOM_4_WEAK
+theorem direction_axiom_4_weak (l : Direction) : ∃ p p' : Direction, ¬(p || p') ∧ p _|_ l ∧ p' _|_ l := by sorry
+
+-- ORTHOGONAL_COMBINE
+theorem orthogonal_combine (x a b : Direction) : 
+    a _|_ x ∧ b _|_ x ∧ ¬(a || b) → 
+    ∃ c : Direction, c _|_ x ∧ ¬(a || c) ∧ ¬(b || c) := by sorry
+
+-- DIRECTION_AXIOM_4
+theorem direction_axiom_4 (l : Direction) : ∃ p p' p'' : Direction, 
+    ¬(p || p') ∧ ¬(p' || p'') ∧ ¬(p || p'') ∧ 
+    p _|_ l ∧ p' _|_ l ∧ p'' _|_ l := by sorry
+
+-- line_tybij
+def Line := Quotient (· || ·)
+def mk_line (d : Direction) : Line := Quotient.mk _ d
+noncomputable def dest_line (l : Line) : Direction := Quotient.out l
+theorem line_tybij : (∀ x, mk_line (dest_line x) = x) ∧ 
+                    (∀ x, Quotient.mk _ (dest_line (mk_line x)) = mk_line x) := by sorry
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef (x y x' y' : Direction) : 
+    x || x' ∧ y || y' → (x _|_ y ↔ x' _|_ y') := by sorry
+
+-- perpl, perpl_th
+noncomputable def perpl (l : Line) (d : Direction) : Prop := 
+    Quotient.lift (fun x => x _|_ d) (by sorry) l
+theorem perpl_th : perpl = fun l d => Quotient.lift (fun x => x _|_ d) (by sorry) l := rfl
+
+-- line_lift_thm
+theorem line_lift_thm {P : Line → Prop} (h : ∀ d, P (mk_line d)) : ∀ l, P l := by sorry
+
+-- LINE_AXIOM_1
+theorem line_axiom_1 (p p' : Line) : p ≠ p' → 
+    ∃ l : Line, perpl p l ∧ perpl p' l ∧ ∀ l' : Line, perpl p l' ∧ perpl p' l' → l' = l := by sorry
+
+-- LINE_AXIOM_2
+theorem line_axiom_2 (l l' : Line) : ∃ p : Line, perpl p l ∧ perpl p l' := by sorry
+
+-- LINE_AXIOM_3
+theorem line_axiom_3 : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l : Line, perpl p l ∧ perpl p' l ∧ perpl p'' l) := by sorry
+
+-- LINE_AXIOM_4
+theorem line_axiom_4 (l : Line) : ∃ p p' p'' : Line, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    perpl p l ∧ perpl p' l ∧ perpl p'' l := by sorry
+
+-- point_tybij
+def Point := Line
+def mk_point (l : Line) : Point := l
+def dest_point (p : Point) : Line := p
+theorem point_tybij : mk_point ∘ dest_point = id ∧ dest_point ∘ mk_point = id := by rfl
+
+-- on
+def on (p : Point) (l : Line) : Prop := perpl (dest_point p) l
+
+-- POINT_CLAUSES
+theorem point_clauses (P : Line → Prop) : 
+    (∀ p : Point, P (dest_point p)) ↔ (∀ l, P l) ∧
+    (∃ p : Point, P (dest_point p)) ↔ (∃ l, P l) := by sorry
+
+-- POINT_TAC
+macro "point_tac" th:term : tactic => `(tactic| rewrite [on, point_clauses]; exact $th)
+
+-- AXIOM_1
+theorem axiom_1 (p p' : Point) : p ≠ p' → 
+    ∃ l : Line, on p l ∧ on p' l ∧ ∀ l' : Line, on p l' ∧ on p' l' → l' = l := by sorry
+
+-- AXIOM_2
+theorem axiom_2 (l l' : Line) : ∃ p : Point, on p l ∧ on p l' := by sorry
+
+-- AXIOM_3
+theorem axiom_3 : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    ¬(∃ l : Line, on p l ∧ on p' l ∧ on p'' l) := by sorry
+
+-- AXIOM_4
+theorem axiom_4 (l : Line) : ∃ p p' p'' : Point, 
+    p ≠ p' ∧ p' ≠ p'' ∧ p ≠ p'' ∧ 
+    on p l ∧ on p' l ∧ on p'' l := by sorry
+
+-- projl
+def projl (x : ℝ³) (h : x ≠ 0) : Line := mk_line (mk_dir x h)
+
+-- projp
+def projp (x : ℝ³) (h : x ≠ 0) : Point := mk_point (projl x h)
+
+-- PROJL_TOTAL
+theorem projl_total (l : Line) : ∃ x : ℝ³, x ≠ 0 ∧ l = projl x (by sorry) := by sorry
+
+-- homol
+noncomputable def homol (l : Line) : ℝ³ := dest_dir (dest_line l)
+
+-- ON_HOMOL
+theorem on_homol (p : Point) (l : Line) : on p l ↔ Orthogonal (homol p) (homol l) := by sorry
+
+-- EQ_HOMOL
+theorem eq_homol (l l' : Line) : l = l' ↔ parallel (homol l) (homol l') := by sorry
+
+-- EQ_HOMOP
+theorem eq_homop (p p' : Point) : p = p' ↔ parallel (homol p) (homol p') := by sorry
+
+-- PARALLEL_PROJL_HOMOL
+theorem parallel_projl_homol (x : ℝ³) (h : x ≠ 0) : parallel x (homol (projl x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP
+theorem parallel_projp_homop (x : ℝ³) (h : x ≠ 0) : parallel x (homol (projp x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP_EXPLICIT
+theorem parallel_projp_homop_explicit (x : ℝ³) (h : x ≠ 0) : 
+    ∃ a, a ≠ 0 ∧ homol (projp x h) = a • x := by sorry
+
+-- bracket
+def bracket (p₁ p₂ p₃ : Point) : ℝ := 
+    Matrix.det !![homol p₁, homol p₂, homol p₃]
+
+-- COLLINEAR
+def Collinear (s : Set Point) : Prop := ∃ l : Line, ∀ p ∈ s, on p l
+
+-- COLLINEAR_SINGLETON
+theorem collinear_singleton (a : Point) : Collinear {a} := by sorry
+
+-- COLLINEAR_PAIR
+theorem collinear_pair (a b : Point) : Collinear {a, b} := by sorry
+
+-- COLLINEAR_TRIPLE
+theorem collinear_triple (a b c : Point) : 
+    Collinear {a, b, c} ↔ ∃ l : Line, on a l ∧ on b l ∧ on c l := by sorry
+
+-- COLLINEAR_BRACKET
+theorem collinear_bracket (p₁ p₂ p₃ : Point) : 
+    Collinear {p₁, p₂, p₃} ↔ bracket p₁ p₂ p₃ = 0 := by sorry
+
+-- BRACKET_SWAP, BRACKET_SHUFFLE
+theorem bracket_swap (x y z : Point) : 
+    bracket x y z = -bracket x z y := by sorry
+
+theorem bracket_shuffle (x y z : Point) : 
+    bracket x y z = bracket y z x ∧ 
+    bracket x y z = bracket z x y := by sorry
+
+-- DESARGUES_DIRECT
+theorem desargues_direct 
+    (A' B S A P C R Q C' B' : Point)
+    (h1 : ¬Collinear {A', B, S})
+    (h2 : ¬Collinear {A, P, C})
+    (h3 : ¬Collinear {A, P, R})
+    (h4 : ¬Collinear {A, C, B})
+    (h5 : ¬Collinear {A, B, R})
+    (h6 : ¬Collinear {C', P, A'})
+    (h7 : ¬Collinear {C', P, B})
+    (h8 : ¬Collinear {C', P, B'})
+    (h9 : ¬Collinear {C', A', S})
+    (h10 : ¬Collinear {C', A', B'})
+    (h11 : ¬Collinear {P, C, A'})
+    (h12 : ¬Collinear {P, C, B})
+    (h13 : ¬Collinear {P, A', R})
+    (h14 : ¬Collinear {P, B, Q})
+    (h15 : ¬Collinear {P, Q, B'})
+    (h16 : ¬Collinear {C, B, S})
+    (h17 : ¬Collinear {A', Q, B'})
+    (h18 : Collinear {P, A', A})
+    (h19 : Collinear {P, B, B'})
+    (h20 : Collinear {P, C', C})
+    (h21 : Collinear {B, C, Q})
+    (h22 : Collinear {B', C', Q})
+    (h23 : Collinear {A, R, C})
+    (h24 : Collinear {A', C', R})
+    (h25 : Collinear {B, S, A})
+    (h26 : Collinear {A', S, B'}) :
+    Collinear {Q, S, R} := by sorry
+[{'severity': 'error', 'pos': {'line': 3, 'column': 6}, 'endPos': {'line': 3, 'column': 8}, 'data': "unexpected token 'ℝ'; expected identifier"}, {'severity': 'error', 'pos': {'line': 6, 'column': 23}, 'endPos': {'line': 6, 'column': 24}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 7, 'column': 21}, 'endPos': {'line': 7, 'column': 22}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 30}, 'endPos': {'line': 10, 'column': 31}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 13, 'column': 23}, 'endPos': {'line': 13, 'column': 24}, 'data': "unexpected token '³'; expected '//', '|' or '}'"}, {'severity': 'error', 'pos': {'line': 14, 'column': 17}, 'endPos': {'line': 14, 'column': 18}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 15, 'column': 32}, 'endPos': {'line': 15, 'column': 33}, 'data': "unexpected token '³'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 16, 'column': 44}, 'endPos': {'line': 16, 'column': 94}, 'data': 'function expected at\n  mk_dir\nterm has type\n  ?m.106'}, {'severity': 'error', 'pos': {'line': 17, 'column': 43}, 'endPos': {'line': 17, 'column': 53}, 'data': 'function expected at\n  mk_dir\nterm has type\n  ?m.106'}, {'severity': 'error', 'pos': {'line': 20, 'column': 40}, 'endPos': {'line': 20, 'column': 50}, 'data': "unknown identifier 'Orthogonal'"}, {'severity': 'error', 'pos': {'line': 24, 'column': 39}, 'endPos': {'line': 24, 'column': 47}, 'data': "unknown identifier 'parallel'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 32}, 'endPos': {'line': 28, 'column': 33}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'warning', 'pos': {'line': 33, 'column': 8}, 'endPos': {'line': 33, 'column': 19}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 34, 'column': 8}, 'endPos': {'line': 34, 'column': 18}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 35, 'column': 43}, 'endPos': {'line': 35, 'column': 44}, 'data': 'application type mismatch\n  or x\nargument\n  x\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Bool : Type'}, {'severity': 'error', 'pos': {'line': 35, 'column': 48}, 'endPos': {'line': 35, 'column': 49}, 'data': 'application type mismatch\n  And y\nargument\n  y\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Prop : Type'}, {'severity': 'error', 'pos': {'line': 38, 'column': 43}, 'endPos': {'line': 38, 'column': 49}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'error', 'pos': {'line': 38, 'column': 56}, 'endPos': {'line': 38, 'column': 62}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'warning', 'pos': {'line': 41, 'column': 8}, 'endPos': {'line': 41, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 45, 'column': 8}, 'endPos': {'line': 45, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 48, 'column': 8}, 'endPos': {'line': 48, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 53, 'column': 8}, 'endPos': {'line': 53, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 56, 'column': 8}, 'endPos': {'line': 56, 'column': 26}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 61, 'column': 8}, 'endPos': {'line': 61, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 66, 'column': 22}, 'endPos': {'line': 66, 'column': 28}, 'data': 'ambiguous, possible interpretations \n  x1✝ || x2✝ : Prop\n  \n  x1✝ || x2✝ : Bool'}, {'severity': 'error', 'pos': {'line': 67, 'column': 38}, 'endPos': {'line': 67, 'column': 53}, 'data': 'type mismatch\n  ⟦d⟧\nhas type\n  Quotient ?m.25109 : Type\nbut is expected to have type\n  Line : Sort ?u.25103'}, {'severity': 'error', 'pos': {'line': 68, 'column': 67}, 'endPos': {'line': 68, 'column': 68}, 'data': 'application type mismatch\n  Quotient.out l\nargument\n  l\nhas type\n  Line : Sort ?u.25937\nbut is expected to have type\n  Quotient ?m.25963 : Type'}, {'severity': 'error', 'pos': {'line': 70, 'column': 66}, 'endPos': {'line': 70, 'column': 75}, 'data': 'type mismatch\n  mk_line x\nhas type\n  Line : Sort ?u.27882\nbut is expected to have type\n  Quotient (?m.29842 x) : Type'}, {'severity': 'error', 'pos': {'line': 74, 'column': 4}, 'endPos': {'line': 74, 'column': 5}, 'data': 'application type mismatch\n  or x\nargument\n  x\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Bool : Type'}, {'severity': 'error', 'pos': {'line': 74, 'column': 9}, 'endPos': {'line': 74, 'column': 11}, 'data': "application type mismatch\n  And x'\nargument\n  x'\nhas type\n  ↑Direction : Type\nbut is expected to have type\n  Prop : Type"}, {'severity': 'error', 'pos': {'line': 78, 'column': 48}, 'endPos': {'line': 78, 'column': 49}, 'data': 'application type mismatch\n  Quotient.lift (fun x => x _|_ d) ⋯ l\nargument\n  l\nhas type\n  Line : Sort ?u.34053\nbut is expected to have type\n  Quotient ?m.34083 : Type'}, {'severity': 'error', 'pos': {'line': 79, 'column': 27}, 'endPos': {'line': 79, 'column': 83}, 'data': 'type mismatch\n  fun l d => Quotient.lift (fun x => x _|_ d) ⋯ l\nhas type\n  Quotient ?m.37483 → ↑Direction → Prop : Type\nbut is expected to have type\n  Line → ↑Direction → Prop : Sort (max 1 ?u.37463)'}, {'severity': 'warning', 'pos': {'line': 82, 'column': 8}, 'endPos': {'line': 82, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 86, 'column': 24}, 'endPos': {'line': 86, 'column': 25}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.46405\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 86, 'column': 37}, 'endPos': {'line': 86, 'column': 38}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.46405\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 86, 'column': 62}, 'endPos': {'line': 86, 'column': 64}, 'data': "application type mismatch\n  perpl p l'\nargument\n  l'\nhas type\n  Line : Sort ?u.55215\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 86, 'column': 76}, 'endPos': {'line': 86, 'column': 78}, 'data': "application type mismatch\n  perpl p' l'\nargument\n  l'\nhas type\n  Line : Sort ?u.55215\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 89, 'column': 57}, 'endPos': {'line': 89, 'column': 58}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.63940\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 89, 'column': 69}, 'endPos': {'line': 89, 'column': 71}, 'data': "application type mismatch\n  perpl p l'\nargument\n  l'\nhas type\n  Line : Sort ?u.63943\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 94, 'column': 26}, 'endPos': {'line': 94, 'column': 27}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.81473\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 94, 'column': 39}, 'endPos': {'line': 94, 'column': 40}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.81473\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 94, 'column': 53}, 'endPos': {'line': 94, 'column': 54}, 'data': "application type mismatch\n  perpl p'' l\nargument\n  l\nhas type\n  Line : Sort ?u.81473\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 99, 'column': 12}, 'endPos': {'line': 99, 'column': 13}, 'data': 'application type mismatch\n  perpl p l\nargument\n  l\nhas type\n  Line : Sort ?u.90298\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 99, 'column': 25}, 'endPos': {'line': 99, 'column': 26}, 'data': "application type mismatch\n  perpl p' l\nargument\n  l\nhas type\n  Line : Sort ?u.90298\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 99, 'column': 39}, 'endPos': {'line': 99, 'column': 40}, 'data': "application type mismatch\n  perpl p'' l\nargument\n  l\nhas type\n  Line : Sort ?u.90298\nbut is expected to have type\n  ↑Direction : Type"}, {'severity': 'error', 'pos': {'line': 105, 'column': 84}, 'endPos': {'line': 105, 'column': 87}, 'data': "tactic 'rfl' failed, the left-hand side\n  mk_point ∘ dest_point = id\nis not definitionally equal to the right-hand side\n  dest_point ∘ mk_point = id\n⊢ mk_point ∘ dest_point = id ∧ dest_point ∘ mk_point = id"}, {'severity': 'error', 'pos': {'line': 108, 'column': 3}, 'endPos': {'line': 108, 'column': 6}, 'data': "unexpected token 'on'; expected identifier"}, {'severity': 'error', 'pos': {'line': 108, 'column': 61}, 'endPos': {'line': 108, 'column': 62}, 'data': 'application type mismatch\n  perpl (dest_point p) l\nargument\n  l\nhas type\n  Line : Sort ?u.99298\nbut is expected to have type\n  ↑Direction : Type'}, {'severity': 'error', 'pos': {'line': 113, 'column': 35}, 'endPos': {'line': 113, 'column': 37}, 'data': "unexpected token '↔'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 116, 'column': 57}, 'endPos': {'line': 116, 'column': 59}, 'data': "unexpected token 'on'; expected ']'"}, {'severity': 'error', 'pos': {'line': 120, 'column': 15}, 'endPos': {'line': 120, 'column': 18}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 123, 'column': 44}, 'endPos': {'line': 123, 'column': 47}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 128, 'column': 17}, 'endPos': {'line': 128, 'column': 20}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 132, 'column': 33}, 'endPos': {'line': 133, 'column': 6}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 136, 'column': 16}, 'endPos': {'line': 136, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 139, 'column': 16}, 'endPos': {'line': 139, 'column': 17}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 142, 'column': 40}, 'endPos': {'line': 142, 'column': 41}, 'data': "unexpected token '³'; expected ','"}, {'severity': 'error', 'pos': {'line': 145, 'column': 38}, 'endPos': {'line': 145, 'column': 39}, 'data': "unexpected token '³'; expected ':=', 'where' or '|'"}, {'severity': 'error', 'pos': {'line': 148, 'column': 41}, 'endPos': {'line': 148, 'column': 44}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 151, 'column': 42}, 'endPos': {'line': 151, 'column': 71}, 'data': 'function expected at\n  parallel\nterm has type\n  ?m.108664'}, {'severity': 'error', 'pos': {'line': 154, 'column': 43}, 'endPos': {'line': 154, 'column': 72}, 'data': 'function expected at\n  parallel\nterm has type\n  ?m.109154'}, {'severity': 'error', 'pos': {'line': 157, 'column': 35}, 'endPos': {'line': 157, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 160, 'column': 35}, 'endPos': {'line': 160, 'column': 36}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 163, 'column': 44}, 'endPos': {'line': 163, 'column': 45}, 'data': "unexpected token '³'; expected ')'"}, {'severity': 'error', 'pos': {'line': 168, 'column': 4}, 'endPos': {'line': 168, 'column': 47}, 'data': 'typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.109647'}, {'severity': 'error', 'pos': {'line': 171, 'column': 60}, 'endPos': {'line': 171, 'column': 63}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 174, 'column': 8}, 'endPos': {'line': 174, 'column': 27}, 'data': "'collinear_singleton' has already been declared"}, {'severity': 'error', 'pos': {'line': 177, 'column': 8}, 'endPos': {'line': 177, 'column': 22}, 'data': "'collinear_pair' has already been declared"}, {'severity': 'error', 'pos': {'line': 181, 'column': 37}, 'endPos': {'line': 181, 'column': 40}, 'data': "unexpected token 'on'; expected term"}, {'severity': 'error', 'pos': {'line': 185, 'column': 14}, 'endPos': {'line': 185, 'column': 26}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.114545)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.114545'}, {'severity': 'warning', 'pos': {'line': 188, 'column': 8}, 'endPos': {'line': 188, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 191, 'column': 8}, 'endPos': {'line': 191, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 198, 'column': 21}, 'endPos': {'line': 198, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.115746)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.115746'}, {'severity': 'error', 'pos': {'line': 199, 'column': 21}, 'endPos': {'line': 199, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.116807)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.116807'}, {'severity': 'error', 'pos': {'line': 200, 'column': 21}, 'endPos': {'line': 200, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.117868)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.117868'}, {'severity': 'error', 'pos': {'line': 201, 'column': 21}, 'endPos': {'line': 201, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.118929)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.118929'}, {'severity': 'error', 'pos': {'line': 202, 'column': 21}, 'endPos': {'line': 202, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.119990)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.119990'}, {'severity': 'error', 'pos': {'line': 203, 'column': 21}, 'endPos': {'line': 203, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.121051)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.121051'}, {'severity': 'error', 'pos': {'line': 204, 'column': 21}, 'endPos': {'line': 204, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.122112)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.122112'}, {'severity': 'error', 'pos': {'line': 205, 'column': 21}, 'endPos': {'line': 205, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.123173)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.123173'}, {'severity': 'error', 'pos': {'line': 206, 'column': 21}, 'endPos': {'line': 206, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.124234)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.124234'}, {'severity': 'error', 'pos': {'line': 207, 'column': 22}, 'endPos': {'line': 207, 'column': 34}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.125295)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.125295'}, {'severity': 'error', 'pos': {'line': 208, 'column': 22}, 'endPos': {'line': 208, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.126356)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.126356'}, {'severity': 'error', 'pos': {'line': 209, 'column': 22}, 'endPos': {'line': 209, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.127417)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.127417'}, {'severity': 'error', 'pos': {'line': 210, 'column': 22}, 'endPos': {'line': 210, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.128478)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.128478'}, {'severity': 'error', 'pos': {'line': 211, 'column': 22}, 'endPos': {'line': 211, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.129539)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.129539'}, {'severity': 'error', 'pos': {'line': 212, 'column': 22}, 'endPos': {'line': 212, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.130600)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.130600'}, {'severity': 'error', 'pos': {'line': 213, 'column': 22}, 'endPos': {'line': 213, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.131661)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.131661'}, {'severity': 'error', 'pos': {'line': 214, 'column': 22}, 'endPos': {'line': 214, 'column': 33}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.132722)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.132722'}, {'severity': 'error', 'pos': {'line': 215, 'column': 21}, 'endPos': {'line': 215, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.133783)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.133783'}, {'severity': 'error', 'pos': {'line': 216, 'column': 21}, 'endPos': {'line': 216, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.134844)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.134844'}, {'severity': 'error', 'pos': {'line': 217, 'column': 21}, 'endPos': {'line': 217, 'column': 31}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.135905)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.135905'}, {'severity': 'error', 'pos': {'line': 218, 'column': 21}, 'endPos': {'line': 218, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.136966)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.136966'}, {'severity': 'error', 'pos': {'line': 219, 'column': 21}, 'endPos': {'line': 219, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.138027)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.138027'}, {'severity': 'error', 'pos': {'line': 220, 'column': 21}, 'endPos': {'line': 220, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.139088)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.139088'}, {'severity': 'error', 'pos': {'line': 221, 'column': 21}, 'endPos': {'line': 221, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.140149)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.140149'}, {'severity': 'error', 'pos': {'line': 222, 'column': 21}, 'endPos': {'line': 222, 'column': 30}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.141210)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.141210'}, {'severity': 'error', 'pos': {'line': 223, 'column': 21}, 'endPos': {'line': 223, 'column': 32}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.142271)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.142271'}, {'severity': 'error', 'pos': {'line': 224, 'column': 14}, 'endPos': {'line': 224, 'column': 23}, 'data': 'overloaded, errors \n  failed to synthesize\n    Singleton Point (Type ?u.143332)\n  Additional diagnostic information may be available using the `set_option diagnostics true` command.\n  \n  invalid {...} notation, expected type is not of the form (C ...)\n    Type ?u.143332'}]
+---

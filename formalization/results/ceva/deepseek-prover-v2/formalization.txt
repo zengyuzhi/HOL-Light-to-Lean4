@@ -1,0 +1,72 @@
+import Mathlib
+open Topology Filter Real Complex TopologicalSpace Finset
+open scoped BigOperators
+
+variable {α : Type*} [NormedAddCommGroup α] [NormedSpace ℝ α] [InnerProductSpace ℝ α]
+
+theorem translation {F : Type*} [AddCommGroup F] [Module ℝ F] {W : Subspace ℝ F} {f : F →ₗ[ℝ] F} {h₁ : ∀ x : F, f x - x ∈ W} {h₂ : F} (h₃ : f h₂ = h₂) : f = LinearMap.id := by
+  have h₄ : ∀ x : F, f x = x := by
+    intro x
+    have h₅ := h₁ x
+    have h₆ := h₁ (x + h₂)
+    have h₇ := h₁ (-x)
+    have h₈ := h₁ 0
+    have h₉ := h₁ (f x)
+    have h₁₀ := h₁ (f x - x)
+    simp [LinearMap.map_add, LinearMap.map_sub, LinearMap.map_neg, LinearMap.map_zero, sub_eq_add_neg, add_assoc,
+      add_left_comm, add_comm] at h₅ h₆ h₇ h₈ h₉ h₁₀
+    -- Simplify the expressions using the given conditions and properties of linear maps.
+    -- Use the fact that f(h₂) = h₂ to solve for f(x).
+    -- Use the properties of the subspace W to derive that f(x) - x must be in W.
+    -- Combine the results to show that f(x) = x for all x.
+    <;>
+    (try simp_all [Submodule.mem_carrier, Submodule.mem_carrier, Submodule.mem_carrier, Submodule.mem_carrier])
+    <;>
+    (try norm_num) at *
+    <;>
+    (try ring_nf at *)
+    <;>
+    (try aesop)
+    <;>
+    (try
+      simp_all [Submodule.mem_carrier, Submodule.mem_carrier, Submodule.mem_carrier, Submodule.mem_carrier]
+      <;> norm_num at *
+      <;> ring_nf at *
+      <;> aesop
+    )
+    <;>
+    (try
+      linarith
+    )
+    <;>
+    (try
+      nlinarith
+    )
+    <;>
+    (try
+      nlinarith
+    )
+    <;>
+    (try
+      nlinarith
+    )
+    <;>
+    (try
+      nlinarith
+    )
+    <;>
+    (try
+      nlinarith
+    )
+    <;>
+    (try
+      nlinarith
+    )
+  -- Use the fact that f(x) = x for all x to show that f is the identity map.
+  have h₅ : f = LinearMap.id := by
+    apply LinearMap.ext
+    intro x
+    rw [h₄ x]
+    <;> simp [LinearMap.id_apply]
+  exact h₅
+

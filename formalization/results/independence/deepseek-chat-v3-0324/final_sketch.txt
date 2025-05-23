@@ -1,0 +1,192 @@
+import Mathlib
+import Aesop
+
+open Real
+
+noncomputable section
+
+variable {N : Type*} [NormedAddCommGroup N] [InnerProductSpace ℝ N]
+
+def between (x a b : N) : Prop := ∃ t : ℝ, t ∈ Set.Icc 0 1 ∧ x = a + t • (b - a)
+
+-- ddist
+noncomputable def ddist (x y : N) : ℝ :=
+  if ‖x‖ < 1 ∧ ‖y‖ < 1 then
+    (1 - inner x y)^2 / ((1 - ‖x‖^2) * (1 - ‖y‖^2)) - 1
+  else
+    dist x y
+
+-- DDIST_INCREASES_ONLINE
+theorem ddist_increases_online {a b x : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (hx : ‖x‖ < 1)
+    (hbetween : between x a b) (hne : x ≠ b) : ddist a x < ddist a b := by sorry
+
+-- DDIST_REFL
+theorem ddist_refl (x : N) : ddist x x = 0 := by sorry
+
+-- DDIST_SYM
+theorem ddist_sym (x y : N) : ddist x y = ddist y x := by sorry
+
+-- DDIST_POS_LT
+theorem ddist_pos_lt {x y : N} (hne : x ≠ y) : 0 < ddist x y := by sorry
+
+-- DDIST_POS_LE
+theorem ddist_pos_le (x y : N) : 0 ≤ ddist x y := by sorry
+
+-- DDIST_EQ_0
+theorem ddist_eq_zero {x y : N} : ddist x y = 0 ↔ x = y := by sorry
+
+-- BETWEEN_COLLINEAR_DDIST_EQ
+theorem between_collinear_ddist_eq {a b x : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (hx : ‖x‖ < 1) :
+    between x a b ↔ Collinear ℝ ({a, x, b} : Set N) ∧ ddist x a ≤ ddist a b ∧ ddist x b ≤ ddist a b := by sorry
+
+-- HYPERBOLIC_MIDPOINT
+theorem hyperbolic_midpoint {a b : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) :
+    ∃ x, between x a b ∧ ddist x a = ddist x b := by sorry
+
+-- DDIST_EQ_ORIGIN
+theorem ddist_eq_origin {x y : N} (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) :
+    ddist 0 x = ddist 0 y ↔ ‖x‖ = ‖y‖ := by sorry
+
+-- DDIST_CONGRUENT_TRIPLES_0
+theorem ddist_congruent_triples_0 {a b a' b' : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (ha' : ‖a'‖ < 1) (hb' : ‖b'‖ < 1) :
+    (ddist 0 a = ddist 0 a' ∧ ddist a b = ddist a' b' ∧ ddist b 0 = ddist b' 0) ↔
+    (dist 0 a = dist 0 a' ∧ dist a b = dist a' b' ∧ dist b 0 = dist b' 0) := by sorry
+
+-- kleinify
+noncomputable def kleinify (z : ℂ) : ℂ := (2 / (1 + ‖z‖^2)) • z
+
+-- poincarify
+noncomputable def poincarify (x : ℂ) : ℂ := ((1 - Real.sqrt (1 - ‖x‖^2)) / ‖x‖^2) • x
+
+-- KLEINIFY_0, POINCARIFY_0
+theorem kleinify_zero : kleinify 0 = 0 := by sorry
+theorem poincarify_zero : poincarify 0 = 0 := by sorry
+
+-- NORM_KLEINIFY
+theorem norm_kleinify (z : ℂ) : ‖kleinify z‖ = (2 * ‖z‖) / (1 + ‖z‖^2) := by sorry
+
+-- NORM_KLEINIFY_LT
+theorem norm_kleinify_lt (z : ℂ) : ‖kleinify z‖ < 1 ↔ ‖z‖ ≠ 1 := by sorry
+
+-- NORM_POINCARIFY_LT
+theorem norm_poincarify_lt {x : ℂ} (hx : ‖x‖ < 1) : ‖poincarify x‖ < 1 := by sorry
+
+-- KLEINIFY_POINCARIFY
+theorem kleinify_poincarify {x : ℂ} (hx : ‖x‖ < 1) : kleinify (poincarify x) = x := by sorry
+
+-- POINCARIFY_KLEINIFY
+theorem poincarify_kleinify {x : ℂ} (hx : ‖x‖ < 1) : poincarify (kleinify x) = x := by sorry
+
+noncomputable def moebius_function (t : ℝ) (w z : ℂ) : ℂ := 
+  (Complex.exp (Complex.I * Complex.ofReal t)) * (z - w) / (1 - (starRingEnd ℂ w) * z)
+
+-- DDIST_KLEINIFY
+theorem ddist_kleinify {w z : ℂ} (hw : ‖w‖ ≠ 1) (hz : ‖z‖ ≠ 1) :
+    ddist (kleinify w) (kleinify z) = 4 * (1/2 + ‖w - z‖^2 / ((1 - ‖w‖^2) * (1 - ‖z‖^2)))^2 - 1 := by sorry
+
+-- DDIST_KLEINIFY_EQ
+theorem ddist_kleinify_eq {w z w' z' : ℂ} (hw : ‖w‖ ≠ 1) (hz : ‖z‖ ≠ 1) (hw' : ‖w'‖ ≠ 1) (hz' : ‖z'‖ ≠ 1)
+    (h : ‖w - z‖^2 * (1 - ‖w'‖^2) * (1 - ‖z'‖^2) = ‖w' - z'‖^2 * (1 - ‖w‖^2) * (1 - ‖z‖^2)) :
+    ddist (kleinify w) (kleinify z) = ddist (kleinify w') (kleinify z') := by sorry
+
+-- NORM_KLEINIFY_MOEBIUS_LT
+theorem norm_kleinify_moebius_lt {w x : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) :
+    ‖kleinify (moebius_function 0 w x)‖ < 1 := by sorry
+
+-- DDIST_KLEINIFY_MOEBIUS
+theorem ddist_kleinify_moebius {w x y : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) :
+    ddist (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y)) = ddist (kleinify x) (kleinify y) := by sorry
+
+-- COLLINEAR_KLEINIFY_MOEBIUS
+theorem collinear_kleinify_moebius {w x y z : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) (hz : ‖z‖ < 1) :
+    Collinear ℝ ({kleinify (moebius_function 0 w x), kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z)} : Set ℂ) ↔
+    Collinear ℝ ({kleinify x, kleinify y, kleinify z} : Set ℂ) := by sorry
+
+-- BETWEEN_KLEINIFY_MOEBIUS
+theorem between_kleinify_moebius {w x y z : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) (hz : ‖z‖ < 1) :
+    between (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y)) (kleinify (moebius_function 0 w z)) ↔
+    between (kleinify x) (kleinify y) (kleinify z) := by sorry
+
+-- hyperbolic_isometry
+structure HyperbolicIsometry (f : ℂ → ℂ) : Prop where
+  maps_to_unit : ∀ x, ‖x‖ < 1 → ‖f x‖ < 1
+  preserves_dist : ∀ x y, ‖x‖ < 1 → ‖y‖ < 1 → ddist (f x) (f y) = ddist x y
+  preserves_between : ∀ x y z, ‖x‖ < 1 → ‖y‖ < 1 → ‖z‖ < 1 → 
+    (between (f x) (f y) (f z) ↔ between x y z)
+
+-- HYPERBOLIC_TRANSLATION
+theorem hyperbolic_translation {w : ℂ} (hw : ‖w‖ < 1) :
+    ∃ f g : ℂ → ℂ, HyperbolicIsometry f ∧ HyperbolicIsometry g ∧
+    f w = 0 ∧ g 0 = w ∧ (∀ x, ‖x‖ < 1 → f (g x) = x) ∧ (∀ x, ‖x‖ < 1 → g (f x) = x) := by sorry
+
+-- plane_tybij
+structure Plane where
+  point : ℂ
+  norm_lt_one : ‖point‖ < 1
+
+-- pbetween
+def pbetween (y : Plane) (x z : Plane) : Prop :=
+  between y.point x.point z.point
+
+-- pdist
+noncomputable def pdist (x y : Plane) : ℝ := ddist x.point y.point
+
+-- DEST_PLANE_NORM_LT
+theorem dest_plane_norm_lt (x : Plane) : ‖x.point‖ < 1 := x.norm_lt_one
+
+-- DEST_PLANE_EQ
+theorem dest_plane_eq {x y : Plane} : x.point = y.point ↔ x = y := by sorry
+
+-- FORALL_DEST_PLANE
+theorem forall_dest_plane {P : ℂ → Prop} : (∀ x : Plane, P x.point) ↔ ∀ x, ‖x‖ < 1 → P x := by sorry
+
+-- EXISTS_DEST_PLANE
+theorem exists_dest_plane {P : ℂ → Prop} : (∃ x : Plane, P x.point) ↔ ∃ x, ‖x‖ < 1 ∧ P x := by sorry
+
+-- TARSKI_AXIOM_1_NONEUCLIDEAN
+theorem tarski_axiom_1_noneuclidean (a b : Plane) : pdist a b = pdist b a := by sorry
+
+-- TARSKI_AXIOM_2_NONEUCLIDEAN
+theorem tarski_axiom_2_noneuclidean (a b p q r s : Plane) 
+    (h1 : pdist a b = pdist p q) (h2 : pdist a b = pdist r s) : pdist p q = pdist r s := by sorry
+
+-- TARSKI_AXIOM_3_NONEUCLIDEAN
+theorem tarski_axiom_3_noneuclidean (a b c : Plane) (h : pdist a b = pdist c c) : a = b := by sorry
+
+-- TARSKI_AXIOM_4_NONEUCLIDEAN
+theorem tarski_axiom_4_noneuclidean (a q b c : Plane) :
+    ∃ x, pbetween x a q ∧ pdist a x = pdist b c := by sorry
+
+-- TARSKI_AXIOM_5_NONEUCLIDEAN
+theorem tarski_axiom_5_noneuclidean (a b c a' b' c' x x' : Plane) 
+    (hne : a ≠ b) (h1 : pdist a b = pdist a' b') (h2 : pdist a c = pdist a' c')
+    (h3 : pdist b c = pdist b' c') (h4 : pbetween b a x) (h5 : pbetween b' a' x')
+    (h6 : pdist b x = pdist b' x') : pdist c x = pdist c' x' := by sorry
+
+-- TARSKI_AXIOM_6_NONEUCLIDEAN
+theorem tarski_axiom_6_noneuclidean (a b : Plane) (h : pbetween b a a) : a = b := by sorry
+
+-- TARSKI_AXIOM_7_NONEUCLIDEAN
+theorem tarski_axiom_7_noneuclidean (a b c p q : Plane) 
+    (h1 : pbetween p a c) (h2 : pbetween q b c) :
+    ∃ x, pbetween x p b ∧ pbetween x q a := by sorry
+
+-- TARSKI_AXIOM_8_NONEUCLIDEAN
+theorem tarski_axiom_8_noneuclidean :
+    ∃ a b c : Plane, ¬pbetween b a c ∧ ¬pbetween c b a ∧ ¬pbetween a c b := by sorry
+
+-- TARSKI_AXIOM_9_NONEUCLIDEAN
+theorem tarski_axiom_9_noneuclidean (p q a b c : Plane) 
+    (hne : p ≠ q) (h1 : pdist a p = pdist a q) (h2 : pdist b p = pdist b q)
+    (h3 : pdist c p = pdist c q) : pbetween b a c ∨ pbetween c b a ∨ pbetween a c b := by sorry
+
+-- NOT_TARSKI_AXIOM_10_NONEUCLIDEAN
+theorem not_tarski_axiom_10_noneuclidean :
+    ¬∀ a b c d t : Plane, pbetween d a t → pbetween d b c → a ≠ d →
+    ∃ x y, pbetween b a x ∧ pbetween c a y ∧ pbetween t x y := by sorry
+
+-- TARSKI_AXIOM_11_NONEUCLIDEAN
+theorem tarski_axiom_11_noneuclidean (X Y : Set Plane) 
+    (hneX : X.Nonempty) (hneY : Y.Nonempty) 
+    (h : ∃ a, ∀ x y, x ∈ X → y ∈ Y → pbetween x a y) :
+    ∃ b, ∀ x y, x ∈ X → y ∈ Y → pbetween b x y := by sorry

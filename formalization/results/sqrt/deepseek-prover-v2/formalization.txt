@@ -1,0 +1,86 @@
+import Mathlib
+import Aesop
+
+open Real
+
+theorem irrational_sqrt_nonsquare (n : ℕ) :
+    (∃ p q : ℤ, q ≠ 0 ∧ sqrt n = p / q) → ∃ m : ℕ, n = m ^ 2 := by
+  intro h
+  -- Extract integers p and q from the rational condition
+  rcases h with ⟨p, q, hq, hsqrt⟩
+  -- Square both sides of the equation to eliminate the square root
+  have h₁ : (Real.sqrt n : ℝ) = p / q := by simpa [hq] using hsqrt
+  have h₂ : (Real.sqrt n : ℝ) ^ 2 = (p / q : ℝ) ^ 2 := by rw [h₁]
+  -- Simplify the squared equation
+  have h₃ : (n : ℝ) = (p : ℝ) ^ 2 / (q : ℝ) ^ 2 := by
+    have h₄ : (Real.sqrt n : ℝ) ^ 2 = (n : ℝ) := by
+      rw [Real.sq_sqrt (by positivity)]
+    rw [h₄] at h₂
+    field_simp [hq] at h₂ ⊢
+    <;> nlinarith
+  -- Clear denominators to get an integer equation
+  have h₄ : (q : ℤ) ^ 2 * n = p ^ 2 := by
+    field_simp [hq, mul_comm] at h₃
+    <;> norm_cast at h₃ ⊢
+    <;> ring_nf at h₃ ⊢
+    <;> nlinarith
+  -- Use the fact that the square root of n is rational to conclude n is a perfect square
+  have h₅ : ∃ m : ℕ, n = m ^ 2 := by sorry
+  -- Since we already have that n is a perfect square, we can conclude
+  obtain ⟨m, hm⟩ := h₅
+  exact ⟨m, by simp_all⟩
+
+theorem irrational_sqrt_prime (p : ℕ) (hp : p.Prime) :
+    ¬ ∃ p' q : ℤ, q ≠ 0 ∧ sqrt p = p' / q := by
+  intro h
+  have h₁ : ∃ m : ℕ, p = m ^ 2 := by
+    have h₂ : ∃ p' q : ℤ, q ≠ 0 ∧ sqrt p = p' / q := h
+    -- Use `IRRATIONAL_SQRT_NONSQUARE` to get the perfect square condition
+    have h₃ : ∃ m : ℕ, p = m ^ 2 := by
+      apply irrational_sqrt_nonsquare
+      obtain ⟨p', q, hq, hpq⟩ := h₂
+      refine' ⟨p', q, hq, _⟩
+      exact hpq
+    exact h₃
+  obtain ⟨m, hm⟩ := h₁
+  have h₂ : p = m ^ 2 := hm
+  have h₃ : p.Prime := hp
+  have h₄ : m = 1 := by
+    -- Since `p` is prime and equals `m^2`, `m` must be 1
+    have h₅ : m ∣ p := by
+      rw [h₂]
+      exact ⟨m, by ring⟩
+    have h₆ : m = 1 ∨ m = p := by
+      have h₇ := Nat.Prime.eq_one_or_self_of_dvd hp m h₅
+      aesop
+    cases h₆ with
+    | inl h₆ =>
+      exact h₆
+    | inr h₆ =>
+      have h₇ : p ≥ 2 := Nat.Prime.two_le hp
+      have h₈ : m = p := h₆
+      have h₉ : p = p ^ 2 := by
+        rw [h₈] at h₂
+        nlinarith
+      have h₁₀ : p = 1 := by
+        nlinarith
+      have h₁₁ : p ≥ 2 := Nat.Prime.two_le hp
+      linarith
+  have h₅ : p = 1 := by
+    rw [h₄] at h₂
+    nlinarith
+  have h₆ : p ≥ 2 := Nat.Prime.two_le hp
+  linarith
+
+theorem irrational_sqrt_2 :
+    ¬ ∃ p q : ℤ, q ≠ 0 ∧ sqrt 2 = p / q := by
+  -- Use the theorem `irrational_sqrt_prime` with the fact that 2 is a prime number.
+  have h : Nat.Prime 2 := Nat.prime_two
+  have h₁ : ¬ ∃ p q : ℤ, q ≠ 0 ∧ sqrt 2 = p / q := by
+    intro h₂
+    -- Apply the `irrational_sqrt_prime` theorem to deduce a contradiction.
+    have h₃ := irrational_sqrt_prime 2 h
+    simp_all [Nat.Prime]
+  -- The result follows from the `irrational_sqrt_prime` theorem and the fact that 2 is prime.
+  exact h₁
+

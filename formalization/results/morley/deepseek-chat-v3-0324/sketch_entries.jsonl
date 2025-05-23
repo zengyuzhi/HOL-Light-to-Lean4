@@ -1,0 +1,23 @@
+{'rotate2d': 'def rotate2d (θ : ℝ) (z : ℂ) : ℂ := Complex.exp (θ * I) * z'}
+{'reflect2d': 'def reflect2d (t : ℝ) (z : ℂ) : ℂ :=\n  rotate2d t z * (conjAe (rotate2d (-t) z))'}
+{'REFLECT2D_COMPOSE': 'theorem reflect2d_compose (s t : ℝ) :\n    reflect2d s ∘ reflect2d t = fun z ↦ rotate2d (2 * (s - t)) z := by sorry'}
+{'rotate_about': 'def rotate_about (a : ℂ) (t : ℝ) (x : ℂ) : ℂ := a + rotate2d t (x - a)'}
+{'reflect_across': 'noncomputable def reflect_across (a b : ℂ) (x : ℂ) : ℂ := a + reflect2d (Complex.arg (b - a)) (x - a)'}
+{'REFLECT_ACROSS_COMPOSE': 'theorem reflect_across_compose (a b c : ℂ) (h₁ : b ≠ a) (h₂ : c ≠ a) :\n  reflect_across a b ∘ reflect_across a c = rotate_about a (2 * Complex.arg ((b - a) / (c - a))) := by sorry'}
+{'REFLECT_ACROSS_COMPOSE_ANGLE': 'theorem reflect_across_compose_angle (a b c : ℂ)\n    (h₁ : b ≠ a) (h₂ : c ≠ a)\n    (h₃ : 0 ≤ ((c - a) / (b - a)).im) :\n    reflect_across a c ∘ reflect_across a b =\n      rotate_about a (2 * Complex.arg ((c - a) / (b - a))):= by\n  sorry'}
+{'REFLECT_ACROSS_COMPOSE_INVOLUTION': 'theorem reflect_across_compose_involution (a b : ℂ) (h : a ≠ b) :\n  reflect_across a b ∘ reflect_across a b = id := by sorry'}
+{'REFLECT_ACROSS_SYM': 'theorem reflect_across_sym (a b : ℂ) : reflect_across a b = reflect_across b a := by sorry'}
+{'ITER_ROTATE_ABOUT': 'theorem iter_rotate_about (n : ℕ) (a : ℂ) (t : ℝ) :\n  (rotate_about a t)^[n] = rotate_about a (n * t) := by sorry'}
+{'REAL_LE_IM_DIV_CYCLIC': 'theorem real_le_im_div_cyclic (a b c : ℂ) :\n  (0 ≤ ((c - a) / (b - a)).im) ↔ (0 ≤ ((a - b) / (c - b)).im) := by sorry'}
+{'ROTATE_ABOUT_INVERT': 'theorem rotate_about_invert (a : ℂ) (t : ℝ) (w z : ℂ) :\n  rotate_about a t w = z ↔ w = rotate_about a (-t) z := by sorry'}
+{'ROTATE_EQ_REFLECT_LEMMA': 'theorem rotate_eq_reflect_lemma (a b z : ℂ) (t : ℝ)\n  (h₁ : b ≠ a) (h₂ : 2 * Complex.arg ((b - a) / (z - a)) = t) :\n  rotate_about a t z = reflect_across a b z := by sorry'}
+{'ROTATE_EQ_REFLECT_PI_LEMMA': 'theorem rotate_eq_reflect_pi_lemma (a b z : ℂ) (t : ℝ)\n  (h₁ : b ≠ a) (h₂ : 2 * Complex.arg ((b - a) / (z - a)) = 4 * Real.pi + t) :\n  rotate_about a t z = reflect_across a b z := by sorry'}
+{'EQUILATERAL_TRIANGLE_ALGEBRAIC': 'theorem equilateral_triangle_algebraic (A B C j : ℂ)\n  (h₁ : j^3 = 1) (h₂ : j ≠ 1)\n  (h₃ : A + j * B + j^2 * C = 0) :\n  dist A B = dist B C ∧ dist C A = dist B C := by sorry'}
+{'AFFINE_GROUP_ITER_3': 'theorem affine_group_iter_3 (a b : ℂ) :\n  (fun z ↦ a * z + b)^[3] = (fun z ↦ a^3 * z + b * (1 + a + a^2)) := by sorry'}
+{'AFFINE_GROUP_COMPOSE': 'theorem affine_group_compose (a₁ b₁ a₂ b₂ : ℂ) :\n  (fun z ↦ a₁ * z + b₁) ∘ (fun z ↦ a₂ * z + b₂) =\n  (fun z ↦ (a₁ * a₂) * z + (b₁ + a₁ * b₂)) := by sorry'}
+{'AFFINE_GROUP_I': 'theorem affine_group_I :\n  id = (fun (z:ℂ) ↦ 1 * z + 0) := by sorry'}
+{'AFFINE_GROUP_EQ': "theorem affine_group_eq (a b a' b' : ℂ) :\n  (fun z ↦ a * z + b) = (fun z ↦ a' * z + b') ↔ a = a' ∧ b = b' := by sorry"}
+{'AFFINE_GROUP_ROTATE_ABOUT': 'theorem affine_group_rotate_about (a : ℂ) (t : ℝ) :\n  rotate_about a t = (fun z ↦ Complex.exp (t * I) * z + (1 - Complex.exp (t * I)) * a) := by sorry'}
+{'ALGEBRAIC_LEMMA': 'theorem algebraic_lemma (a₁ a₂ a₃ b₁ b₂ b₃ A B C : ℂ)\n  (h₁ : (fun z ↦ a₃ * z + b₃) ((fun z ↦ a₁ * z + b₁) B) = B)\n  (h₂ : (fun z ↦ a₁ * z + b₁) ((fun z ↦ a₂ * z + b₂) C) = C)\n  (h₃ : (fun z ↦ a₂ * z + b₂) ((fun z ↦ a₃ * z + b₃) A) = A)\n  (h₄ : (fun z ↦ a₁ * z + b₁)^[3] ∘ (fun z ↦ a₂ * z + b₂)^[3] ∘ (fun z ↦ a₃ * z + b₃)^[3] = id)\n  (h₅ : a₁ * a₂ * a₃ ≠ 1)\n  (h₆ : a₁ * a₂ ≠ 1)\n  (h₇ : a₂ * a₃ ≠ 1)\n  (h₈ : a₃ * a₁ ≠ 1) :\n  (a₁ * a₂ * a₃)^3 = 1 ∧ a₁ * a₂ * a₃ ≠ 1 ∧\n  C + (a₁ * a₂ * a₃) * A + (a₁ * a₂ * a₃)^2 * B = 0 := by sorry'}
+{'angle': 'noncomputable def angle (a b c : ℂ) : ℝ :=\n  Complex.arg ((c - b) / (a - b))'}
+{'MORLEY': 'theorem morley (A B C P Q R : ℂ)\n  (h_noncol : ¬ Collinear ℂ ({A, B, C} : Set ℂ))\n  (h_conv : {P, Q, R} ⊆ convexHull ℝ ({A, B, C} : Set ℂ))\n  (h_angles₁ : angle A B R = angle A B C / 3)\n  (h_angles₂ : angle B A R = angle B A C / 3)\n  (h_angles₃ : angle B C P = angle B C A / 3)\n  (h_angles₄ : angle C B P = angle C B A / 3)\n  (h_angles₅ : angle C A Q = angle C A B / 3)\n  (h_angles₆ : angle A C Q = angle A C B / 3) :\n  dist R P = dist P Q ∧ dist Q R = dist P Q := by sorry'}

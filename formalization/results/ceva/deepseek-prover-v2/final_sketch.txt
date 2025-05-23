@@ -1,0 +1,96 @@
+import Mathlib
+open Topology Filter Real Complex TopologicalSpace Finset
+open scoped BigOperators
+
+variable {α : Type*} [NormedAddCommGroup α] [NormedSpace ℝ α] [InnerProductSpace ℝ α]
+
+/- Definitions needed for the theorems -/
+
+def between (x : α) (p : α × α) : Prop :=
+  ∃ u : ℝ, 0 ≤ u ∧ u ≤ 1 ∧ x = u • p.1 + (1 - u) • p.2
+
+def collinear (s : Set α) : Prop :=
+  ∃ (v : α) (w : α), ∀ x ∈ s, ∃ t : ℝ, x = v + t • (w - v)
+
+/- Theorems -/
+
+-- BETWEEN_THM
+theorem between_thm {x a b : α} :
+    between x (a, b) ↔ ∃ u, 0 ≤ u ∧ u ≤ 1 ∧ x = u • a + (1 - u) • b := by
+  -- Proof outline:
+  -- 1. Rewrite using convex hull characterization of betweenness
+  -- 2. Apply symmetry of convex hull for {a,b} = {b,a}
+  -- 3. Use alternate characterization of 2-point convex hull
+  -- 4. Simplify set membership and vector arithmetic
+  sorry
+
+-- NORM_CROSS
+theorem norm_cross {a b c d e f : α} :
+    ‖a‖ * ‖b‖ * ‖c‖ = ‖d‖ * ‖e‖ * ‖f‖ ↔ ‖a‖^2 * ‖b‖^2 * ‖c‖^2 = ‖d‖^2 * ‖e‖^2 * ‖f‖^2 := by
+  -- Proof outline:
+  -- 1. Prove lemma: ∀ x y ≥ 0, x^2 = y^2 ↔ x = y
+  -- 2. Rewrite norms using ‖v‖^2 = v.dot v
+  -- 3. Apply lemma to squared terms
+  -- 4. Use non-negativity of norms
+  sorry
+
+-- COLLINEAR
+theorem collinear_iff {a b c : α} :
+    collinear {a, b, c} ↔
+    ∃ u v w : ℝ, u • (b - a) = v • (c - b) := by
+  -- Proof outline:
+  -- 1. Handle degenerate case where a = b
+  -- 2. For general case:
+  --    - For (→): Express collinearity as vector proportionality
+  --    - For (←): Solve system of equations to show vector proportionality
+  -- 3. Use real arithmetic to establish equivalence
+  sorry
+
+-- CEVA_WEAK
+theorem ceva_weak {A B C X Y Z P : α}
+    (h₁ : ¬collinear {A, B, C})
+    (h₂ : between X (B, C)) (h₃ : between Y (A, C)) (h₄ : between Z (A, B))
+    (h₅ : between P (A, X)) (h₆ : between P (B, Y)) (h₇ : between P (C, Z)) :
+    dist B X * dist C Y * dist A Z = dist X C * dist Y A * dist Z B := by
+  -- Proof outline:
+  -- 1. Rewrite using between_thm to get parametric forms
+  -- 2. Substitute parametric expressions for all points
+  -- 3. Express distances via vector norms
+  -- 4. Simplify using norm_cross and collinear_iff
+  -- 5. Final real arithmetic verification
+  sorry
+
+-- CEVA
+theorem ceva {A B C X Y Z : α}
+    (h₁ : ¬collinear {A, B, C})
+    (h₂ : between X (B, C)) (h₃ : between Y (C, A)) (h₄ : between Z (A, B)) :
+    (dist B X / dist X C) * (dist C Y / dist Y A) * (dist A Z / dist Z B) = 1 ↔
+    ∃ P, between P (A, X) ∧ between P (B, Y) ∧ between P (C, Z) := by
+  -- Proof outline:
+  -- 1. Handle degenerate cases where any two vertices coincide
+  -- 2. Express X, Y, Z as convex combinations (using between_thm)
+  -- 3. Calculate distance ratios algebraically
+  -- 4. For (→): Solve system of equations to find P
+  -- 5. For (←): Verify distances from existence of P
+  -- 6. Extensive real arithmetic and vector simplification
+  sorry
+
+-- BETWEEN_SYM
+theorem between_sym {u v w : α} :
+    between v (u, w) ↔ between v (w, u) := by
+  -- Proof outline:
+  -- 1. Rewrite using between_thm
+  -- 2. For each direction, find counterpart parameter (1 - u)
+  -- 3. Verify parameter constraints and vector equality
+  sorry
+
+-- BETWEEN_METRICAL
+theorem between_metrical {u v w : α} :
+    between v (u, w) ↔ dist u v + dist v w = dist u w := by
+  -- Proof outline:
+  -- 1. Use symmetry to handle u ↔ w
+  -- 2. Rewrite using between_thm and vector expressions
+  -- 3. Use triangle equality condition for collinear points
+  -- 4. Handle degenerate case where u = v = w
+  -- 5. Construct parameter in general case using distance ratios
+  sorry

@@ -1,0 +1,68 @@
+```lean
+import Mathlib.Tactic
+
+/-!
+# Roots of Unity
+
+This file defines primitive roots of unity in a field and proves related theorems.
+-/
+
+open Complex
+
+variable {R : Type*} [CommRing R]
+         {A : Type*} [CommRing A] [Algebra R A]
+variable {K : Type*} [Field K] [Algebra R K]
+variable {n : ℕ} {ω : K}
+
+-- PRIM_ROOT
+def IsPrimitiveRoot (ω : K) (n : ℕ) : Prop :=
+  n > 0 ∧ ω ^ n = 1 ∧ ∀ k, 0 < k → k < n → ω ^ k ≠ 1
+
+-- PRIM_ROOT_ALT
+theorem isPrimitiveRoot_iff (hn : n > 0) (hω : ω ^ n = 1) :
+    IsPrimitiveRoot ω n ↔ ∀ k : ℕ, 0 < k → k < n → ω ^ k ≠ 1 := by sorry
+
+-- PRIM_ROOT_PRIME
+theorem isPrimitiveRoot_prime (p : ℕ) (hp : p.Prime) (hω : ω ≠ 1) (hωp : ω ^ p = 1) :
+    IsPrimitiveRoot ω p := by sorry
+
+-- PRIM_ROOT_NZ
+theorem isPrimitiveRoot_neZero {ω : K} {n : ℕ} (h : IsPrimitiveRoot ω n) : ω ≠ 0 := by sorry
+
+-- PRIM_ROOT_PRIME_POWER
+theorem isPrimitiveRoot_prime_power (p : ℕ) (hp : p.Prime) (k : ℕ) (hk : k > 0) 
+    (hω : IsPrimitiveRoot ω (p ^ (k - 1))) (hωp : ω ^ (p ^ (k - 1) * (p - 1)) ≠ 1) : 
+    IsPrimitiveRoot (ω ^ (p - 1)) (p ^ k) := by sorry
+
+-- ROOTS_UNITY_PRIME_FACTORIZATION
+theorem exists_primitiveRoot_prime_factors (n : ℕ) (hn : n > 0) :
+    ∃ ω : K, IsPrimitiveRoot ω n ↔ 
+      ∀ p k, p.Prime → k > 0 → p ^ k ∣ n → ∃ α : K, IsPrimitiveRoot α (p ^ k) := by sorry
+
+-- ROOTS_UNITY_PRIME_EQ_FIELD
+theorem primitiveRoot_prime_eq_of_field {p : ℕ} {K : Type*} [Field K] [Algebra R K] 
+    (hp : p.Prime) (hK : finiteField K) (hchar : ringChar K = 0) : 
+    ∃ ω : K, IsPrimitiveRoot ω p ↔ algebraClosure K = K := by sorry
+
+-- PRIM_ROOT_COMPLEX
+theorem exists_primitiveRoot_complex (n : ℕ) (hn : n > 0) :
+    ∃ ω : ℂ, IsPrimitiveRoot ω n := by sorry
+
+-- PRIM_ROOT_COMPLEX_EXPLICIT
+theorem primitiveRoot_complex_explicit (n : ℕ) (hn : n > 0) :
+    IsPrimitiveRoot (Complex.exp (2 * Real.pi * Complex.I / n)) n := by sorry
+
+-- PRIM_ROOT_MULT
+theorem primitiveRoot_mul {ω₁ ω₂ : K} {n₁ n₂ : ℕ} (h₁ : IsPrimitiveRoot ω₁ n₁) 
+    (h₂ : IsPrimitiveRoot ω₂ n₂) (hcoprime : Nat.Coprime n₁ n₂) :
+    IsPrimitiveRoot (ω₁ * ω₂) (n₁ * n₂) := by sorry
+
+-- PRIM_ROOT_POW
+theorem primitiveRoot_pow {ω : K} {n d : ℕ} (h : IsPrimitiveRoot ω n) (hd : Nat.Coprime d n) :
+    IsPrimitiveRoot (ω ^ d) n := by sorry
+
+-- CYCLOTOMIC_ROOTS
+theorem cyclotomic_roots (n : ℕ) (hn : n > 0) :
+    ∀ ω : K, IsPrimitiveRoot ω n → Polynomial.cyclotomic n K = ∏ i in Finset.filter (λ j => j.Coprime n) (Finset.range n), 
+      (Polynomial.X - C (ω ^ i)) := by sorry
+```

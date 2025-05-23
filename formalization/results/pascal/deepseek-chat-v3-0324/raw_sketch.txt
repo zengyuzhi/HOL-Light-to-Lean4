@@ -1,0 +1,314 @@
+```lean
+import Mathlib
+import Aesop
+
+variable (Point Line : Type)
+variable [ProjPlane Point Line]
+
+variable {u v w : ℝ³}
+variable {x y z : ℝ³} 
+variable {a b c : ℝ³}
+variable {p p' p'' : Point}
+variable {l l' l'' : Line}
+
+-- NORMAL_EXISTS
+theorem normal_exists : ∃ w : ℝ³, w ≠ 0 ∧ orthogonal u w ∧ orthogonal v w := by sorry
+
+-- direction_tybij
+def mk_dir (x : ℝ³) (h : x ≠ 0) : Direction := sorry
+def dest_dir (d : Direction) : {x : ℝ³ // x ≠ 0} := sorry
+
+-- perpdir
+def Perpendicular (x y : Direction) : Prop := orthogonal (dest_dir x) (dest_dir y)
+
+-- pardir
+def Parallel (x y : Direction) : Prop := (dest_dir x) × (dest_dir y) = 0
+
+-- DIRECTION_CLAUSES
+theorem direction_clauses (P : ℝ³ → Prop) :
+    (∀ x : Direction, P (dest_dir x)) ↔ (∀ x : ℝ³, x ≠ 0 → P x) ∧ 
+    (∃ x : Direction, P (dest_dir x)) ↔ (∃ x : ℝ³, x ≠ 0 ∧ P x) := by sorry
+
+-- PARDIR_REFL
+theorem parallel_refl : ∀ x : Direction, Parallel x x := by sorry
+
+-- PARDIR_SYM
+theorem parallel_sym : ∀ x y : Direction, Parallel x y ↔ Parallel y x := by sorry
+
+-- PARDIR_TRANS
+theorem parallel_trans : ∀ x y z : Direction, Parallel x y ∧ Parallel y z → Parallel x z := by sorry
+
+-- PARDIR_EQUIV
+theorem parallel_equiv : ∀ x y : Direction, (Parallel x = Parallel y) ↔ Parallel x y := by sorry
+
+-- DIRECTION_AXIOM_1
+theorem direction_axiom_1 : ∀ p p' : Direction, ¬Parallel p p' → 
+    ∃ l : Direction, Perpendicular p l ∧ Perpendicular p' l ∧ 
+    ∀ l' : Direction, Perpendicular p l' ∧ Perpendicular p' l' → Parallel l' l := by sorry
+
+-- DIRECTION_AXIOM_2
+theorem direction_axiom_2 : ∀ l l' : Direction, ∃ p : Direction, Perpendicular p l ∧ Perpendicular p l' := by sorry
+
+-- DIRECTION_AXIOM_3
+theorem direction_axiom_3 : ∃ p p' p'' : Direction, 
+    ¬Parallel p p' ∧ ¬Parallel p' p'' ∧ ¬Parallel p p'' ∧ 
+    ¬∃ l : Direction, Perpendicular p l ∧ Perpendicular p' l ∧ Perpendicular p'' l := by sorry
+
+-- DIRECTION_AXIOM_4_WEAK
+theorem direction_axiom_4_weak : ∀ l : Direction, 
+    ∃ p p' : Direction, ¬Parallel p p' ∧ Perpendicular p l ∧ Perpendicular p' l := by sorry
+
+-- ORTHOGONAL_COMBINE
+theorem orthogonal_combine : ∀ x a b : Direction,
+    Perpendicular a x ∧ Perpendicular b x ∧ ¬Parallel a b → 
+    ∃ c : Direction, Perpendicular c x ∧ ¬Parallel a c ∧ ¬Parallel b c := by sorry
+
+-- DIRECTION_AXIOM_4
+theorem direction_axiom_4 : ∀ l : Direction, ∃ p p' p'' : Direction,
+    ¬Parallel p p' ∧ ¬Parallel p' p'' ∧ ¬Parallel p p'' ∧
+    Perpendicular p l ∧ Perpendicular p' l ∧ Perpendicular p'' l := by sorry
+
+-- line_tybij
+def mk_line (d : Direction) : Line := sorry
+def dest_line (l : Line) : {d : Direction // true} := sorry
+
+-- PERPDIR_WELLDEF
+theorem perpendicular_well_def : ∀ x y x' y' : Direction,
+    Parallel x x' ∧ Parallel y y' → (Perpendicular x y ↔ Perpendicular x' y') := by sorry
+
+-- perpl, perpl_th
+noncomputable def perpl : Line → Line → Prop := sorry
+
+-- line_lift_thm
+theorem line_lift {P : Direction → Direction → Prop} 
+    (h : ∀ d d', Parallel d d' → P d d') : ∀ l l' : Line, perpl l l' := by sorry
+
+-- LINE_AXIOM_1
+theorem line_axiom_1 : ∀ p p' : Point, p ≠ p' → 
+    ∃ l : Line, Incident p l ∧ Incident p' l ∧ 
+    ∀ l' : Line, Incident p l' ∧ Incident p' l' → l' = l := by sorry
+
+-- LINE_AXIOM_2
+theorem line_axiom_2 : ∀ l l' : Line, ∃ p : Point, Incident p l ∧ Incident p l' := by sorry
+
+-- LINE_AXIOM_3
+theorem line_axiom_3 : ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' := by sorry
+
+-- LINE_AXIOM_4
+theorem line_axiom_4 : ∀ l : Line, ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' ∧ Incident p l ∧ Incident p' l ∧ Incident p'' l := by sorry
+
+-- point_tybij
+def mk_point (l : Line) : Point := sorry
+def dest_point (p : Point) : {l : Line // true} := sorry
+
+-- on
+def Incident (p : Point) (l : Line) : Prop := perpl (dest_point p) l
+
+-- POINT_CLAUSES
+theorem point_clauses (P : Line → Prop) :
+    (∀ p : Point, P (dest_point p)) ↔ (∀ l : Line, P l) ∧ 
+    (∃ p : Point, P (dest_point p)) ↔ (∃ l : Line, P l) := by sorry
+
+-- POINT_TAC (tactic, not directly portable)
+
+-- AXIOM_1
+theorem axiom_1 : ∀ p p' : Point, p ≠ p' → 
+    ∃ l : Line, Incident p l ∧ Incident p' l ∧ 
+    ∀ l' : Line, Incident p l' ∧ Incident p' l' → l' = l := by sorry
+
+-- AXIOM_2
+theorem axiom_2 : ∀ l l' : Line, ∃ p : Point, Incident p l ∧ Incident p l' := by sorry
+
+-- AXIOM_3
+theorem axiom_3 : ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' := by sorry
+
+-- AXIOM_4
+theorem axiom_4 : ∀ l : Line, ∃ p p' p'' : Point, 
+    ¬Collinear p p' p'' ∧ Incident p l ∧ Incident p' l ∧ Incident p'' l := by sorry
+
+-- projl
+def projl (x : ℝ³) (h : x ≠ 0) : Line := mk_line (mk_dir x h)
+
+-- projp
+def projp (x : ℝ³) (h : x ≠ 0) : Point := mk_point (projl x h)
+
+-- PROJL_TOTAL
+theorem projl_total : ∀ l : Line, ∃ x : ℝ³, x ≠ 0 ∧ l = projl x := by sorry
+
+-- homol
+noncomputable def homol (l : Line) : {x : ℝ³ // x ≠ 0} := sorry
+
+-- PERPDIR_WELLDEF
+theorem perpendicular_well_def : ∀ x y x' y' : Direction,
+    Parallel x x' ∧ Parallel y y' → (Perpendicular x y ↔ Perpendicular x' y') := by sorry
+
+-- PERPDIR_WELLDEF
+theorem perpdir_welldef : ∀ x y x' y' : Direction,
+    Parallel x x' ∧ Parallel y y' → (Perpendicular x y ↔ Perpendicular x' y') := by sorry
+
+-- projl_homol
+theorem projl_homol (x : ℝ³) (h : x ≠ 0) : Parallel x (homol (projl x h)) := by sorry
+
+-- homop_def
+def homop (p : Point) : {x : ℝ³ // x ≠ 0} := homol (dest_point p)
+
+-- homop
+theorem homop_property (p : Point) : homop p ≠ 0 ∧ p = projp (homop p) := by sorry
+
+-- ON_HOMOL
+theorem on_homol : ∀ p : Point, ∀ l : Line, 
+    Incident p l ↔ orthogonal (homop p) (homol l) := by sorry
+
+-- EQ_HOMOL
+theorem eq_homol : ∀ l l' : Line, l = l' ↔ Parallel (homol l) (homol l') := by sorry
+
+-- EQ_HOMOP
+theorem eq_homop : ∀ p p' : Point, p = p' ↔ Parallel (homop p) (homop p') := by sorry
+
+-- PARALLEL_PROJL_HOMOL
+theorem parallel_projl_homol (x : ℝ³) (h : x ≠ 0) : 
+    Parallel x (homol (projl x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP
+theorem parallel_projp_homop (x : ℝ³) (h : x ≠ 0) : 
+    Parallel x (homop (projp x h)) := by sorry
+
+-- PARALLEL_PROJP_HOMOP_EXPLICIT
+theorem parallel_projp_homop_explicit (x : ℝ³) (h : x ≠ 0) :
+    ∃ a : ℝ, a ≠ 0 ∧ homop (projp x h) = a • x := by sorry
+
+-- bracket
+def bracket [Finite ι] (v : ι → ℝ³) : ℝ := det (Matrix.of (fun i j => (v i) j))
+
+-- COLLINEAR
+def Collinear (s : Set Point) : Prop := ∃ l : Line, ∀ p ∈ s, Incident p l
+
+-- COLLINEAR_SINGLETON
+theorem collinear_singleton (a : Point) : Collinear {a} := by sorry
+
+-- COLLINEAR_PAIR
+theorem collinear_pair (a b : Point) : Collinear {a, b} := by sorry
+
+-- COLLINEAR_TRIPLE
+theorem collinear_triple (a b c : Point) : 
+    Collinear {a, b, c} ↔ ∃ l : Line, Incident a l ∧ Incident b l ∧ Incident c l := by sorry
+
+-- COLLINEAR_BRACKET
+theorem collinear_bracket (p1 p2 p3 : Point) :
+    Collinear {p1, p2, p3} ↔ bracket ![homop p1, homop p2, homop p3] = 0 := by sorry
+
+-- homogeneous_conic
+def HomogeneousConic (con : Set ℝ³) : Prop := 
+    ∃ a b c d e f : ℝ, ¬(a = 0 ∧ b = 0 ∧ c = 0 ∧ d = 0 ∧ e = 0 ∧ f = 0) ∧
+    con = {x : ℝ³ | a * x.1² + b * x.2² + c * x.3² + d * x.1 * x.2 + 
+                    e * x.1 * x.3 + f * x.2 * x.3 = 0}
+
+-- projective_conic
+def ProjectiveConic (con : Set Point) : Prop := 
+    ∃ c : Set ℝ³, HomogeneousConic c ∧ con = {p | (homop p) ∈ c}
+
+-- HOMOGENEOUS_CONIC_BRACKET
+theorem homogeneous_conic_bracket {con : Set ℝ³} {x1 x2 x3 x4 x5 x6 : ℝ³} :
+    HomogeneousConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    bracket ![x6, x1, x4] * bracket ![x6, x2, x3] * 
+    bracket ![x5, x1, x3] * bracket ![x5, x2, x4] = 
+    bracket ![x6, x1, x3] * bracket ![x6, x2, x4] * 
+    bracket ![x5, x1, x4] * bracket ![x5, x2, x3] := by sorry
+
+-- PROJECTIVE_CONIC_BRACKET
+theorem projective_conic_bracket {con : Set Point} {p1 p2 p3 p4 p5 p6 : Point} :
+    ProjectiveConic con → p1 ∈ con → p2 ∈ con → p3 ∈ con → 
+    p4 ∈ con → p5 ∈ con → p6 ∈ con → 
+    bracket ![homop p6, homop p1, homop p4] * bracket ![homop p6, homop p2, homop p3] * 
+    bracket ![homop p5, homop p1, homop p3] * bracket ![homop p5, homop p2, homop p4] = 
+    bracket ![homop p6, homop p1, homop p3] * bracket ![homop p6, homop p2, homop p4] * 
+    bracket ![homop p5, homop p1, homop p4] * bracket ![homop p5, homop p2, homop p3] := by sorry
+
+-- PASCAL_DIRECT
+theorem pascal_direct {con : Set Point} {x1 x2 x3 x4 x5 x6 x7 x8 x9 : Point} :
+    (¬Collinear x2 x5 x7) → (¬Collinear x1 x2 x5) → (¬Collinear x1 x3 x6) → 
+    (¬Collinear x2 x4 x6) → (¬Collinear x3 x4 x5) → (¬Collinear x1 x5 x7) → 
+    (¬Collinear x2 x5 x9) → (¬Collinear x1 x2 x6) → (¬Collinear x3 x6 x8) → 
+    (¬Collinear x2 x4 x5) → (¬Collinear x2 x4 x7) → (¬Collinear x2 x6 x8) → 
+    (¬Collinear x3 x4 x6) → (¬Collinear x3 x5 x8) → (¬Collinear x1 x3 x5) →
+    ProjectiveConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+
+-- PASCAL
+theorem pascal {con : Set Point} {x1 x2 x3 x4 x5 x6 x7 x8 x9 : Point} :
+    (¬Collinear x1 x2 x4) → (¬Collinear x1 x2 x5) → (¬Collinear x1 x2 x6) → 
+    (¬Collinear x1 x3 x4) → (¬Collinear x1 x3 x5) → (¬Collinear x1 x3 x6) → 
+    (¬Collinear x2 x3 x4) → (¬Collinear x2 x3 x5) → (¬Collinear x2 x3 x6) → 
+    (¬Collinear x4 x5 x1) → (¬Collinear x4 x5 x2) → (¬Collinear x4 x5 x3) → 
+    (¬Collinear x4 x6 x1) → (¬Collinear x4 x6 x2) → (¬Collinear x4 x6 x3) → 
+    (¬Collinear x5 x6 x1) → (¬Collinear x5 x6 x2) → (¬Collinear x5 x6 x3) →
+    ProjectiveConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+
+-- homogenize
+def homogenize (x : ℝ²) : ℝ³ := ![x.1, x.2, 1]
+
+-- projectivize
+def projectivize (x : ℝ²) : Point := projp (homogenize x) (by simp [homogenize])
+
+-- HOMOGENIZE_NONZERO
+theorem homogenize_nonzero (x : ℝ²) : homogenize x ≠ 0 := by sorry
+
+-- affine_conic
+def AffineConic (con : Set ℝ²) : Prop := 
+    ∃ a b c d e f : ℝ, ¬(a = 0 ∧ b = 0 ∧ c = 0 ∧ d = 0 ∧ e = 0 ∧ f = 0) ∧
+    con = {x : ℝ² | a * x.1² + b * x.2² + c * x.1 * x.2 + 
+                    d * x.1 + e * x.2 + f = 0}
+
+-- COLLINEAR_PROJECTIVIZE
+theorem collinear_projectivize (a b c : ℝ²) : 
+    Collinear a b c ↔ Collinear (projectivize a) (projectivize b) (projectivize c) := by sorry
+
+-- AFFINE_PROJECTIVE_CONIC
+theorem affine_projective_conic (con : Set ℝ²) : 
+    AffineConic con ↔ ∃ con' : Set Point, ProjectiveConic con' ∧ 
+                  con = {x | projectivize x ∈ con'} := by sorry
+
+-- PASCAL_AFFINE
+theorem pascal_affine {con : Set ℝ²} {x1 x2 x3 x4 x5 x6 x7 x8 x9 : ℝ²} :
+    (¬Collinear x1 x2 x4) → (¬Collinear x1 x2 x5) → (¬Collinear x1 x2 x6) → 
+    (¬Collinear x1 x3 x4) → (¬Collinear x1 x3 x5) → (¬Collinear x1 x3 x6) → 
+    (¬Collinear x2 x3 x4) → (¬Collinear x2 x3 x5) → (¬Collinear x2 x3 x6) → 
+    (¬Collinear x4 x5 x1) → (¬Collinear x4 x5 x2) → (¬Collinear x4 x5 x3) → 
+    (¬Collinear x4 x6 x1) → (¬Collinear x4 x6 x2) → (¬Collinear x4 x6 x3) → 
+    (¬Collinear x5 x6 x1) → (¬Collinear x5 x6 x2) → (¬Collinear x5 x6 x3) →
+    AffineConic con → x1 ∈ con → x2 ∈ con → x3 ∈ con → 
+    x4 ∈ con → x5 ∈ con → x6 ∈ con → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+
+-- COLLINEAR_NOT_COCIRCULAR
+theorem collinear_not_cocircular {r : ℝ} {c x y z : ℝ²} : 
+    dist c x = r → dist c y = r → dist c z = r → 
+    x ≠ y → x ≠ z → y ≠ z → 
+    ¬Collinear x y z := by sorry
+
+-- PASCAL_AFFINE_CIRCLE
+theorem pascal_affine_circle {r : ℝ} {c x1 x2 x3 x4 x5 x6 x7 x8 x9 : ℝ²} :
+    Pairwise (· ≠ ·) [x1, x2, x3, x4, x5, x6] → 
+    dist c x1 = r → dist c x2 = r → dist c x3 = r → 
+    dist c x4 = r → dist c x5 = r → dist c x6 = r → 
+    Collinear x1 x9 x5 → Collinear x1 x8 x6 → 
+    Collinear x2 x9 x4 → Collinear x2 x7 x6 → 
+    Collinear x3 x8 x4 → Collinear x3 x7 x5 → 
+    Collinear x7 x8 x9 := by sorry
+```

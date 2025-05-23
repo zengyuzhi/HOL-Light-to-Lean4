@@ -1,0 +1,5 @@
+.env
+docs
+docs_agents
+__pycache__
+log

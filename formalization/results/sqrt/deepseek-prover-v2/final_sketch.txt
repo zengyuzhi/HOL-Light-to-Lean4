@@ -1,0 +1,16 @@
+import Mathlib
+import Aesop
+
+open Real
+
+-- IRRATIONAL_SQRT_NONSQUARE
+theorem irrational_sqrt_nonsquare (n : ℕ) :
+    (∃ p q : ℤ, q ≠ 0 ∧ sqrt n = p / q) → ∃ m : ℕ, n = m ^ 2 := by sorry
+
+-- IRRATIONAL_SQRT_PRIME
+theorem irrational_sqrt_prime (p : ℕ) (hp : p.Prime) :
+    ¬ ∃ p' q : ℤ, q ≠ 0 ∧ sqrt p = p' / q := by sorry
+
+-- IRRATIONAL_SQRT_2
+theorem irrational_sqrt_2 :
+    ¬ ∃ p q : ℤ, q ≠ 0 ∧ sqrt 2 = p / q := by sorry

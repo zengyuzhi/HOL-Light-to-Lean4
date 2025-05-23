@@ -1,0 +1,383 @@
+Refinement 1 errors:
+import Mathlib
+import Aesop
+
+open Real
+
+variable {N : Type*} [NormedAddCommGroup N] [InnerProductSpace ℝ N]
+
+-- ddist
+def ddist (x y : N) : ℝ :=
+  if ‖x‖ < 1 ∧ ‖y‖ < 1 then
+    (1 - inner x y)^2 / ((1 - ‖x‖^2) * (1 - ‖y‖^2)) - 1
+  else
+    dist x y
+
+-- DDIST_INCREASES_ONLINE
+theorem ddist_increases_online {a b x : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (hx : ‖x‖ < 1)
+    (hbetween : between x a b) (hne : x ≠ b) : ddist a x < ddist a b := by sorry
+
+-- DDIST_REFL
+theorem ddist_refl (x : N) : ddist x x = 0 := by sorry
+
+-- DDIST_SYM
+theorem ddist_sym (x y : N) : ddist x y = ddist y x := by sorry
+
+-- DDIST_POS_LT
+theorem ddist_pos_lt {x y : N} (hne : x ≠ y) : 0 < ddist x y := by sorry
+
+-- DDIST_POS_LE
+theorem ddist_pos_le (x y : N) : 0 ≤ ddist x y := by sorry
+
+-- DDIST_EQ_0
+theorem ddist_eq_zero {x y : N} : ddist x y = 0 ↔ x = y := by sorry
+
+-- BETWEEN_COLLINEAR_DDIST_EQ
+theorem between_collinear_ddist_eq {a b x : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (hx : ‖x‖ < 1) :
+    between x a b ↔ Collinear ℝ ({a, x, b} : Set N) ∧ ddist x a ≤ ddist a b ∧ ddist x b ≤ ddist a b := by sorry
+
+-- HYPERBOLIC_MIDPOINT
+theorem hyperbolic_midpoint {a b : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) :
+    ∃ x, between x a b ∧ ddist x a = ddist x b := by sorry
+
+-- DDIST_EQ_ORIGIN
+theorem ddist_eq_origin {x y : N} (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) :
+    ddist 0 x = ddist 0 y ↔ ‖x‖ = ‖y‖ := by sorry
+
+-- DDIST_CONGRUENT_TRIPLES_0
+theorem ddist_congruent_triples_0 {a b a' b' : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (ha' : ‖a'‖ < 1) (hb' : ‖b'‖ < 1) :
+    (ddist 0 a = ddist 0 a' ∧ ddist a b = ddist a' b' ∧ ddist b 0 = ddist b' 0) ↔
+    (dist 0 a = dist 0 a' ∧ dist a b = dist a' b' ∧ dist b 0 = dist b' 0) := by sorry
+
+-- kleinify
+def kleinify (z : ℂ) : ℂ := (2 / (1 + ‖z‖^2)) • z
+
+-- poincarify
+def poincarify (x : ℂ) : ℂ := ((1 - Real.sqrt (1 - ‖x‖^2)) / ‖x‖^2) • x
+
+-- KLEINIFY_0, POINCARIFY_0
+theorem kleinify_zero : kleinify 0 = 0 := by sorry
+theorem poincarify_zero : poincarify 0 = 0 := by sorry
+
+-- NORM_KLEINIFY
+theorem norm_kleinify (z : ℂ) : ‖kleinify z‖ = (2 * ‖z‖) / (1 + ‖z‖^2) := by sorry
+
+-- NORM_KLEINIFY_LT
+theorem norm_kleinify_lt (z : ℂ) : ‖kleinify z‖ < 1 ↔ ‖z‖ ≠ 1 := by sorry
+
+-- NORM_POINCARIFY_LT
+theorem norm_poincarify_lt {x : ℂ} (hx : ‖x‖ < 1) : ‖poincarify x‖ < 1 := by sorry
+
+-- KLEINIFY_POINCARIFY
+theorem kleinify_poincarify {x : ℂ} (hx : ‖x‖ < 1) : kleinify (poincarify x) = x := by sorry
+
+-- POINCARIFY_KLEINIFY
+theorem poincarify_kleinify {x : ℂ} (hx : ‖x‖ < 1) : poincarify (kleinify x) = x := by sorry
+
+-- DDIST_KLEINIFY
+theorem ddist_kleinify {w z : ℂ} (hw : ‖w‖ ≠ 1) (hz : ‖z‖ ≠ 1) :
+    ddist (kleinify w) (kleinify z) = 4 * (1/2 + ‖w - z‖^2 / ((1 - ‖w‖^2) * (1 - ‖z‖^2)))^2 - 1 := by sorry
+
+-- DDIST_KLEINIFY_EQ
+theorem ddist_kleinify_eq {w z w' z' : ℂ} (hw : ‖w‖ ≠ 1) (hz : ‖z‖ ≠ 1) (hw' : ‖w'‖ ≠ 1) (hz' : ‖z'‖ ≠ 1)
+    (h : ‖w - z‖^2 * (1 - ‖w'‖^2) * (1 - ‖z'‖^2) = ‖w' - z'‖^2 * (1 - ‖w‖^2) * (1 - ‖z‖^2)) :
+    ddist (kleinify w) (kleinify z) = ddist (kleinify w') (kleinify z') := by sorry
+
+-- NORM_KLEINIFY_MOEBIUS_LT
+theorem norm_kleinify_moebius_lt {w x : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) :
+    ‖kleinify (moebius_function 0 w x)‖ < 1 := by sorry
+
+-- DDIST_KLEINIFY_MOEBIUS
+theorem ddist_kleinify_moebius {w x y : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) :
+    ddist (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y)) = ddist (kleinify x) (kleinify y) := by sorry
+
+-- COLLINEAR_KLEINIFY_MOEBIUS
+theorem collinear_kleinify_moebius {w x y z : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) (hz : ‖z‖ < 1) :
+    Collinear ℝ ({kleinify (moebius_function 0 w x), kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z)} : Set ℂ) ↔
+    Collinear ℝ ({kleinify x, kleinify y, kleinify z} : Set ℂ) := by sorry
+
+-- BETWEEN_KLEINIFY_MOEBIUS
+theorem between_kleinify_moebius {w x y z : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) (hz : ‖z‖ < 1) :
+    between (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z)) ↔
+    between (kleinify x) (kleinify y, kleinify z) := by sorry
+
+-- hyperbolic_isometry
+structure HyperbolicIsometry (f : ℂ → ℂ) : Prop where
+  maps_to_unit : ∀ x, ‖x‖ < 1 → ‖f x‖ < 1
+  preserves_dist : ∀ x y, ‖x‖ < 1 → ‖y‖ < 1 → ddist (f x) (f y) = ddist x y
+  preserves_between : ∀ x y z, ‖x‖ < 1 → ‖y‖ < 1 → ‖z‖ < 1 → 
+    (between (f x) (f y, f z) ↔ between x (y, z))
+
+-- HYPERBOLIC_TRANSLATION
+theorem hyperbolic_translation {w : ℂ} (hw : ‖w‖ < 1) :
+    ∃ f g : ℂ → ℂ, HyperbolicIsometry f ∧ HyperbolicIsometry g ∧
+    f w = 0 ∧ g 0 = w ∧ (∀ x, ‖x‖ < 1 → f (g x) = x) ∧ (∀ x, ‖x‖ < 1 → g (f x) = x) := by sorry
+
+-- plane_tybij
+structure Plane where
+  point : ℂ
+  norm_lt_one : ‖point‖ < 1
+
+-- pbetween
+def pbetween (y : Plane) (x z : Plane) : Prop :=
+  between y.point (x.point, z.point)
+
+-- pdist
+def pdist (x y : Plane) : ℝ := ddist x.point y.point
+
+-- DEST_PLANE_NORM_LT
+theorem dest_plane_norm_lt (x : Plane) : ‖x.point‖ < 1 := x.norm_lt_one
+
+-- DEST_PLANE_EQ
+theorem dest_plane_eq {x y : Plane} : x.point = y.point ↔ x = y := by sorry
+
+-- FORALL_DEST_PLANE
+theorem forall_dest_plane {P : ℂ → Prop} : (∀ x : Plane, P x.point) ↔ ∀ x, ‖x‖ < 1 → P x := by sorry
+
+-- EXISTS_DEST_PLANE
+theorem exists_dest_plane {P : ℂ → Prop} : (∃ x : Plane, P x.point) ↔ ∃ x, ‖x‖ < 1 ∧ P x := by sorry
+
+-- TARSKI_AXIOM_1_NONEUCLIDEAN
+theorem tarski_axiom_1_noneuclidean (a b : Plane) : pdist a b = pdist b a := by sorry
+
+-- TARSKI_AXIOM_2_NONEUCLIDEAN
+theorem tarski_axiom_2_noneuclidean (a b p q r s : Plane) 
+    (h1 : pdist a b = pdist p q) (h2 : pdist a b = pdist r s) : pdist p q = pdist r s := by sorry
+
+-- TARSKI_AXIOM_3_NONEUCLIDEAN
+theorem tarski_axiom_3_noneuclidean (a b c : Plane) (h : pdist a b = pdist c c) : a = b := by sorry
+
+-- TARSKI_AXIOM_4_NONEUCLIDEAN
+theorem tarski_axiom_4_noneuclidean (a q b c : Plane) :
+    ∃ x, pbetween x (a, q) ∧ pdist a x = pdist b c := by sorry
+
+-- TARSKI_AXIOM_5_NONEUCLIDEAN
+theorem tarski_axiom_5_noneuclidean (a b c a' b' c' x x' : Plane) 
+    (hne : a ≠ b) (h1 : pdist a b = pdist a' b') (h2 : pdist a c = pdist a' c')
+    (h3 : pdist b c = pdist b' c') (h4 : pbetween b (a, x)) (h5 : pbetween b' (a', x'))
+    (h6 : pdist b x = pdist b' x') : pdist c x = pdist c' x' := by sorry
+
+-- TARSKI_AXIOM_6_NONEUCLIDEAN
+theorem tarski_axiom_6_noneuclidean (a b : Plane) (h : pbetween b (a, a)) : a = b := by sorry
+
+-- TARSKI_AXIOM_7_NONEUCLIDEAN
+theorem tarski_axiom_7_noneuclidean (a b c p q : Plane) 
+    (h1 : pbetween p (a, c)) (h2 : pbetween q (b, c)) :
+    ∃ x, pbetween x (p, b) ∧ pbetween x (q, a) := by sorry
+
+-- TARSKI_AXIOM_8_NONEUCLIDEAN
+theorem tarski_axiom_8_noneuclidean :
+    ∃ a b c : Plane, ¬pbetween b (a, c) ∧ ¬pbetween c (b, a) ∧ ¬pbetween a (c, b) := by sorry
+
+-- TARSKI_AXIOM_9_NONEUCLIDEAN
+theorem tarski_axiom_9_noneuclidean (p q a b c : Plane) 
+    (hne : p ≠ q) (h1 : pdist a p = pdist a q) (h2 : pdist b p = pdist b q)
+    (h3 : pdist c p = pdist c q) : pbetween b (a, c) ∨ pbetween c (b, a) ∨ pbetween a (c, b) := by sorry
+
+-- NOT_TARSKI_AXIOM_10_NONEUCLIDEAN
+theorem not_tarski_axiom_10_noneuclidean :
+    ¬∀ a b c d t : Plane, pbetween d (a, t) → pbetween d (b, c) → a ≠ d →
+    ∃ x y, pbetween b (a, x) ∧ pbetween c (a, y) ∧ pbetween t (x, y) := by sorry
+
+-- TARSKI_AXIOM_11_NONEUCLIDEAN
+theorem tarski_axiom_11_noneuclidean (X Y : Set Plane) 
+    (hneX : X.Nonempty) (hneY : Y.Nonempty) 
+    (h : ∃ a, ∀ x y, x ∈ X → y ∈ Y → pbetween x (a, y)) :
+    ∃ b, ∀ x y, x ∈ X → y ∈ Y → pbetween b (x, y) := by sorry
+[{'severity': 'error', 'pos': {'line': 7, 'column': 4}, 'endPos': {'line': 7, 'column': 9}, 'data': "failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Real.instDivInvMonoid', and it does not have executable code"}, {'severity': 'error', 'pos': {'line': 15, 'column': 16}, 'endPos': {'line': 15, 'column': 29}, 'data': 'function expected at\n  between\nterm has type\n  ?m.2492'}, {'severity': 'warning', 'pos': {'line': 18, 'column': 8}, 'endPos': {'line': 18, 'column': 18}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 21, 'column': 8}, 'endPos': {'line': 21, 'column': 17}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 24, 'column': 8}, 'endPos': {'line': 24, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 27, 'column': 8}, 'endPos': {'line': 27, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 30, 'column': 8}, 'endPos': {'line': 30, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 34, 'column': 4}, 'endPos': {'line': 34, 'column': 17}, 'data': 'function expected at\n  between\nterm has type\n  ?m.4560'}, {'severity': 'error', 'pos': {'line': 38, 'column': 9}, 'endPos': {'line': 38, 'column': 22}, 'data': 'function expected at\n  between\nterm has type\n  ?m.7068'}, {'severity': 'warning', 'pos': {'line': 41, 'column': 8}, 'endPos': {'line': 41, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 45, 'column': 8}, 'endPos': {'line': 45, 'column': 33}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 50, 'column': 4}, 'endPos': {'line': 50, 'column': 12}, 'data': "failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Complex.instRCLike', and it does not have executable code"}, {'severity': 'error', 'pos': {'line': 53, 'column': 4}, 'endPos': {'line': 53, 'column': 14}, 'data': "failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Complex.instRCLike', and it does not have executable code"}, {'severity': 'warning', 'pos': {'line': 56, 'column': 8}, 'endPos': {'line': 56, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 57, 'column': 8}, 'endPos': {'line': 57, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 60, 'column': 8}, 'endPos': {'line': 60, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 63, 'column': 8}, 'endPos': {'line': 63, 'column': 24}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 66, 'column': 8}, 'endPos': {'line': 66, 'column': 26}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 69, 'column': 8}, 'endPos': {'line': 69, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 72, 'column': 8}, 'endPos': {'line': 72, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 75, 'column': 8}, 'endPos': {'line': 75, 'column': 22}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 79, 'column': 8}, 'endPos': {'line': 79, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 85, 'column': 15}, 'endPos': {'line': 85, 'column': 37}, 'data': 'function expected at\n  moebius_function\nterm has type\n  ?m.21349'}, {'severity': 'error', 'pos': {'line': 89, 'column': 21}, 'endPos': {'line': 89, 'column': 43}, 'data': 'function expected at\n  moebius_function\nterm has type\n  ?m.22149'}, {'severity': 'error', 'pos': {'line': 89, 'column': 57}, 'endPos': {'line': 89, 'column': 79}, 'data': 'function expected at\n  moebius_function\nterm has type\n  ?m.22149'}, {'severity': 'error', 'pos': {'line': 93, 'column': 28}, 'endPos': {'line': 93, 'column': 50}, 'data': 'function expected at\n  moebius_function\nterm has type\n  ?m.23642'}, {'severity': 'error', 'pos': {'line': 93, 'column': 63}, 'endPos': {'line': 93, 'column': 85}, 'data': 'function expected at\n  moebius_function\nterm has type\n  ?m.23642'}, {'severity': 'error', 'pos': {'line': 93, 'column': 98}, 'endPos': {'line': 93, 'column': 120}, 'data': 'function expected at\n  moebius_function\nterm has type\n  ?m.23642'}, {'severity': 'error', 'pos': {'line': 98, 'column': 4}, 'endPos': {'line': 98, 'column': 118}, 'data': 'function expected at\n  between\nterm has type\n  ?m.28048'}, {'severity': 'error', 'pos': {'line': 99, 'column': 4}, 'endPos': {'line': 99, 'column': 49}, 'data': 'function expected at\n  between\nterm has type\n  ?m.28048'}, {'severity': 'error', 'pos': {'line': 106, 'column': 5}, 'endPos': {'line': 106, 'column': 29}, 'data': 'function expected at\n  between\nterm has type\n  ?m.31863'}, {'severity': 'error', 'pos': {'line': 106, 'column': 32}, 'endPos': {'line': 106, 'column': 48}, 'data': 'function expected at\n  between\nterm has type\n  ?m.31863'}, {'severity': 'error', 'pos': {'line': 110, 'column': 19}, 'endPos': {'line': 110, 'column': 39}, 'data': 'function expected at\n  HyperbolicIsometry\nterm has type\n  ?m.35728'}, {'severity': 'error', 'pos': {'line': 110, 'column': 42}, 'endPos': {'line': 110, 'column': 62}, 'data': 'function expected at\n  HyperbolicIsometry\nterm has type\n  ?m.35728'}, {'severity': 'error', 'pos': {'line': 120, 'column': 2}, 'endPos': {'line': 120, 'column': 9}, 'data': "unknown identifier 'between'"}, {'severity': 'error', 'pos': {'line': 123, 'column': 4}, 'endPos': {'line': 123, 'column': 9}, 'data': "failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Complex.instNormedAddCommGroup', and it does not have executable code"}, {'severity': 'warning', 'pos': {'line': 129, 'column': 8}, 'endPos': {'line': 129, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 132, 'column': 8}, 'endPos': {'line': 132, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 135, 'column': 8}, 'endPos': {'line': 135, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 138, 'column': 8}, 'endPos': {'line': 138, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 141, 'column': 8}, 'endPos': {'line': 141, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 145, 'column': 8}, 'endPos': {'line': 145, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 149, 'column': 20}, 'endPos': {'line': 149, 'column': 26}, 'data': 'application type mismatch\n  pbetween x (a, q)\nargument\n  (a, q)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 154, 'column': 52}, 'endPos': {'line': 154, 'column': 58}, 'data': 'application type mismatch\n  pbetween b (a, x)\nargument\n  (a, x)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 158, 'column': 66}, 'endPos': {'line': 158, 'column': 72}, 'data': 'application type mismatch\n  pbetween b (a, a)\nargument\n  (a, a)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 162, 'column': 21}, 'endPos': {'line': 162, 'column': 27}, 'data': 'application type mismatch\n  pbetween p (a, c)\nargument\n  (a, c)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 167, 'column': 33}, 'endPos': {'line': 167, 'column': 39}, 'data': 'application type mismatch\n  pbetween b (a, c)\nargument\n  (a, c)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 167, 'column': 54}, 'endPos': {'line': 167, 'column': 60}, 'data': 'application type mismatch\n  pbetween c (b, a)\nargument\n  (b, a)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 167, 'column': 75}, 'endPos': {'line': 167, 'column': 81}, 'data': 'application type mismatch\n  pbetween a (c, b)\nargument\n  (c, b)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 172, 'column': 46}, 'endPos': {'line': 172, 'column': 52}, 'data': 'application type mismatch\n  pbetween b (a, c)\nargument\n  (a, c)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 172, 'column': 66}, 'endPos': {'line': 172, 'column': 72}, 'data': 'application type mismatch\n  pbetween c (b, a)\nargument\n  (b, a)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 172, 'column': 86}, 'endPos': {'line': 172, 'column': 92}, 'data': 'application type mismatch\n  pbetween a (c, b)\nargument\n  (c, b)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 176, 'column': 37}, 'endPos': {'line': 176, 'column': 43}, 'data': 'application type mismatch\n  pbetween d (a, t)\nargument\n  (a, t)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 182, 'column': 48}, 'endPos': {'line': 182, 'column': 54}, 'data': 'application type mismatch\n  pbetween x (a, y)\nargument\n  (a, y)\nhas type\n  ?m.55842 × Plane : Type (max ?u.56047 0)\nbut is expected to have type\n  Plane : Type'}, {'severity': 'error', 'pos': {'line': 183, 'column': 43}, 'endPos': {'line': 183, 'column': 49}, 'data': 'application type mismatch\n  pbetween b (x, y)\nargument\n  (x, y)\nhas type\n  Plane × Plane : Type\nbut is expected to have type\n  Plane : Type'}]
+---
+Refinement 2 errors:
+import Mathlib
+import Aesop
+
+open Real
+
+noncomputable section
+
+variable {N : Type*} [NormedAddCommGroup N] [InnerProductSpace ℝ N]
+
+def between (x a b : N) : Prop := ∃ t : ℝ, t ∈ Set.Icc 0 1 ∧ x = a + t • (b - a)
+
+-- ddist
+noncomputable def ddist (x y : N) : ℝ :=
+  if ‖x‖ < 1 ∧ ‖y‖ < 1 then
+    (1 - inner x y)^2 / ((1 - ‖x‖^2) * (1 - ‖y‖^2)) - 1
+  else
+    dist x y
+
+-- DDIST_INCREASES_ONLINE
+theorem ddist_increases_online {a b x : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (hx : ‖x‖ < 1)
+    (hbetween : between x a b) (hne : x ≠ b) : ddist a x < ddist a b := by sorry
+
+-- DDIST_REFL
+theorem ddist_refl (x : N) : ddist x x = 0 := by sorry
+
+-- DDIST_SYM
+theorem ddist_sym (x y : N) : ddist x y = ddist y x := by sorry
+
+-- DDIST_POS_LT
+theorem ddist_pos_lt {x y : N} (hne : x ≠ y) : 0 < ddist x y := by sorry
+
+-- DDIST_POS_LE
+theorem ddist_pos_le (x y : N) : 0 ≤ ddist x y := by sorry
+
+-- DDIST_EQ_0
+theorem ddist_eq_zero {x y : N} : ddist x y = 0 ↔ x = y := by sorry
+
+-- BETWEEN_COLLINEAR_DDIST_EQ
+theorem between_collinear_ddist_eq {a b x : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (hx : ‖x‖ < 1) :
+    between x a b ↔ Collinear ℝ ({a, x, b} : Set N) ∧ ddist x a ≤ ddist a b ∧ ddist x b ≤ ddist a b := by sorry
+
+-- HYPERBOLIC_MIDPOINT
+theorem hyperbolic_midpoint {a b : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) :
+    ∃ x, between x a b ∧ ddist x a = ddist x b := by sorry
+
+-- DDIST_EQ_ORIGIN
+theorem ddist_eq_origin {x y : N} (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) :
+    ddist 0 x = ddist 0 y ↔ ‖x‖ = ‖y‖ := by sorry
+
+-- DDIST_CONGRUENT_TRIPLES_0
+theorem ddist_congruent_triples_0 {a b a' b' : N} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) (ha' : ‖a'‖ < 1) (hb' : ‖b'‖ < 1) :
+    (ddist 0 a = ddist 0 a' ∧ ddist a b = ddist a' b' ∧ ddist b 0 = ddist b' 0) ↔
+    (dist 0 a = dist 0 a' ∧ dist a b = dist a' b' ∧ dist b 0 = dist b' 0) := by sorry
+
+-- kleinify
+noncomputable def kleinify (z : ℂ) : ℂ := (2 / (1 + ‖z‖^2)) • z
+
+-- poincarify
+noncomputable def poincarify (x : ℂ) : ℂ := ((1 - Real.sqrt (1 - ‖x‖^2)) / ‖x‖^2) • x
+
+-- KLEINIFY_0, POINCARIFY_0
+theorem kleinify_zero : kleinify 0 = 0 := by sorry
+theorem poincarify_zero : poincarify 0 = 0 := by sorry
+
+-- NORM_KLEINIFY
+theorem norm_kleinify (z : ℂ) : ‖kleinify z‖ = (2 * ‖z‖) / (1 + ‖z‖^2) := by sorry
+
+-- NORM_KLEINIFY_LT
+theorem norm_kleinify_lt (z : ℂ) : ‖kleinify z‖ < 1 ↔ ‖z‖ ≠ 1 := by sorry
+
+-- NORM_POINCARIFY_LT
+theorem norm_poincarify_lt {x : ℂ} (hx : ‖x‖ < 1) : ‖poincarify x‖ < 1 := by sorry
+
+-- KLEINIFY_POINCARIFY
+theorem kleinify_poincarify {x : ℂ} (hx : ‖x‖ < 1) : kleinify (poincarify x) = x := by sorry
+
+-- POINCARIFY_KLEINIFY
+theorem poincarify_kleinify {x : ℂ} (hx : ‖x‖ < 1) : poincarify (kleinify x) = x := by sorry
+
+noncomputable def moebius_function (t : ℝ) (w z : ℂ) : ℂ := 
+  (Complex.exp (Complex.I * Complex.ofReal t)) * (z - w) / (1 - (Complex.conj w) * z)
+
+-- DDIST_KLEINIFY
+theorem ddist_kleinify {w z : ℂ} (hw : ‖w‖ ≠ 1) (hz : ‖z‖ ≠ 1) :
+    ddist (kleinify w) (kleinify z) = 4 * (1/2 + ‖w - z‖^2 / ((1 - ‖w‖^2) * (1 - ‖z‖^2)))^2 - 1 := by sorry
+
+-- DDIST_KLEINIFY_EQ
+theorem ddist_kleinify_eq {w z w' z' : ℂ} (hw : ‖w‖ ≠ 1) (hz : ‖z‖ ≠ 1) (hw' : ‖w'‖ ≠ 1) (hz' : ‖z'‖ ≠ 1)
+    (h : ‖w - z‖^2 * (1 - ‖w'‖^2) * (1 - ‖z'‖^2) = ‖w' - z'‖^2 * (1 - ‖w‖^2) * (1 - ‖z‖^2)) :
+    ddist (kleinify w) (kleinify z) = ddist (kleinify w') (kleinify z') := by sorry
+
+-- NORM_KLEINIFY_MOEBIUS_LT
+theorem norm_kleinify_moebius_lt {w x : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) :
+    ‖kleinify (moebius_function 0 w x)‖ < 1 := by sorry
+
+-- DDIST_KLEINIFY_MOEBIUS
+theorem ddist_kleinify_moebius {w x y : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) :
+    ddist (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y)) = ddist (kleinify x) (kleinify y) := by sorry
+
+-- COLLINEAR_KLEINIFY_MOEBIUS
+theorem collinear_kleinify_moebius {w x y z : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) (hz : ‖z‖ < 1) :
+    Collinear ℝ ({kleinify (moebius_function 0 w x), kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z)} : Set ℂ) ↔
+    Collinear ℝ ({kleinify x, kleinify y, kleinify z} : Set ℂ) := by sorry
+
+-- BETWEEN_KLEINIFY_MOEBIUS
+theorem between_kleinify_moebius {w x y z : ℂ} (hw : ‖w‖ < 1) (hx : ‖x‖ < 1) (hy : ‖y‖ < 1) (hz : ‖z‖ < 1) :
+    between (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z)) ↔
+    between (kleinify x) (kleinify y, kleinify z) := by sorry
+
+-- hyperbolic_isometry
+structure HyperbolicIsometry (f : ℂ → ℂ) : Prop where
+  maps_to_unit : ∀ x, ‖x‖ < 1 → ‖f x‖ < 1
+  preserves_dist : ∀ x y, ‖x‖ < 1 → ‖y‖ < 1 → ddist (f x) (f y) = ddist x y
+  preserves_between : ∀ x y z, ‖x‖ < 1 → ‖y‖ < 1 → ‖z‖ < 1 → 
+    (between (f x) (f y, f z) ↔ between x (y, z))
+
+-- HYPERBOLIC_TRANSLATION
+theorem hyperbolic_translation {w : ℂ} (hw : ‖w‖ < 1) :
+    ∃ f g : ℂ → ℂ, HyperbolicIsometry f ∧ HyperbolicIsometry g ∧
+    f w = 0 ∧ g 0 = w ∧ (∀ x, ‖x‖ < 1 → f (g x) = x) ∧ (∀ x, ‖x‖ < 1 → g (f x) = x) := by sorry
+
+-- plane_tybij
+structure Plane where
+  point : ℂ
+  norm_lt_one : ‖point‖ < 1
+
+-- pbetween
+def pbetween (y : Plane) (x z : Plane) : Prop :=
+  between y.point x.point z.point
+
+-- pdist
+noncomputable def pdist (x y : Plane) : ℝ := ddist x.point y.point
+
+-- DEST_PLANE_NORM_LT
+theorem dest_plane_norm_lt (x : Plane) : ‖x.point‖ < 1 := x.norm_lt_one
+
+-- DEST_PLANE_EQ
+theorem dest_plane_eq {x y : Plane} : x.point = y.point ↔ x = y := by sorry
+
+-- FORALL_DEST_PLANE
+theorem forall_dest_plane {P : ℂ → Prop} : (∀ x : Plane, P x.point) ↔ ∀ x, ‖x‖ < 1 → P x := by sorry
+
+-- EXISTS_DEST_PLANE
+theorem exists_dest_plane {P : ℂ → Prop} : (∃ x : Plane, P x.point) ↔ ∃ x, ‖x‖ < 1 ∧ P x := by sorry
+
+-- TARSKI_AXIOM_1_NONEUCLIDEAN
+theorem tarski_axiom_1_noneuclidean (a b : Plane) : pdist a b = pdist b a := by sorry
+
+-- TARSKI_AXIOM_2_NONEUCLIDEAN
+theorem tarski_axiom_2_noneuclidean (a b p q r s : Plane) 
+    (h1 : pdist a b = pdist p q) (h2 : pdist a b = pdist r s) : pdist p q = pdist r s := by sorry
+
+-- TARSKI_AXIOM_3_NONEUCLIDEAN
+theorem tarski_axiom_3_noneuclidean (a b c : Plane) (h : pdist a b = pdist c c) : a = b := by sorry
+
+-- TARSKI_AXIOM_4_NONEUCLIDEAN
+theorem tarski_axiom_4_noneuclidean (a q b c : Plane) :
+    ∃ x, pbetween x a q ∧ pdist a x = pdist b c := by sorry
+
+-- TARSKI_AXIOM_5_NONEUCLIDEAN
+theorem tarski_axiom_5_noneuclidean (a b c a' b' c' x x' : Plane) 
+    (hne : a ≠ b) (h1 : pdist a b = pdist a' b') (h2 : pdist a c = pdist a' c')
+    (h3 : pdist b c = pdist b' c') (h4 : pbetween b a x) (h5 : pbetween b' a' x')
+    (h6 : pdist b x = pdist b' x') : pdist c x = pdist c' x' := by sorry
+
+-- TARSKI_AXIOM_6_NONEUCLIDEAN
+theorem tarski_axiom_6_noneuclidean (a b : Plane) (h : pbetween b a a) : a = b := by sorry
+
+-- TARSKI_AXIOM_7_NONEUCLIDEAN
+theorem tarski_axiom_7_noneuclidean (a b c p q : Plane) 
+    (h1 : pbetween p a c) (h2 : pbetween q b c) :
+    ∃ x, pbetween x p b ∧ pbetween x q a := by sorry
+
+-- TARSKI_AXIOM_8_NONEUCLIDEAN
+theorem tarski_axiom_8_noneuclidean :
+    ∃ a b c : Plane, ¬pbetween b a c ∧ ¬pbetween c b a ∧ ¬pbetween a c b := by sorry
+
+-- TARSKI_AXIOM_9_NONEUCLIDEAN
+theorem tarski_axiom_9_noneuclidean (p q a b c : Plane) 
+    (hne : p ≠ q) (h1 : pdist a p = pdist a q) (h2 : pdist b p = pdist b q)
+    (h3 : pdist c p = pdist c q) : pbetween b a c ∨ pbetween c b a ∨ pbetween a c b := by sorry
+
+-- NOT_TARSKI_AXIOM_10_NONEUCLIDEAN
+theorem not_tarski_axiom_10_noneuclidean :
+    ¬∀ a b c d t : Plane, pbetween d a t → pbetween d b c → a ≠ d →
+    ∃ x y, pbetween b a x ∧ pbetween c a y ∧ pbetween t x y := by sorry
+
+-- TARSKI_AXIOM_11_NONEUCLIDEAN
+theorem tarski_axiom_11_noneuclidean (X Y : Set Plane) 
+    (hneX : X.Nonempty) (hneY : Y.Nonempty) 
+    (h : ∃ a, ∀ x y, x ∈ X → y ∈ Y → pbetween x a y) :
+    ∃ b, ∀ x y, x ∈ X → y ∈ Y → pbetween b x y := by sorry
+[{'severity': 'warning', 'pos': {'line': 18, 'column': 8}, 'endPos': {'line': 18, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 22, 'column': 8}, 'endPos': {'line': 22, 'column': 18}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 25, 'column': 8}, 'endPos': {'line': 25, 'column': 17}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 28, 'column': 8}, 'endPos': {'line': 28, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 31, 'column': 8}, 'endPos': {'line': 31, 'column': 20}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 34, 'column': 8}, 'endPos': {'line': 34, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 37, 'column': 8}, 'endPos': {'line': 37, 'column': 34}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 41, 'column': 8}, 'endPos': {'line': 41, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 45, 'column': 8}, 'endPos': {'line': 45, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 49, 'column': 8}, 'endPos': {'line': 49, 'column': 33}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 60, 'column': 8}, 'endPos': {'line': 60, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 61, 'column': 8}, 'endPos': {'line': 61, 'column': 23}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 64, 'column': 8}, 'endPos': {'line': 64, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 67, 'column': 8}, 'endPos': {'line': 67, 'column': 24}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 70, 'column': 8}, 'endPos': {'line': 70, 'column': 26}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 73, 'column': 8}, 'endPos': {'line': 73, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 76, 'column': 8}, 'endPos': {'line': 76, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 79, 'column': 65}, 'endPos': {'line': 79, 'column': 79}, 'data': "unknown constant 'Complex.conj'"}, {'severity': 'warning', 'pos': {'line': 82, 'column': 8}, 'endPos': {'line': 82, 'column': 22}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 86, 'column': 8}, 'endPos': {'line': 86, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 91, 'column': 8}, 'endPos': {'line': 91, 'column': 32}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 95, 'column': 8}, 'endPos': {'line': 95, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 99, 'column': 8}, 'endPos': {'line': 99, 'column': 34}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 105, 'column': 48}, 'endPos': {'line': 105, 'column': 118}, 'data': 'application type mismatch\n  between (kleinify (moebius_function 0 w x)) (kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z))\nargument\n  (kleinify (moebius_function 0 w y), kleinify (moebius_function 0 w z))\nhas type\n  ℂ × ℂ : Type\nbut is expected to have type\n  ℂ : Type'}, {'severity': 'error', 'pos': {'line': 106, 'column': 25}, 'endPos': {'line': 106, 'column': 49}, 'data': 'application type mismatch\n  between (kleinify x) (kleinify y, kleinify z)\nargument\n  (kleinify y, kleinify z)\nhas type\n  ℂ × ℂ : Type\nbut is expected to have type\n  ℂ : Type'}, {'severity': 'error', 'pos': {'line': 113, 'column': 19}, 'endPos': {'line': 113, 'column': 29}, 'data': 'application type mismatch\n  between (f x) (f y, f z)\nargument\n  (f y, f z)\nhas type\n  ℂ × ℂ : Type\nbut is expected to have type\n  ℂ : Type'}, {'severity': 'error', 'pos': {'line': 113, 'column': 42}, 'endPos': {'line': 113, 'column': 48}, 'data': 'application type mismatch\n  between x (y, z)\nargument\n  (y, z)\nhas type\n  ℂ × ℂ : Type\nbut is expected to have type\n  ℂ : Type'}, {'severity': 'warning', 'pos': {'line': 116, 'column': 8}, 'endPos': {'line': 116, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 136, 'column': 8}, 'endPos': {'line': 136, 'column': 21}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 139, 'column': 8}, 'endPos': {'line': 139, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 142, 'column': 8}, 'endPos': {'line': 142, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 145, 'column': 8}, 'endPos': {'line': 145, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 148, 'column': 8}, 'endPos': {'line': 148, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 152, 'column': 8}, 'endPos': {'line': 152, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 155, 'column': 8}, 'endPos': {'line': 155, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 159, 'column': 8}, 'endPos': {'line': 159, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 165, 'column': 8}, 'endPos': {'line': 165, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 168, 'column': 8}, 'endPos': {'line': 168, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 173, 'column': 8}, 'endPos': {'line': 173, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 177, 'column': 8}, 'endPos': {'line': 177, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 182, 'column': 8}, 'endPos': {'line': 182, 'column': 40}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 187, 'column': 8}, 'endPos': {'line': 187, 'column': 36}, 'data': "declaration uses 'sorry'"}]
+---

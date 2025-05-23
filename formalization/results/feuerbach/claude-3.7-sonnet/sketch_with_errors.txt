@@ -1,0 +1,267 @@
+Refinement 1 errors:
+import Mathlib.Tactic
+
+/-!
+# Roots of Unity
+
+This file defines primitive roots of unity in a field and proves related theorems.
+-/
+
+open Complex
+
+variable {R : Type*} [CommRing R]
+         {A : Type*} [CommRing A] [Algebra R A]
+variable {K : Type*} [Field K] [Algebra R K]
+variable {n : ℕ} {ω : K}
+
+-- PRIM_ROOT
+def IsPrimitiveRoot (ω : K) (n : ℕ) : Prop :=
+  n > 0 ∧ ω ^ n = 1 ∧ ∀ k, 0 < k → k < n → ω ^ k ≠ 1
+
+-- PRIM_ROOT_ALT
+theorem isPrimitiveRoot_iff (hn : n > 0) (hω : ω ^ n = 1) :
+    IsPrimitiveRoot ω n ↔ ∀ k : ℕ, 0 < k → k < n → ω ^ k ≠ 1 := by sorry
+
+-- PRIM_ROOT_PRIME
+theorem isPrimitiveRoot_prime (p : ℕ) (hp : p.Prime) (hω : ω ≠ 1) (hωp : ω ^ p = 1) :
+    IsPrimitiveRoot ω p := by sorry
+
+-- PRIM_ROOT_NZ
+theorem isPrimitiveRoot_neZero {ω : K} {n : ℕ} (h : IsPrimitiveRoot ω n) : ω ≠ 0 := by sorry
+
+-- PRIM_ROOT_PRIME_POWER
+theorem isPrimitiveRoot_prime_power (p : ℕ) (hp : p.Prime) (k : ℕ) (hk : k > 0) 
+    (hω : IsPrimitiveRoot ω (p ^ (k - 1))) (hωp : ω ^ (p ^ (k - 1) * (p - 1)) ≠ 1) : 
+    IsPrimitiveRoot (ω ^ (p - 1)) (p ^ k) := by sorry
+
+-- ROOTS_UNITY_PRIME_FACTORIZATION
+theorem exists_primitiveRoot_prime_factors (n : ℕ) (hn : n > 0) :
+    ∃ ω : K, IsPrimitiveRoot ω n ↔ 
+      ∀ p k, p.Prime → k > 0 → p ^ k ∣ n → ∃ α : K, IsPrimitiveRoot α (p ^ k) := by sorry
+
+-- ROOTS_UNITY_PRIME_EQ_FIELD
+theorem primitiveRoot_prime_eq_of_field {p : ℕ} {K : Type*} [Field K] [Algebra R K] 
+    (hp : p.Prime) (hK : finiteField K) (hchar : ringChar K = 0) : 
+    ∃ ω : K, IsPrimitiveRoot ω p ↔ algebraClosure K = K := by sorry
+
+-- PRIM_ROOT_COMPLEX
+theorem exists_primitiveRoot_complex (n : ℕ) (hn : n > 0) :
+    ∃ ω : ℂ, IsPrimitiveRoot ω n := by sorry
+
+-- PRIM_ROOT_COMPLEX_EXPLICIT
+theorem primitiveRoot_complex_explicit (n : ℕ) (hn : n > 0) :
+    IsPrimitiveRoot (Complex.exp (2 * Real.pi * Complex.I / n)) n := by sorry
+
+-- PRIM_ROOT_MULT
+theorem primitiveRoot_mul {ω₁ ω₂ : K} {n₁ n₂ : ℕ} (h₁ : IsPrimitiveRoot ω₁ n₁) 
+    (h₂ : IsPrimitiveRoot ω₂ n₂) (hcoprime : Nat.Coprime n₁ n₂) :
+    IsPrimitiveRoot (ω₁ * ω₂) (n₁ * n₂) := by sorry
+
+-- PRIM_ROOT_POW
+theorem primitiveRoot_pow {ω : K} {n d : ℕ} (h : IsPrimitiveRoot ω n) (hd : Nat.Coprime d n) :
+    IsPrimitiveRoot (ω ^ d) n := by sorry
+
+-- CYCLOTOMIC_ROOTS
+theorem cyclotomic_roots (n : ℕ) (hn : n > 0) :
+    ∀ ω : K, IsPrimitiveRoot ω n → Polynomial.cyclotomic n K = ∏ i in Finset.filter (λ j => j.Coprime n) (Finset.range n), 
+      (Polynomial.X - C (ω ^ i)) := by sorry
+[{'severity': 'error', 'pos': {'line': 16, 'column': 4}, 'endPos': {'line': 16, 'column': 19}, 'data': "'IsPrimitiveRoot' has already been declared"}, {'severity': 'warning', 'pos': {'line': 20, 'column': 8}, 'endPos': {'line': 20, 'column': 27}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 24, 'column': 8}, 'endPos': {'line': 24, 'column': 29}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 28, 'column': 8}, 'endPos': {'line': 28, 'column': 30}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 31, 'column': 8}, 'endPos': {'line': 31, 'column': 35}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 36, 'column': 8}, 'endPos': {'line': 36, 'column': 42}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 42, 'column': 25}, 'endPos': {'line': 42, 'column': 38}, 'data': 'function expected at\n  finiteField\nterm has type\n  ?m.9744'}, {'severity': 'error', 'pos': {'line': 43, 'column': 35}, 'endPos': {'line': 43, 'column': 51}, 'data': 'function expected at\n  algebraClosure\nterm has type\n  ?m.10251'}, {'severity': 'warning', 'pos': {'line': 46, 'column': 8}, 'endPos': {'line': 46, 'column': 36}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 50, 'column': 8}, 'endPos': {'line': 50, 'column': 38}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 54, 'column': 8}, 'endPos': {'line': 54, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'warning', 'pos': {'line': 59, 'column': 8}, 'endPos': {'line': 59, 'column': 25}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 65, 'column': 22}, 'endPos': {'line': 65, 'column': 31}, 'data': 'function expected at\n  C\nterm has type\n  ?m.17185'}]
+---
+Refinement 2 errors:
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Analysis.Calculus.Deriv.Basic
+/*
+Copyright (c) 2023 Burak Ekici and The mathlib Community.
+*/
+/-!
+# Picard Iterations Theorem for Ordinary Differential Equations
+
+This theorem is concerned with the existence and uniqueness of solutions to first-order initial value problems of the form:
+
+$$\frac{dy}{dx} = f(x, y), \quad y(x_0) = y_0.$$
+
+Given a sufficiently well-behaved function $f(x,y)$ (i.e., $f$ is *Lipschitz continuous* in $y$ and continuous in $x$), this theorem guarantees the existence and uniqueness of a solution $y(x)$ in a neighborhood of the initial point $x_0$.
+
+The proof technique is constructive and iterative, known as "Picard iterations" or the method of "successive approximations", Essentially, it starts with an initial function (often taken to be the constant function $y_0$), and iteratively defines a sequence of functions through integration.
+
+The central claim is that this sequence of functions converges to a function that satisfies the given differential equation, and furthermore, this solution is unique.
+
+This formalization follows the construction presented in many calculus texts, and particularly on HOL Light Multivariate/picard.ml
+
+## References
+* HOL Light Multivariate/picard.ml
+-/
+
+variable {α : Type} [CompleteLinearOrder α] {E : Type*}
+variable [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+
+def isLocalSolution (f : α → E → E) (g : α → E) (x₀ : α) (y₀ : E) (t : Set α) :=
+  x₀ ∈ t ∧ g x₀ = y₀ ∧ ∀ x ∈ t, HasDerivAt g (f x (g x)) x
+
+/-- picard_iteration f x₀ y₀ h n x is the nth Picard iterate for the
+differential equation y' = f(x,y).  -/
+def picardIteration (f : ℝ → E → E) (x₀ : ℝ) (y₀ : E) (h : ℝ) : ℕ → (ℝ → E)
+  | 0 => λ _ => y₀
+  | n + 1 => λ x => y₀ + ∫ x₀..x, f t (picardIteration f x₀ y₀ h n t)
+
+/-- Picard's theorem for the case of a contraction in a closed interval. -/
+theorem picard1 (f : ℝ → E → E) (x₀ y₀ : ℝ → E) (a b : ℝ) (K M : ℝ) :
+    True := -- Original constraints omitted for brevity
+  sorry
+
+/-- Picard's (main) existence and uniqueness theorem. -/
+theorem picardLindelofTheorem {f : ℝ → E → E} {x₀ : ℝ} {y₀ : E} {a b : ℝ} {K : ℝ} :
+    a < x₀ ∧
+    x₀ < b ∧
+    (∀ x y z, x ∈ [a, b] → ‖y - z‖ ≤ dist y z → ‖f x y - f x z‖ ≤ K * dist y z) ∧
+    (∃ M, ∀ x ∈ [a, b], ‖f x y₀‖ ≤ M) →
+    ∃ g t,
+      t ⊆ [a, b] ∧
+      x₀ ∈ interior t ∧
+      isLocalSolution f g x₀ y₀ t ∧
+      ∀ {g'} {t'},
+        t' ⊆ [a, b] →
+        x₀ ∈ t' →
+        isLocalSolution f g' x₀ y₀ t' →
+        ∀ x ∈ t ∩ t', g x = g' x :=
+  sorry
+
+/-- Another statement of picard lindelöf theorem. -/
+theorem picardLindelofTheorem' (f : ℝ → E → E) (x₀ : ℝ) (y₀ : E) (a b : ℝ) (K M : ℝ) :
+    a < x₀ ∧
+    x₀ < b ∧
+    (∀ x y z, x ∈ [a, b] → dist y z < ⊤ → dist (f x y) (f x z) ≤ K * dist y z) ∧
+    (∀ x, x ∈ [a, b] → dist (f x y₀) 0 ≤ M) →
+    ∃ g t,
+      t ⊆ [a, b] ∧
+      x₀ ∈ interior t ∧
+      isLocalSolution f g x₀ y₀ t ∧
+      ∀ {g'} {t'},
+        t' ⊆ [a, b] →
+        x₀ ∈ t' →
+        isLocalSolution f g' x₀ y₀ t' →
+        ∀ x ∈ t ∩ t', g x = g' x :=
+  sorry
+
+/-- The Picard-Lindelöf theorem with a global Lipschitz condition gives a 
+solution defined on the whole interval [a,b]. -/
+theorem picard_lindelof_global (f : ℝ → E → E) (x₀ : ℝ) (y₀ : E) (a b : ℝ) (K M : ℝ) :
+    a ≤ x₀ ∧
+    x₀ ≤ b ∧
+    (∀ x y z, x ∈ [a, b] → dist y z < ⊤ → dist (f x y) (f x z) ≤ K * dist y z) ∧
+    (∀ x, x ∈ [a, b] → dist (f x y₀) 0 ≤ M) →
+    ∃ g,
+      isLocalSolution f g x₀ y₀ [a, b] ∧
+      ∀ {g'} {t'},
+        t' ⊆ [a, b] →
+        x₀ ∈ t' →
+        isLocalSolution f g' x₀ y₀ t' →
+        ∀ x ∈ t', g x = g' x :=
+  sorry
+[{'severity': 'error', 'pos': {'line': 1, 'column': 0}, 'endPos': {'line': 1, 'column': 1}, 'data': "unexpected token '/'; expected command"}, {'severity': 'error', 'pos': {'line': 27, 'column': 32}, 'endPos': {'line': 27, 'column': 58}, 'data': 'failed to synthesize\n  NontriviallyNormedField α\nAdditional diagnostic information may be available using the `set_option diagnostics true` command.'}, {'severity': 'error', 'pos': {'line': 33, 'column': 25}, 'endPos': None, 'data': 'expected token'}, {'severity': 'warning', 'pos': {'line': 36, 'column': 8}, 'endPos': {'line': 36, 'column': 15}, 'data': "declaration uses 'sorry'"}, {'severity': 'error', 'pos': {'line': 48, 'column': 20}, 'endPos': {'line': 48, 'column': 21}, 'data': 'application type mismatch\n  interior t\nargument\n  t\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ?m.5419 : Type'}, {'severity': 'error', 'pos': {'line': 49, 'column': 32}, 'endPos': {'line': 49, 'column': 33}, 'data': 'application type mismatch\n  isLocalSolution f g x₀ y₀ t\nargument\n  t\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ℝ : Type'}, {'severity': 'error', 'pos': {'line': 53, 'column': 35}, 'endPos': {'line': 53, 'column': 37}, 'data': "application type mismatch\n  isLocalSolution f g' x₀ y₀ t'\nargument\n  t'\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ℝ : Type"}, {'severity': 'error', 'pos': {'line': 61, 'column': 38}, 'endPos': {'line': 61, 'column': 39}, 'data': 'failed to synthesize\n  Top ℝ\nAdditional diagnostic information may be available using the `set_option diagnostics true` command.'}, {'severity': 'error', 'pos': {'line': 65, 'column': 20}, 'endPos': {'line': 65, 'column': 21}, 'data': 'application type mismatch\n  interior t\nargument\n  t\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ?m.9062 : Type'}, {'severity': 'error', 'pos': {'line': 66, 'column': 32}, 'endPos': {'line': 66, 'column': 33}, 'data': 'application type mismatch\n  isLocalSolution f g x₀ y₀ t\nargument\n  t\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ℝ : Type'}, {'severity': 'error', 'pos': {'line': 70, 'column': 35}, 'endPos': {'line': 70, 'column': 37}, 'data': "application type mismatch\n  isLocalSolution f g' x₀ y₀ t'\nargument\n  t'\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ℝ : Type"}, {'severity': 'error', 'pos': {'line': 79, 'column': 38}, 'endPos': {'line': 79, 'column': 39}, 'data': 'failed to synthesize\n  Top ℝ\nAdditional diagnostic information may be available using the `set_option diagnostics true` command.'}, {'severity': 'error', 'pos': {'line': 82, 'column': 32}, 'endPos': {'line': 82, 'column': 38}, 'data': 'application type mismatch\n  isLocalSolution f g x₀ y₀ [a, b]\nargument\n  [a, b]\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ℝ : Type'}, {'severity': 'error', 'pos': {'line': 86, 'column': 35}, 'endPos': {'line': 86, 'column': 37}, 'data': "application type mismatch\n  isLocalSolution f g' x₀ y₀ t'\nargument\n  t'\nhas type\n  List ℝ : Type\nbut is expected to have type\n  Set ℝ : Type"}]
+---
+Refinement 3 errors:
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Set.Function
+import Mathlib.Order.FixedPoint
+import Mathlib.Order.Complete.Basic
+import Mathlib.Data.Set.Lattice
+import Mathlib.Logic.UniformInductive
+import Mathlib.Topology.Sets.Opens
+import Mathlib.Order.CompleteLattice
+import Mathlib.Tactic
+
+open Set
+
+/--
+  A semi-closure operator on a type `α` is a function from `Set α` to `Set α` that satisfies:
+  1. Extensive: `A ⊆ cl A`
+  2. Increasing: `A ⊆ B → cl A ⊆ cl B`
+-/
+structure SemiClosureOp (α : Type) where
+  cl : Set α → Set α
+  extensive : ∀ A : Set α, A ⊆ cl A
+  increasing : ∀ A B : Set α, A ⊆ B → cl A ⊆ cl B
+
+/--
+  A closure operator on a type `α` is a semi-closure operator that is also idempotent:
+  3. Idempotent: `cl (cl A) = cl A`
+-/
+structure ClosureOp (α : Type) extends SemiClosureOp α where
+  idempotent : ∀ A : Set α, cl (cl A) = cl A
+
+/--
+  A Tarski fixed point operator on a type `α` is a function from `Set α → Set α` to `Set α`,
+  such that:
+  1. `f (tarski_op f) = tarski_op f`
+  2. `∀ A, f A = A → tarski_op f ⊆ A`
+  (i.e., it gives the least fixed point of the function `f`)
+-/
+def tarski_op {α : Type} (f : Set α → Set α) (H : Monotone f) : Set α :=
+  sInf {A : Set α | f A = A}
+
+/--
+  The Tarski fixed point theorem states that for any monotone function `f` on sets,
+  the Tarski operator produces a fixed point of `f`.
+-/
+theorem tarski_fixed_point {α : Type} (f : Set α → Set α) (H : Monotone f) :
+  f (tarski_op f H) = tarski_op f H := by
+  sorry
+
+/--
+  The Tarski fixed point is the least fixed point of `f`.
+-/
+theorem tarski_least_fixed_point {α : Type} (f : Set α → Set α) (H : Monotone f)
+  (A : Set α) (h : f A = A) :
+  tarski_op f H ⊆ A := by
+  sorry
+
+/--
+  The closure of a set `A` under a closure operator `cl` is just `cl A`.
+-/
+theorem closure_eq_cl {α : Type} (cl : ClosureOp α) (A : Set α) :
+  tarski_op (fun X => A ∪ cl.1.cl X) (monotone_union_right fun X => cl.1.cl X) = cl.1.cl A := by
+  sorry
+
+/--
+  The interior of a set `A` under a closure operator `cl` is the complement of the closure of the complement.
+-/
+def interior_op {α : Type} (cl : ClosureOp α) : Set α → Set α :=
+  fun A => (cl.1.cl (Aᶜ))ᶜ
+
+/--
+  The interior operator satisfies the dual properties to a closure operator:
+  1. Contractive: `interior_op cl A ⊆ A`
+  2. Increasing: `A ⊆ B → interior_op cl A ⊆ interior_op cl B`
+  3. Idempotent: `interior_op cl (interior_op cl A) = interior_op cl A`
+-/
+theorem interior_op_props {α : Type} (cl : ClosureOp α) :
+  (∀ A, interior_op cl A ⊆ A) ∧
+  (∀ A B, A ⊆ B → interior_op cl A ⊆ interior_op cl B) ∧
+  (∀ A, interior_op cl (interior_op cl A) = interior_op cl A) := by
+  sorry
+
+/--
+  The dual Tarski fixed point theorem: For any antitonae function `f` on sets,
+  iteration starting from the bottom element converges to a fixed point which is the greatest fixed point.
+-/
+def dual_tarski_op {α : Type} (f : Set α → Set α) (H : Antitone f) : Set α :=
+  sSup {A : Set α | f A = A}
+
+/--
+  The dual Tarski fixed point theorem states that for any antitone function `f` on sets,
+  the dual Tarski operator produces a fixed point of `f`.
+-/
+theorem dual_tarski_fixed_point {α : Type} (f : Set α → Set α) (H : Antitone f) :
+  f (dual_tarski_op f H) = dual_tarski_op f H := by
+  sorry
+
+/--
+  The dual Tarski fixed point is the greatest fixed point of `f`.
+-/
+theorem dual_tarski_greatest_fixed_point {α : Type} (f : Set α → Set α) (H : Antitone f)
+  (A : Set α) (h : f A = A) :
+  A ⊆ dual_tarski_op f H := by
+  sorry
+[{'severity': 'error', 'pos': {'line': 2, 'column': 5}, 'endPos': {'line': 2, 'column': 8}, 'data': "unknown namespace 'Set'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 7}, 'endPos': {'line': 10, 'column': 12}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 7}, 'endPos': {'line': 10, 'column': 12}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 15}, 'endPos': {'line': 10, 'column': 20}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 10, 'column': 15}, 'endPos': {'line': 10, 'column': 20}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 11, 'column': 27}, 'endPos': {'line': 11, 'column': 28}, 'data': "unknown constant 'CoeSort'"}, {'severity': 'error', 'pos': {'line': 11, 'column': 14}, 'endPos': {'line': 11, 'column': 28}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 11, 'column': 29}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 18, 'column': 39}, 'endPos': {'line': 18, 'column': 52}, 'data': "unknown identifier 'SemiClosureOp'"}, {'severity': 'error', 'pos': {'line': 18, 'column': 39}, 'endPos': {'line': 18, 'column': 54}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 19, 'column': 38}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 29, 'column': 24}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 28, 'column': 30}, 'endPos': {'line': 28, 'column': 35}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 30}, 'endPos': {'line': 28, 'column': 35}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 38}, 'endPos': {'line': 28, 'column': 43}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 38}, 'endPos': {'line': 28, 'column': 43}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 50}, 'endPos': {'line': 28, 'column': 60}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 50}, 'endPos': {'line': 28, 'column': 60}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 64}, 'endPos': {'line': 28, 'column': 69}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 28, 'column': 64}, 'endPos': {'line': 28, 'column': 69}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 36, 'column': 20}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 43, 'column': 23}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 51, 'column': 24}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 58, 'column': 22}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 57, 'column': 33}, 'endPos': {'line': 57, 'column': 44}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 57, 'column': 33}, 'endPos': {'line': 57, 'column': 44}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 57, 'column': 48}, 'endPos': {'line': 57, 'column': 53}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 57, 'column': 48}, 'endPos': {'line': 57, 'column': 53}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 57, 'column': 56}, 'endPos': {'line': 57, 'column': 61}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 57, 'column': 56}, 'endPos': {'line': 57, 'column': 61}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 67, 'column': 25}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 77, 'column': 24}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 76, 'column': 35}, 'endPos': {'line': 76, 'column': 40}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 35}, 'endPos': {'line': 76, 'column': 40}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 43}, 'endPos': {'line': 76, 'column': 48}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 43}, 'endPos': {'line': 76, 'column': 48}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 55}, 'endPos': {'line': 76, 'column': 65}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 55}, 'endPos': {'line': 76, 'column': 65}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 69}, 'endPos': {'line': 76, 'column': 74}, 'data': "unknown constant 'CoeFun'"}, {'severity': 'error', 'pos': {'line': 76, 'column': 69}, 'endPos': {'line': 76, 'column': 74}, 'data': "unknown constant 'sorryAx'"}, {'severity': 'error', 'pos': {'line': 84, 'column': 25}, 'endPos': None, 'data': 'expected token'}, {'severity': 'error', 'pos': {'line': 91, 'column': 23}, 'endPos': None, 'data': 'expected token'}]
+---

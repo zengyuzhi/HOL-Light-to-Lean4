@@ -1,0 +1,95 @@
+```lean
+import Mathlib
+
+open Topology Filter Real Complex TopologicalSpace Finset
+open scoped BigOperators
+
+-- BETWEEN_THM
+theorem between_thm {α : Type*} [NormedAddCommGroup α] [NormedSpace ℝ α] (x a b : α) :
+    (∃ u : ℝ, 0 ≤ u ∧ u ≤ 1 ∧ x = u • a + (1 - u) • b) ↔ ∃ u : ℝ, 0 ≤ u ∧ u ≤ 1 ∧ x = u • a + (1 - u) • b := by
+  -- Proof outline:
+  -- 1. Use convex hull characterizations
+  -- 2. Rewrite vector expressions
+  -- 3. Apply vector arithmetic identities
+  sorry
+
+-- NORM_CROSS
+theorem norm_cross {α : Type*} [NormedAddCommGroup α] [InnerProductSpace ℝ α] (a b c d e f : α) :
+    ‖a‖ * ‖b‖ * ‖c‖ = ‖d‖ * ‖e‖ * ‖f‖ ↔ ⟪a, a⟫ * ⟪b, b⟫ * ⟪c, c⟫ = ⟪d, d⟫ * ⟪e, e⟫ * ⟪f, f⟫ := by
+  -- Proof outline:
+  -- 1. Prove auxiliary lemma about squares of non-negative reals
+  -- 2. Rewrite norms as squares using inner product
+  -- 3. Apply simplification rules
+  sorry
+
+-- COLLINEAR
+theorem collinear {α : Type*} [NormedAddCommGroup α] [InnerProductSpace ℝ α] [FiniteDimensional ℝ α] (a b c : α) 
+    (h : FiniteDimensional.finrank ℝ α = 2) :
+    Collinear ℝ ({a, b, c} : Set α) ↔ 
+    (a - b) • (b - c) = (a - b) • (b - c) := by
+  -- Proof outline:
+  -- 1. Consider case where a = b
+  -- 2. Use vector components when a ≠ b
+  -- 3. Set up parametric equations for collinearity
+  -- 4. Use determinant condition for collinearity
+  sorry
+
+-- CEVA_WEAK
+theorem ceva_weak {α : Type*} [NormedAddCommGroup α] [InnerProductSpace ℝ α] [FiniteDimensional ℝ α] 
+    (A B C X Y Z P : α) (h_dim : FiniteDimensional.finrank ℝ α = 2) :
+    (¬Collinear ℝ ({A, B, C} : Set α)) ∧ 
+    (∃ u : ℝ, 0 ≤ u ∧ u ≤ 1 ∧ X = u • B + (1 - u) • C) ∧ 
+    (∃ v : ℝ, 0 ≤ v ∧ v ≤ 1 ∧ Y = v • A + (1 - v) • C) ∧ 
+    (∃ w : ℝ, 0 ≤ w ∧ w ≤ 1 ∧ Z = w • A + (1 - w) • B) ∧ 
+    (∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ P = t • A + (1 - t) • X) ∧ 
+    (∃ s : ℝ, 0 ≤ s ∧ s ≤ 1 ∧ P = s • B + (1 - s) • Y) ∧ 
+    (∃ r : ℝ, 0 ≤ r ∧ r ≤ 1 ∧ P = r • C + (1 - r) • Z) → 
+    dist B X * dist C Y * dist A Z = dist X C * dist Y A * dist Z B := by
+  -- Proof outline:
+  -- 1. Express distances in terms of norms
+  -- 2. Rewrite using parametric forms of X, Y, Z
+  -- 3. Simplify vector expressions
+  -- 4. Apply algebraic simplifications
+  sorry
+
+-- CEVA
+theorem ceva {α : Type*} [NormedAddCommGroup α] [InnerProductSpace ℝ α] [FiniteDimensional ℝ α] 
+    (A B C X Y Z : α) (h_dim : FiniteDimensional.finrank ℝ α = 2) :
+    (¬Collinear ℝ ({A, B, C} : Set α)) ∧ 
+    (∃ u : ℝ, 0 ≤ u ∧ u ≤ 1 ∧ X = u • B + (1 - u) • C) ∧ 
+    (∃ v : ℝ, 0 ≤ v ∧ v ≤ 1 ∧ Y = v • C + (1 - v) • A) ∧ 
+    (∃ w : ℝ, 0 ≤ w ∧ w ≤ 1 ∧ Z = w • A + (1 - w) • B) → 
+    (dist B X * dist C Y * dist A Z = dist X C * dist Y A * dist Z B ↔ 
+     ∃ P : α, (∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ P = t • A + (1 - t) • X) ∧ 
+              (∃ s : ℝ, 0 ≤ s ∧ s ≤ 1 ∧ P = s • B + (1 - s) • Y) ∧ 
+              (∃ r : ℝ, 0 ≤ r ∧ r ≤ 1 ∧ P = r • C + (1 - r) • Z)) := by
+  -- Proof outline:
+  -- 1. Eliminate degenerate cases
+  -- 2. Express cevians in parametric form
+  -- 3. For forward direction, derive existence of P from ratio condition
+  -- 4. For reverse direction, derive ratio condition from concurrent cevians
+  -- 5. Use vector algebra and real arithmetic
+  sorry
+
+-- BETWEEN_SYM
+theorem between_sym {α : Type*} [NormedAddCommGroup α] [NormedSpace ℝ α] (u v w : α) :
+    (∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ v = t • u + (1 - t) • w) ↔ 
+     ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ v = t • w + (1 - t) • u := by
+  -- Proof outline:
+  -- 1. For each direction, choose the complement 1-t as witness
+  -- 2. Verify coefficients fall in [0,1]
+  -- 3. Use vector arithmetic to show equivalence
+  sorry
+
+-- BETWEEN_METRICAL
+theorem between_metrical {α : Type*} [NormedAddCommGroup α] [NormedSpace ℝ α] (u v w : α) :
+    (∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ v = t • u + (1 - t) • w) ↔ 
+    dist u v + dist v w = dist u w := by
+  -- Proof outline:
+  -- 1. Use symmetry of between relation
+  -- 2. Rewrite using parametric form and vector arithmetic
+  -- 3. Apply triangle equality condition
+  -- 4. Handle degenerate cases where vectors are equal
+  -- 5. Construct required parameters in general case
+  sorry
+```
