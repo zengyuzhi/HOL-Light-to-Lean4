@@ -37,7 +37,7 @@ from llm_doc import (
 # --------------------------------------------------------------------------- #
 # Constants & helpers
 # --------------------------------------------------------------------------- #
-CACHE_FILE = Path("./HOL_Light_deps/hol_index.pkl")
+CACHE_FILE = Path("./HOL_Light_deps/.hol_index.pkl")
 load_dotenv()
 
 def walk_hol_files(root: Path) -> Iterable[Path]:
@@ -284,10 +284,10 @@ def main(
         )
         if use_agents and backend == "openai":
             overview_md = generate_overview(
-                llm, tokenizer, informalizer_params[0], overview_prompt, backend=backend
+                llm, tokenizer, informalizer_params[0], [overview_prompt], backend=backend
             )
         else:
-            overview_md = generate_docs(
+            overview_md = generate_overview(
                 llm, tokenizer, informalizer_params, [overview_prompt], backend=backend
             )
 

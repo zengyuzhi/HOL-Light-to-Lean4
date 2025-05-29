@@ -110,7 +110,7 @@ def generate_overview(
     llm, tokenizer, params, prompt: str, *, backend: str
 ) -> str:
     """Thin wrapper around `generate_docs` for single prompt."""
-    return generate_docs(llm, tokenizer, params, [prompt], backend=backend)[0]
+    return generate_docs(llm, tokenizer, params, prompt, backend=backend)[0]
 
 # ----------------------------------------------------------------------
 # Multi‑agent mode (OpenAI only)
@@ -125,11 +125,11 @@ def run_multi_agent( llm: "OpenAI.chat.completions.Completions", agent_params: L
         versions = []
         for p in informalizers:
             try:
-                resp = llm.create(messages=_check_add_system_prompt(p['model'], prompts ), **p)
+                resp = llm.create(messages=_check_add_system_prompt(p['model'], user_prompt ), **p)
                 versions.append(resp.choices[0].message.content)
             except Exception as e:
                 logger.warning(f"Generation failed, retrying once: {e}")
-                resp = llm.create(messages=_check_add_system_prompt(p['model'], prompts ), **p)
+                resp = llm.create(messages=_check_add_system_prompt(p['model'], user_prompt ), **p)
                 versions.append(resp.choices[0].message.content)
 
         joined = "\n\n".join(
