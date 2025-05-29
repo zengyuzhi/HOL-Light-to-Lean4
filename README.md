@@ -5,6 +5,20 @@ This project aims to proivde a approach to **port the top 100 theorems** from **
 
 We have successfully ported the **Quartic formula** (`quartic.ml`) from HOL-Light to Lean 4, with most of the work automated via large language models (LLMs), and only minor refinements required by human intervention.
 
+## Result
+
+#### Informalization
+As 29 May 2025, 89 of HOL-Light theorems have all been infromazlied into natural language documentation.
+
+#### Formalization
+| File             | Statement Verified | Proof Completed   | Notes                                 |
+|------------------|--------------------|-------------------|---------------------------------------|
+| `Ceva.lean`      | ✅ Yes              | ❌ No (`sorry`)   | Proof not yet completed               |
+| `Desargues.lean` | ✅ Yes              | ❌ No (`sorry`)   | Proof not yet completed               |
+| `Feuerbach.lean` | ✅ Yes              | ❌ No (`sorry`)   | Proof not yet completed               |
+| `Morley.lean`    | ✅ Yes              | ❌ No (`sorry`)   | Contains some formal proof sketch     |
+| `Quartic.lean`   | ✅ Yes              | ✅ Yes            | Fully formalized and verified         |
+
 
 
 ## 🚀 Workflow
