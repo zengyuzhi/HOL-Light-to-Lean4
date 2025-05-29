@@ -95,8 +95,7 @@ All generated English Markdown files are stored in the `docs/` folder and catego
 | 🔵 Large  | 1000–2999 lines | 6     | 13,497      |
 | 🟣 Huge   | 3000+ lines     | 6     | 45,459      |
 
-Out of 89 HOL-Light theorem files, **88 have been successfully informalized**.
-The only exception is `transcendence.ml`, which contains **25,323 lines**, making it the largest and most complex file.
+**89 HOL-Light theorem files have been successfully informalized**.
 
 * ✍️ Informalizer: **Claude 3.7 Sonnet**
 * 🧪 Judger: **GPT-4.1 Mini**
